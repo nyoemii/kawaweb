@@ -224,8 +224,12 @@ async def settings_custom_post():
 
     if background is not None and background.filename:
         _, file_extension = os.path.splitext(background.filename.lower())
-        if not file_extension in ALLOWED_EXTENSIONS:
+        if not file_extension in ALLOWED_EXTENSIONS and session['user_data']['is_donator']:
             return await flash_with_customizations('error', f'The background you select must be either a .JPG, .JPEG, .PNG or .GIF file!', 'settings/custom')
+        elif not file_extension in ALLOWED_EXTENSIONS and not session['user_data']['is_donator']:
+            if file_extension == '.gif':
+                return await flash_with_customizations('error', 'Only donators can use .gif backgrounds!', 'settings/custom')
+            return await flash_with_customizations('error', f'The background you select must be either a .JPG, .JPEG, or .PNG file!', 'settings/custom')
 
         background_file_no_ext = os.path.join(f'.data/backgrounds', f'{session["user_data"]["id"]}')
 

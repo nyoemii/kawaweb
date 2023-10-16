@@ -16,8 +16,14 @@
           <div class="column">
             <div class="single-block-content avatar-block-content">
               <h4 class="mb-4">Avatar</h4>
-              <div class="subtitle">We recommend an image of at least 512x512 (or 1:1 ratio).
-                You can upload a PNG, JPG under 5MB
+              <div class="subtitle">
+                {% if session['user_data']['is_donator'] %} 
+                We recommend an image of at least 512x512 (or 1:1 ratio).
+                You can upload a PNG, JPG, GIF under 128MB
+                {% else %}
+                We recommend an image of at least 512x512 (or 1:1 ratio).
+                You can upload a PNG, JPG, GIF under 32MB
+                {% endif %}
               </div>
               <form id="upload-profile" action="/settings/avatar" method="post" enctype="multipart/form-data">
                 <div class="buttons margin-top" id="selection">
