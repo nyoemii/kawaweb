@@ -141,6 +141,9 @@ async def settings_avatar_post():
     MAX_IMAGE_SIZE = glob.config.max_image_size * 1024 * 1024
     AVATARS_PATH = f'{glob.config.path_to_gulag}.data/avatars'
     ALLOWED_EXTENSIONS = ['.jpeg', '.jpg', '.png']
+    if session['user_data']['is_donator']:
+        ALLOWED_EXTENSIONS.append('.gif')
+        MAX_IMAGE_SIZE = glob.config.max_image_size_supporter * 1024 * 1024
 
     avatar = (await request.files).get('avatar')
 
@@ -151,11 +154,18 @@ async def settings_avatar_post():
     filename, file_extension = os.path.splitext(avatar.filename.lower())
 
     # bad file extension; deny post
-    if not file_extension in ALLOWED_EXTENSIONS:
-        return await flash('error', 'The image you select must be either a .JPG, .JPEG, or .PNG file!', 'settings/avatar')
-    
+    if not file_extension in ALLOWED_EXTENSIONS and not session['user_data']['is_donator']:
+        if file_extension == '.gif':
+            return await flash('error', 'Only donators can use .gif avatars!', 'settings/avatar')
+        else:
+            return await flash('error', 'The image you select must be either a .JPG, .JPEG, or .PNG file!', 'settings/avatar')
+    elif not file_extension in ALLOWED_EXTENSIONS and session['user_data']['is_donator']:
+        return await flash('error', 'The image you select must be either a .JPG, .JPEG, .PNG or .GIF file!', 'settings/avatar')
+
     # check file size of avatar
-    if avatar.content_length > MAX_IMAGE_SIZE:
+    if avatar.content_length > MAX_IMAGE_SIZE and not session['user_data']['is_donator']:
+        return await flash('error', 'The image you selected is too large! become a donor to get double the size!', 'settings/avatar')
+    elif avatar.content_length > MAX_IMAGE_SIZE and session['user_data']['is_donator']:
         return await flash('error', 'The image you selected is too large!', 'settings/avatar')
 
     # remove old avatars
@@ -183,7 +193,10 @@ async def settings_custom_post():
     files = await request.files
     banner = files.get('banner')
     background = files.get('background')
-    ALLOWED_EXTENSIONS = ['.jpeg', '.jpg', '.png', '.gif']
+    ALLOWED_EXTENSIONS = ['.jpeg', '.jpg', '.png']
+    if session['user_data']['is_donator']:
+        ALLOWED_EXTENSIONS.append('.gif')
+
 
     # no file uploaded; deny post
     if banner is None and background is None:
@@ -191,7 +204,12 @@ async def settings_custom_post():
 
     if banner is not None and banner.filename:
         _, file_extension = os.path.splitext(banner.filename.lower())
-        if not file_extension in ALLOWED_EXTENSIONS:
+        if not file_extension in ALLOWED_EXTENSIONS and not session['user_data']['is_donator']:
+            if file_extension == '.gif':
+                return await flash_with_customizations('error', 'Only donators can use .gif banners!', 'settings/custom')
+            else:
+                return await flash_with_customizations('error', f'The banner you select must be either a .JPG, .JPEG, or .PNG file!', 'settings/custom')
+        elif not file_extension in ALLOWED_EXTENSIONS and session['user_data']['is_donator']:
             return await flash_with_customizations('error', f'The banner you select must be either a .JPG, .JPEG, .PNG or .GIF file!', 'settings/custom')
 
         banner_file_no_ext = os.path.join(f'.data/banners', f'{session["user_data"]["id"]}')
