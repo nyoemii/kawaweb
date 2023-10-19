@@ -173,12 +173,18 @@ async def settings_avatar_post():
         if os.path.isfile(f'{AVATARS_PATH}/{session["user_data"]["id"]}{fx}'): # Checking file e
             os.remove(f'{AVATARS_PATH}/{session["user_data"]["id"]}{fx}')
 
-    # avatar cropping to 1:1
-    pilavatar = Image.open(avatar.stream)
+    if file_extension.lower() != '.gif':
+        # avatar cropping to 1:1 for non-animated images
+        pilavatar = Image.open(avatar.stream)
+        pilavatar = utils.crop_image(pilavatar)
+        pilavatar.save(os.path.join(AVATARS_PATH, f'{session["user_data"]["id"]}{file_extension.lower()}'))
+    else:
+        # Handle GIF images (no processing)
+        save_path = os.path.join(AVATARS_PATH, f'{session["user_data"]["id"]}.gif')
+        with open(save_path, "wb") as output_file:
+            output_file.write(avatar.read())
+    
 
-    # avatar change success
-    pilavatar = utils.crop_image(pilavatar)
-    pilavatar.save(os.path.join(AVATARS_PATH, f'{session["user_data"]["id"]}{file_extension.lower()}'))
     return await flash('success', 'Your avatar has been successfully changed!', 'settings/avatar')
 
 @frontend.route('/settings/custom')
