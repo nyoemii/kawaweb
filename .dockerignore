@@ -1,0 +1,12 @@
+/.vscode
+__pycache__/
+/.data
+/gulag
+gulag
+_testing/
+*.lprof
+.venv/
+.mypy_cache/
+.pytest_cache/
+tools/cf_records.txt
+.env

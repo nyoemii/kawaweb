@@ -1,52 +1,48 @@
 # -*- coding: utf-8 -*-
 
 # app name
-app_name = 'guweb'
+app_name = os.environ["APP_NAME"]
 
 # secret key
-secret_key = 'changeme'
+secret_key = os.environ["SECRET_KEY"]
 
 #hCaptcha settings:
-hCaptcha_sitekey = 'changeme'
-hCaptcha_secret = 'changeme'
+hCaptcha_sitekey = os.environ["HCAPTCHA_SITEKEY"]
+hCaptcha_secret = os.environ["HCAPTCHA_SECRET"]
 
 # domain (used for api, avatar, etc)
-domain = 'gulag.ca'
+domain = os.environ["DOMAIN"]
 
 # max image size for avatars, in megabytes
-max_image_size = 2
+max_image_size = os.environ["MAX_IMAGE_SIZE"]
+max_image_size_supporter = os.environ["MAX_IMAGE_SIZE_SUPPORTER"]
 
 # mysql credentials
 mysql = {
-    'db': 'gulag',
-    'host': 'localhost',
-    'user': 'cmyui',
-    'password': 'changeme',
+    'db': os.environ["MYSQL_DB"],
+    'host': os.environ["MYSQL_HOST"],
+    'user': os.environ["MYSQL_USER"],
+    'password': os.environ["MYSQL_PASSWORD"],
 }
 
 # path to gulag root (must have leading and following slash)
-path_to_gulag = '/path/to/gulag/'
+path_to_gulag = os.environ["PATH_TO_GULAG"]
 
 # enable debug (disable when in production to improve performance)
-debug = False
+debug = os.environ["DEBUG"]
 
 # disallowed names (hardcoded banned usernames)
-disallowed_names = {
-    'cookiezi', 'rrtyui',
-    'hvick225', 'qsc20010'
-}
+disallowed_names = read_list(os.environ["DISALLOWED_NAMES"])
 
 # disallowed passwords (hardcoded banned passwords)
-disallowed_passwords = {
-    'password', 'minilamp'
-}
+disallowed_passwords = read_list(os.environ["DISALLOWED_PASSWORD"])
 
 # enable registration
-registration = True
+registration = os.environ["ENABLE_REGISTRATION"]
 
 # social links (used throughout guweb)
-github = 'https://github.com/varkaria/guweb'
-discord_server = 'https://discord.com/invite/Y5uPvcNpD9'
+github = 'https://github.com/kawatapw/kawaweb'
+discord_server = 'https://discord.com/invite/kawata-451130713627164683'
 youtube = 'https://youtube.com/'
 twitter = 'https://twitter.com/'
 instagram = 'https://instagram.com/'

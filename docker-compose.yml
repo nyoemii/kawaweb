@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  web:
+    image: kawaweb:latest
+    container_name: Kawata-Web
+    network_mode: bridge
+    restart: always
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+      - 6680:80
+      - 6681:443
+    #depends_on:
+    #  - mysql
+    #  - redis
+    tty: true
+    init: true
+    volumes:
+      - .:/srv/root
+    environment:
+      - APP_HOST=${APP_HOST}
+      - APP_PORT=${APP_PORT}
+      - APP_NAME=${APP_NAME}
+      - SECRET_KEY=${SECRET_KEY}
+      - HCAPTCHA_SITEKEY=${HCAPTCHA_SITEKEY}
+      - HCAPTCHA_SECRET=${HCAPTCHA_SECRET}
+      - DOMAIN=${DOMAIN}
+      - MAX_IMAGE_SIZE=${MAX_IMAGE_SIZE}
+      - MAX_IMAGE_SIZE_SUPPORTER=${MAX_IMAGE_SIZE_SUPPORTER}
+      - MYSQL_DB=${MYSQL_DB}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - PATH_TO_GULAG=${PATH_TO_GULAG}
+      - DEBUG=${DEBUG}
+      - DISALLOWED_NAMES=${DISALLOWED_NAMES}
+      - DISALLOWED_PASSWORDS=${DISALLOWED_PASSWORDS}
+      - ENABLE_REGISTRATION=${ENABLE_REGISTRATION}
