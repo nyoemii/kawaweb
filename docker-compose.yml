@@ -17,7 +17,7 @@ services:
     init: true
     volumes:
       - .:/srv/root
-      - ./gulag:/srv/root/gulag
+      - ${GULAG_PATH}:/srv/root/gulag
     environment:
       - APP_HOST=${APP_HOST}
       - APP_PORT=${APP_PORT}
