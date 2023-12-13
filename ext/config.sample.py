@@ -1,4 +1,15 @@
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
+import os
+from datetime import date
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def read_list(value: str) -> list[str]:
+    return [v.strip() for v in value.split(",")]
 
 # app name
 app_name = os.environ["APP_NAME"]
@@ -35,7 +46,7 @@ debug = os.environ["DEBUG"]
 disallowed_names = read_list(os.environ["DISALLOWED_NAMES"])
 
 # disallowed passwords (hardcoded banned passwords)
-disallowed_passwords = read_list(os.environ["DISALLOWED_PASSWORD"])
+disallowed_passwords = read_list(os.environ["DISALLOWED_PASSWORDS"])
 
 # enable registration
 registration = os.environ["ENABLE_REGISTRATION"]

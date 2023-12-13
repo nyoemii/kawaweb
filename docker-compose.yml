@@ -8,8 +8,8 @@ services:
     restart: always
     ports:
       - ${APP_PORT}:${APP_PORT}
-      - 6680:80
-      - 6681:443
+      - 6780:80
+      - 6781:443
     #depends_on:
     #  - mysql
     #  - redis
@@ -17,6 +17,7 @@ services:
     init: true
     volumes:
       - .:/srv/root
+      - ./gulag:/srv/root/gulag
     environment:
       - APP_HOST=${APP_HOST}
       - APP_PORT=${APP_PORT}
@@ -29,6 +30,7 @@ services:
       - MAX_IMAGE_SIZE_SUPPORTER=${MAX_IMAGE_SIZE_SUPPORTER}
       - MYSQL_DB=${MYSQL_DB}
       - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - PATH_TO_GULAG=${PATH_TO_GULAG}

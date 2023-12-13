@@ -16,12 +16,17 @@ sed -e "s|\${APP_PORT}|$APP_PORT|g" \
     -e "s|\${DOMAIN}|$DOMAIN|g" \
     -e "s|\${SSL_CERT_PATH}|$SSL_CERT_PATH|g" \
     -e "s|\${SSL_KEY_PATH}|$SSL_KEY_PATH|g" \
-    -e "s|\${DATA_DIRECTORY}|$DATA_DIRECTORY|g" \
-    ext/nginx.conf.example > /etc/nginx/sites-available/bancho.conf
+    ext/nginx.conf.example > /etc/nginx/sites-available/web.conf
 
-ln -f -s /etc/nginx/sites-available/bancho.conf /etc/nginx/sites-enabled/bancho.conf
+ln -f -s /etc/nginx/sites-available/web.conf /etc/nginx/sites-enabled/web.conf
 
 echo "Restarting nginx"
-service nginx restart
+if service nginx restart; then
+    echo "Nginx restarted successfully"
+else
+    echo "Failed to restart nginx. Status:"
+    service nginx status
+fi
+
 
 echo "Nginx configuration installed"
