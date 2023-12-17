@@ -25,8 +25,8 @@ hCaptcha_secret = os.environ["HCAPTCHA_SECRET"]
 domain = os.environ["DOMAIN"]
 
 # max image size for avatars, in megabytes
-max_image_size = os.environ["MAX_IMAGE_SIZE"]
-max_image_size_supporter = os.environ["MAX_IMAGE_SIZE_SUPPORTER"]
+max_image_size = int(os.environ["MAX_IMAGE_SIZE"])
+max_image_size_supporter = int(os.environ["MAX_IMAGE_SIZE_SUPPORTER"])
 
 # mysql credentials
 mysql = {
