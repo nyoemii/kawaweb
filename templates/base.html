@@ -4,6 +4,10 @@
   <!-- Title -->
   <title>{{ appName() }} - {% block title %}{% endblock %}</title>
 
+  <!-- VueJS -->
+  <script src="/static/js/asserts/vue.js"></script>
+  <script src="/static/js/asserts/vue-axios.js"></script>
+
   <!-- Favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
@@ -51,8 +55,6 @@
   {% include 'components/footer.html' %}
 
   <!-- Main JS scripts -->
-  <script src="/static/js/asserts/vue.js"></script>
-  <script src="/static/js/asserts/vue-axios.js"></script>
   <script src="/static/js/main.js" crossorigin="anonymous"></script>
 
   <!-- Customisation -->
