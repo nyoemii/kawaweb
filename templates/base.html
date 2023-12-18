@@ -44,16 +44,30 @@
   <div class="container is-fullhd my-con">
     {% block content %}
     {% endblock %}
+    <div id="search-window"></div>
   </div>
 
   <!-- Footer -->
   {% include 'components/footer.html' %}
 
-  <!-- Main JS script -->
+  <!-- Main JS scripts -->
+  <script src="/static/js/asserts/vue.js"></script>
+  <script src="/static/js/asserts/vue-axios.js"></script>
   <script src="/static/js/main.js" crossorigin="anonymous"></script>
 
   <!-- Customisation -->
-  {% block bottom %}{% endblock %}
+  {% block bottom %}
+  <style>
+    :root {
+      --main:180;
+      --main-hue-theme:var(--main)deg;
+    }
+    html {
+      --main:180;
+      --main-hue-theme:var(--main)deg;
+    }
+  </style>
+  {% endblock %}
 </body>
 
 </html>

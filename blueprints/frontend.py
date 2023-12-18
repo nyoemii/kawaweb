@@ -25,11 +25,20 @@ from objects import utils
 from objects.privileges import Privileges
 from objects.utils import flash
 from objects.utils import flash_with_customizations
+from quart import Quart, request, redirect, Response
 
 VALID_MODES = frozenset({'std', 'taiko', 'catch', 'mania'})
 VALID_MODS = frozenset({'vn', 'rx', 'ap'})
 
 frontend = Blueprint('frontend', __name__)
+
+app = Quart(__name__)
+
+@app.route("/api/<path:file_path>")
+async def api_redirect(file_path):
+    redirect_url = f"https://api.{glob.config.domain}/{file_path}"
+    return redirect(redirect_url, code=301)
+
 
 def login_required(func):
     @wraps(func)
