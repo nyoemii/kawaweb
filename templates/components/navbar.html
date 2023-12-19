@@ -53,7 +53,7 @@
             <div id="search-icon" @click="showSearchWindow" @mouseover="startAnimation" @mouseleave="stopAnimation" class="navbar-item search-button" style="
             
             ">
-                <div class="navbar-item circle" :class="{ 'animate': isAnimating }"></div>
+                <div class="navbar-item search-circle" :class="{ 'animate': isAnimating }"></div>
                 <i class="fas fa-search"></i>
             </div>
             {% if session.authenticated %}

@@ -79,64 +79,87 @@ new Vue({
             this.show = true;
         });
     },
+    mounted: function() {
+        let images = document.querySelectorAll('.bm-search-result-container img');
+
+        images.forEach(img => {
+            img.addEventListener('mouseover', function() {
+                this.classList.add('pan');
+            });
+
+            img.addEventListener('mouseout', function() {
+                this.classList.remove('pan');
+            });
+        });
+    },
     template: `
         <div class="modal" v-bind:class="{ 'is-active': show }">
             <div class="modal-background" @click="close"></div>
-            <div class="modal-content">
-                <div class="box">
-                    <div class="field">
-                        <p class="control has-icons-left">
+            <div id="search" class="modal-content <!--search-bg-->">
+                <div id="search-box" class="box search-fg">
+                    <div id="sw-search" class="field">
+                        <p class="search-input control has-icons-left">
                             <input class="input" type="search" placeholder="Search..." v-model="query" @input="handleInput" ref="searchInput">
                             <span class="icon is-left">
                                 <i class="fas fa-search"></i>
                             </span>
                         </p>
                     </div>
-                    <div class="search-results">
+                    <div class="search-divider"></div>
+                    <div class="search-container">
                         <h2 class="title is-4">Players</h2>
-                        <div v-if="playersLoading">Loading...</div>
-                        <div v-else-if="players.length === 0">No players found</div>
-                        <div v-else v-for="player in players" :key="player.id">
-                            <!-- Display the player search result here -->
-                            {{ player.info.name }}
-                        </div>
-                        <h2 class="title is-4">Beatmaps</h2>
-                        <div v-if="mapsLoading">Loading...</div>
-                        <div v-else-if="maps.length === 0">No maps found</div>
-                        <div v-for="map in maps" :key="map.SetID" class="beatmap-container bm-search" :id="map.SetID">
-                                <a :href="'/b/' + map.ChildrenBeatmaps[0].BeatmapID">
-                                        <div class="tab">
-                                                <!-- Display the beatmap search result here -->
-                                                <h3>{{ map.Title }}</h3>
-                                                <h4>{{ map.Artist }} // {{ map.Creator }}</h4>
-                                                <div class="mini-icons">
-                                                        <div v-for="(childMap, index) in map.ChildrenBeatmaps" :key="childMap.BeatmapID" v-if="index < 15" :data-title="childMap.DiffName + ' <br> ' + childMap.DifficultyRating + '⭐'">
-                                                                <img :src="'/static/images/icons/mode-' + ['osu', 'taiko', 'fruits', 'mania'][childMap.Mode] + '.png'">
-                                                        </div>
-                                                        <div v-if="map.ChildrenBeatmaps.length > 15">.</div>
+                        <div class="results-container" id="players-container">
+                            <div v-if="playersLoading">Loading...</div>
+                            <div v-else-if="players.length === 0">No players found</div>
+                            <a v-else v-for="player in players" :key="player.info.id" :href="'/u/' +player.info.id" class="player-search-result">
+                                <!-- Display the player search result here -->
+                                <div class="avatar">
+                                    <img :src="'https://a.kawata.pw/' + player.info.id" @error="this.onerror=null; this.src='https://a.kawata.pw/-1'">
+                                </div>
+                                <h3>{{ player.info.name }}</h3>
+                            </a>
+                            </div>
+                            <div class="search-divider"></div>
+                            <h2 class="title is-4">Beatmaps</h2>
+                            <div class="results-container" id="beatmaps-container">
+                                <div v-if="mapsLoading">Loading...</div>
+                            <div v-else-if="maps.length === 0">No maps found</div>
+                            <div v-for="map in maps" :key="map.SetID" class="bm-search-result" :id="map.SetID">
+                                <a :href="'https://osu.ppy.sh/b/' + map.ChildrenBeatmaps[0].BeatmapID" class="bm-search-result-container">
+                                    <div class="tab">
+                                        <!-- Display the beatmap search result here -->
+                                        <h3>{{ map.Title }}</h3>
+                                        <h4>{{ map.Artist }} // {{ map.Creator }}</h4>
+                                        <div class="buttons">
+                                            <a @click="interract(map.SetID)">
+                                                <div class="play-div">
+                                                    <i class="fas fa-play" :id="'play-' + map.SetID">
+                                                        <audio :src="'https://b.ppy.sh/preview/' + map.SetID + '.mp3'" :id="'audio-' + map.SetID"></audio>
+                                                    </i>
                                                 </div>
-                                                <div class="buttons">
-                                                    <a @click="interract(map.SetID)">
-                                                        <div class="play-div">
-                                                            <i class="play icon" :id="'play-' + map.SetID">
-                                                                <audio :src="'https://b.ppy.sh/preview/' + map.SetID + '.mp3'" :id="'audio-' + map.SetID"></audio>
-                                                            </i>
-                                                        </div>
-                                                    </a>
-                                                    <a :href="'https://bm6.kawata.pw/d/' + map.SetID">
-                                                        <div class="download-div">
-                                                            <i class="download icon"></i>
-                                                        </div>
-                                                    </a>
+                                            </a>
+                                            <a :href="'https://api.osu.direct/d/' + map.SetID">
+                                                <div class="download-div">
+                                                    <i class="fas fa-download"></i>
                                                 </div>
+                                            </a>
                                         </div>
-                                        <img :src="'https://assets.ppy.sh/beatmaps/' + map.SetID + '/covers/card@2x.jpg'" @error="this.onerror=null; this.src='/static/default-bg.png'">
+                                        </br>
+                                        <div class="mini-icons">
+                                            <div v-for="(childMap, index) in map.ChildrenBeatmaps" :key="childMap.BeatmapID" v-if="index < 15" :data-title="childMap.DiffName + ' <br> ' + childMap.DifficultyRating + '⭐'">
+                                                <img :src="'/static/images/icons/mode-' + ['osu', 'taiko', 'fruits', 'mania'][childMap.Mode] + '.png'">
+                                            </div>
+                                            <div v-if="map.ChildrenBeatmaps.length > 15">.</div>
+                                        </div>
+                                    </div>
+                                    <img :src="'https://assets.ppy.sh/beatmaps/' + map.SetID + '/covers/card@2x.jpg'" @error="this.onerror=null; this.src='/static/default-bg.png'">
                                 </a>
-                        </div>
+                                                    </div>
                     </div>
                 </div>
             </div>
-            <button class="modal-close is-large" aria-label="close" @click="close"></button>
         </div>
+        <button class="modal-close is-large" aria-label="close" @click="close"></button>
+    </div>
     `
 });
