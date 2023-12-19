@@ -945,6 +945,7 @@ body::-webkit-scrollbar-thumb {
             border: 1px;
             border-radius: 0.5em!important;
             overflow: hidden;
+            overflow-y: hidden;
             width: 100%;
             display: flex;
           }
@@ -960,58 +961,61 @@ body::-webkit-scrollbar-thumb {
               object-position: center;
               transition: object-position 5s ease;
             }
-            .bm-search-result-container img.pan {
+            .bm-search-result-container:hover img {
               animation: pan 5s forwards;
             }
             @keyframes pan {
               0% {
-                object-position: top;
+                background-position: top;
               }
               100% {
-                object-position: bottom;
+                background-position: bottom;
               }
             }
             .bm-search-result-container .tab {
               padding: 0.25em 0.5em!important;
               border-radius: 0.5em !important;
-              width: -moz-available;text-align: left;
+              width: -moz-available;
+              text-align: left;
               position: absolute;
-              background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3));
+              background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5));
+              pointer-events: auto;
+              bottom: 0px;
+              top: 0px;
             }
-              .bm-search-result-container .tab h4 {
-                margin: 0;
-                color: #48acff;
-                display:inline-flex
-              }
-              .bm-search-result-container .tab .buttons {
-                float: right;
-                margin: auto;
-                display: inline-flex;
-              }
-                .bm-search-result-container .tab .buttons a .download-div {
-                  background: #3a9c22;
-                  margin: 1em;
-                  padding: 0.4em;
-                  border-radius: 1em;
-                }
-                .bm-search-result-container .tab .buttons a .download-div i {
-                  color: white;
-                  display: contents;
-                  color: white;
-                  margin: 0;
-                }
-              
-                .bm-search-result-container .tab .buttons a .play-div {
-                  background: #48acff;
-                  margin: 1em;
-                  padding: 0.4em;
-                  border-radius: 1em;
-                  margin-right: auto;
-                }
-                .bm-search-result-container .tab .buttons a .play-div i {
-                  color: white;
-                  margin: 0;
-                }
+            .bm-search-result-container .tab h4 {
+              margin: 0;
+              color: #48acff;
+              display:inline-flex
+            }
+            .bm-search-result-container .tab .buttons {
+              float: right;
+              margin: auto;
+              display: inline-flex;
+            }
+            .bm-search-result-container .tab .buttons a .download-div {
+              background: #3a9c22;
+              margin: 1em;
+              padding: 0.4em;
+              border-radius: 1em;
+            }
+            .bm-search-result-container .tab .buttons a .download-div i {
+              color: white;
+              display: contents;
+              color: white;
+              margin: 0;
+            }
+            .bm-search-result-container .tab .buttons a .play-div {
+              background: #48acff;
+              margin: 1em;
+              padding: 0.4em;
+              border-radius: 1em;
+              margin-right: auto;
+            }
+            .bm-search-result-container .tab .buttons a .play-div i {
+              color: white;
+              margin: 0;
+            }
               .mini-icons {
                 margin-left:0px;
                 margin-top: 0em;

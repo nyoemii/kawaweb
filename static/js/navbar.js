@@ -25,7 +25,8 @@ new Vue({
         playersLoading: false,
         maps: [],
         mapsLoading: false,
-        typingTimeout: null // Added property for debounce
+        typingTimeout: null, // Timeout used to delay the search
+        currentAudio: null
     },
     methods: {
         close: function() {
@@ -72,6 +73,18 @@ new Vue({
         },
         resetQuery: function() {
             this.query = '';
+        },
+        interract: function(setId) {
+            const audioElement = document.getElementById('audio-' + setId);
+            if (this.currentAudio && this.currentAudio !== audioElement) {
+                this.currentAudio.pause();
+            }
+            if (audioElement.paused) {
+                audioElement.play();
+            } else {
+                audioElement.pause();
+            }
+            this.currentAudio = audioElement;
         }
     },
     created: function() {
@@ -80,16 +93,16 @@ new Vue({
         });
     },
     mounted: function() {
-        let images = document.querySelectorAll('.bm-search-result-container img');
+        let images = document.querySelectorAll('.bm-search .image-container');
 
         images.forEach(img => {
-            img.addEventListener('mouseover', function() {
-                this.classList.add('pan');
-            });
-
-            img.addEventListener('mouseout', function() {
-                this.classList.remove('pan');
-            });
+          img.addEventListener('mouseover', function() {
+            this.classList.add('pan');
+          });
+        
+          img.addEventListener('mouseout', function() {
+            this.classList.remove('pan');
+          });
         });
     },
     template: `
@@ -125,11 +138,15 @@ new Vue({
                                 <div v-if="mapsLoading">Loading...</div>
                             <div v-else-if="maps.length === 0">No maps found</div>
                             <div v-for="map in maps" :key="map.SetID" class="bm-search-result" :id="map.SetID">
-                                <a :href="'https://osu.ppy.sh/b/' + map.ChildrenBeatmaps[0].BeatmapID" class="bm-search-result-container">
+                                <a class="bm-search-result-container">
                                     <div class="tab">
                                         <!-- Display the beatmap search result here -->
-                                        <h3>{{ map.Title }}</h3>
-                                        <h4>{{ map.Artist }} // {{ map.Creator }}</h4>
+                                        <a :href="'https://osu.ppy.sh/b/' + map.ChildrenBeatmaps[0].BeatmapID">
+                                            <h3>{{ map.Title }}</h3>
+                                        </a>
+                                        <a :href="'https://osu.ppy.sh/b/' + map.ChildrenBeatmaps[0].BeatmapID">
+                                            <h4>{{ map.Artist }} // {{ map.Creator }}</h4>
+                                        </a>
                                         <div class="buttons">
                                             <a @click="interract(map.SetID)">
                                                 <div class="play-div">
@@ -154,12 +171,12 @@ new Vue({
                                     </div>
                                     <img :src="'https://assets.ppy.sh/beatmaps/' + map.SetID + '/covers/card@2x.jpg'" @error="this.onerror=null; this.src='/static/default-bg.png'">
                                 </a>
-                                                    </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <button class="modal-close is-large" aria-label="close" @click="close"></button>
     </div>
     `
 });
