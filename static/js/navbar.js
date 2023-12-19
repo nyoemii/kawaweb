@@ -1,4 +1,4 @@
-var bus = new Vue();
+var searchBus = new Vue();
 new Vue({
     el: '#search-icon',
     data: {
@@ -6,7 +6,7 @@ new Vue({
     },
     methods: {
         showSearchWindow: function() {
-            bus.$emit('show-search-window');
+            searchBus.$emit('show-search-window');
         },
         startAnimation: function() {
             this.isAnimating = true;
@@ -88,7 +88,7 @@ new Vue({
         }
     },
     created: function() {
-        bus.$on('show-search-window', () => {
+        searchBus.$on('show-search-window', () => {
             this.show = true;
         });
     },
