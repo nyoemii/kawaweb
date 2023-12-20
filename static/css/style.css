@@ -767,6 +767,7 @@ body::-webkit-scrollbar-thumb {
 
 #search.modal-content {
   /*height: calc(90%);*/
+  max-height: calc(100vh - 100px);
   height: fit-content;
 }
 .search-bg {
@@ -784,9 +785,11 @@ body::-webkit-scrollbar-thumb {
 
   .search-fg {
       width: 100%;
+      max-height: calc(100vh);
       height: fit-content;
       margin: auto;
-      margin-top: 10%;
+      margin-top: 5%;
+      margin-bottom: 5%;
       background: hsl(var(--main-hue-theme), 9%, 28%);
       border-radius: 1em;
       padding: 1.5em 3em;
@@ -906,22 +909,88 @@ body::-webkit-scrollbar-thumb {
           display: flex;
           color: white;
           margin: 0.2em 0;
+          position: relative;
         }
         .player-search-result:hover {
         background: hsl(var(--main-hue-theme), 8%, 23%);
         color: white;
         }
           .player-search-result .avatar {
-              width: 2em;
+              width: 3em;
               margin-right: 0.5em;
           }
             .player-search-result .avatar img{
                 height: 100%;
                 border-radius: 0.5em;
             }
-          .player-search-result h3 {
+          .player-search-result .player h3 {
             margin-top: auto;
             margin-bottom: auto;
+            width: fit-content
+          }
+          .player-search-result .player-stats {
+            display: flex;
+            flex-direction: row;
+            justify-content: left;
+          }
+            .player-search-result .player-stats a {
+              width: fit-content;
+              margin-left: 10px;
+              text-align: left;
+            }
+            .player-search-result .player-stats a p {
+              width: fit-content;
+              text-align: left;
+              color: darkgrey;
+            }
+              .player-search-result .player-stats a#score p {
+                text-align: center;
+              }
+              .player-search-result .player-stats a#score a#rscore {
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+              }
+              .player-search-result .player-stats a#score a#tscore {
+                display: flex;
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+              }
+              .player-search-result .player-stats a#score {
+                display: flex;
+                text-align: center;
+              }
+              /* Hide ranks when window width is less than 400px */
+              @media (max-width: 400px) {
+                .player-search-result .player-stats a#ranks {
+                    display: none;
+                }
+              }
+              /* Hide score when window width is less than 800px */
+              @media (max-width: 800px) {
+                .player-search-result .player-stats a#score {
+                    display: none;
+                }
+              }
+              /* Hide performance when window width is less than 600px */
+              @media (max-width: 600px) {
+                .player-search-result .player-stats a#performance {
+                    display: none;
+                }
+              }
+              /* Hide clan info when window width is less than 300px */
+              @media (max-width: 300px) {
+                .player-search-result .player-clan {
+                    display: none;
+                }
+              }
+          .player-search-result .player-clan {
+            text-align: right;
+            align-self: flex-end;
+            position: sticky;
+            left: 100%;
           }
       
       #beatmaps-container.results-container {
@@ -955,7 +1024,7 @@ body::-webkit-scrollbar-thumb {
             transition: border 0.3s ease-in-out;
           }
             .bm-search-result-container img {
-              width: 38%;
+              width: 75%;
               object-fit: cover;
               border-radius: 0 0.5em 0.5em 0;
               object-position: center;
@@ -963,6 +1032,11 @@ body::-webkit-scrollbar-thumb {
             }
             .bm-search-result-container:hover img {
               animation: pan 5s forwards;
+            }
+            img#bm-image {
+              -webkit-mask-image: linear-gradient(to right, black 50%, transparent 100%);
+              mask-image: linear-gradient(to right, black 50%, transparent 100%);
+              order: -1;
             }
             @keyframes pan {
               0% {
@@ -1026,3 +1100,120 @@ body::-webkit-scrollbar-thumb {
                 margin-bottom: -4px;
               }
               
+
+
+[data-title] { /*optional styling*/
+  font-size: 30px; /*optional styling*/
+  display: inline-block;
+  position: relative;
+  cursor: help;
+  }
+
+  [data-title]:hover::before {
+    text-align: center;
+  z-index: 1;
+  content: attr(data-title);
+  position: absolute;
+  display: inline-block;
+  -webkit-animation: fadeIn ease 1s;
+  -moz-animation: fadeIn ease 1s;
+  -o-animation: fadeIn ease 1s;
+  -ms-animation: fadeIn ease 1s;
+    border-radius:10px;
+  padding: 3px 6px;
+    top:-40px;
+    width:100px;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.93);
+  color: #fff;
+  font-size: 12px;
+  }
+
+  @font-face { 
+    font-family: 'Kawata icons'; 
+    src: url(/static/fonts/Kawata_icons.ttf); 
+  }
+  .kawata-icon {
+    font-family: 'Kawata icons';
+    color: #fff !important;
+    background-size: 100%;
+    font-size: 22px;
+    width: 19px;
+    height: 19px;
+    border-radius: 25px;
+    text-align: center;
+    margin-right: 8px;
+    transition: 170ms text-shadow;
+    font-weight: 400;
+    padding-top: 1px;
+}
+
+
+
+.kawata-icon:before {
+     content: "";
+     position: relative;
+     left: -3px;
+     bottom: 7px;
+}
+
+.kawata-icon.std-diff:before {
+    content: "A";
+    position: relative;
+    left: -3px;
+    bottom: 7px;
+}
+
+.kawata-icon.taiko-diff:before{
+    content: "B";
+    left: -4px;
+}
+
+.kawata-icon.ctb-diff:before{
+    content: "D";
+}
+
+.kawata-icon.mania-diff:before{
+    content: "E";
+    left: -4.3px;
+}
+.diff-expert {
+    color: #bc6fff;
+}
+
+.diff-insane {
+    color: rgba(255, 80, 212, 0.86);
+}
+
+
+.diff-hard {
+    color: #c57f19;
+}
+
+.diff-normal {
+    color: #2f8bbd;
+}
+
+.diff-easy {
+    color: #65d223;
+}
+
+.kawata-icon.diff-expert {
+    background-color: rgba(147, 49, 167, 0.66);
+}
+
+.kawata-icon.diff-insane {
+    background-color: rgba(255, 0, 215, 0.66);
+}
+
+.kawata-icon.diff-hard {
+    background-color: rgba(255, 176, 32, 0.66);
+}
+
+.kawata-icon.diff-normal {
+    background-color: rgba(0, 149, 255, 0.66);
+}
+
+.kawata-icon.diff-easy {
+    background-color: rgba(71, 210, 0, 0.8);
+}

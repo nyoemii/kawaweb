@@ -87,6 +87,12 @@ new Vue({
                     this.data.scores[`${sort}`].more.full = this.data.scores[`${sort}`].out.length != this.data.scores[`${sort}`].more.limit;
                 });
         },
+        showScoreWindow: function(mapId) {
+            bus.$emit('show-score-window', mapId); // Pass the score ID as an argument
+        },
+        showSearchWindow: function() {
+            bus.$emit('show-search-window');
+        },
         LoadMostBeatmaps() {
             this.$set(this.data.maps.most, 'load', true);
             this.$axios.get(`${window.location.protocol}//api.${domain}/v1/get_player_most_played`, {
@@ -231,4 +237,207 @@ new Vue({
         },
     },
     computed: {}
+});
+var bus = new Vue();
+new Vue({
+    el: '#score-window',
+    data: {
+        show: false,
+        scoreId: '', // Add a data property to store the score ID
+        score: null,
+    },
+    created: function() {
+        bus.$on('show-score-window', (scoreId) => { // Receive the score ID as an argument
+            this.show = true;
+            this.scoreId = scoreId; // Store the score ID in the data property
+            this.fetchScoreInfo(); // Call a method to fetch score information
+        });
+        // Get the value of --main-hue-theme
+        let mainHueTheme = getComputedStyle(document.documentElement)
+        .getPropertyValue('--main-hue-theme')
+        .trim();
+        
+        // Remove the 'deg' from the value and convert it to a number
+        mainHueTheme = Number(mainHueTheme.replace('deg', ''));
+
+        // Perform the calculation
+        let accent1 = mainHueTheme + 20;
+
+        // Set the value of --accent1
+        document.documentElement.style.setProperty('--accent1', `${accent1}deg`);
+    },
+    methods: {
+        fetchScoreInfo: function() {
+            // Use the score ID to fetch score information from the API
+            fetch(`https://api.kawata.pw/v1/get_score_info?id=${this.scoreId}&b=1`)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the fetched score information
+                    console.log(data);
+                    this.score = data['score'];
+                    this.score.beatmap = data['beatmap_info'];
+                    
+                })
+                
+                .catch(error => {
+                    // Handle any errors
+                    console.error(error);
+                });
+        },
+        renderReplay: function(scoreId) {
+            igf = 0;
+            fetch(`https://api.kawata.pw/v1/replays/rendered?id=${scoreId}`, {
+                method: 'GET', // or 'GET' depending on your API
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle any errors
+                console.error(error);
+            });
+        },
+        close: function() {
+            this.show = false;
+        },
+    },
+    watch: {
+        score: function(newScore) {
+            if (newScore) {
+                this.$nextTick(() => {
+                    const videoElement = this.$el.querySelector('.responsive-video');
+                    const scoreBanner = this.$el.querySelector('.score-banner');
+                    const songInfo = this.$el.querySelector('#SongInfo');
+                    const songTitle = this.$el.querySelector('#score-banner-map.title');
+                    const artistCreator = this.$el.querySelector('#score-banner-map.artist-creator');
+
+                    const mapDifficulty = this.$el.querySelector('#difficulty.right');
+
+                    if (videoElement && scoreBanner) {
+                        videoElement.addEventListener('focus', function() {
+                            scoreBanner.classList.add('video-focused');
+                            mapDifficulty.classList.add('video-focused');
+                            songInfo.classList.add('video-focused');
+                            songTitle.classList.add('video-focused');
+                            artistCreator.classList.add('video-focused');
+                        });
+
+                        videoElement.addEventListener('blur', function() {
+                            scoreBanner.classList.remove('video-focused');
+                            mapDifficulty.classList.remove('video-focused');
+                            songInfo.classList.remove('video-focused');
+                            songTitle.classList.remove('video-focused');
+                            artistCreator.classList.remove('video-focused');
+                        });
+
+                        videoElement.addEventListener('mouseover', function() {
+                            scoreBanner.classList.add('video-hovered');
+                        });
+
+                        videoElement.addEventListener('mouseout', function() {
+                            scoreBanner.classList.remove('video-hovered');
+                        });
+                    }
+                });
+            }
+        }
+    },
+    template: `
+        <div id="score-modal" class="modal" v-bind:class="{ 'is-active': show }">
+            <div class="modal-background" @click="close"></div>
+            <div id="score-window" class="modal-content" v-if="show">
+                <div class="main-block">
+                    <div class="score-banner" :style="{
+                        backgroundcolor: 'rgba(0, 0, 0, 0)',
+                        }">
+                        <div v-if="score.r_replay_id" class="replay-block" :style="{
+                            backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/card@2x.jpg)'
+                        }">
+                            <video class="responsive-video" controls :poster="'https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/cover@2x.jpg'">
+                                <source :src="'https://dl2.issou.best/ordr/videos/render'+ score.r_replay_id + '.mp4'" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="score-banner img" :style="{
+                            backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/card@2x.jpg)'
+                        }">
+                        </div>
+                        <div id="SongInfo">
+                            <div id="score-banner-map" class="title">{{ score.beatmap.title }}
+                            <div id="score-banner-map" class="artist-creator">{{ score.beatmap.artist }} || <a :href="'https://osu.ppy.sh/u/' + score.beatmap.creator + '/'">{{ score.beatmap.creator }}</a></div>
+                            </div>
+                        </div>
+                        <div id="render-replay" @click="renderReplay(score.id)" v-if="!score.r_replay_id" class="level-left" :style="{
+                            'position': 'absolute',
+                            'left': '0',
+                            'bottom': '13%',
+                        }">
+                            <div class="map-difficulty">
+                                <span class="kawata-icon"></span>
+                                <span id="" class="difficulty-title">Render this play?</span>
+                            </div>
+                        </div>
+                        <div id="bm-info" class="selector">
+                            <div class="left">
+                                <div class="map-difficulty">
+                                    <span class="kawata-icon"></span>
+                                    <span class="difficulty-title">{{ score.beatmap.version }}</span>
+                                </div>
+                            </div>
+                            <div id="difficulty" class="right">
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">{{ score.beatmap.diff }}⭐</span>
+                                </div>
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">CS: {{ score.beatmap.cs }}</span>
+                                </div>
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">AR: {{ score.beatmap.ar }}</span>
+                                </div>
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">OD: {{ score.beatmap.od }}</span>
+                                </div>
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">HP: {{ score.beatmap.hp }}</span>
+                                </div>
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">BPM: {{ score.beatmap.bpm }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="second-block level">
+                    <div id="score-info" class="level-left column is-one-quarter">
+                        <div id="score-perf" class="score-info-block">
+                            <h5>Performance</h5>
+                            <h3 class="title">PP: <h1 class="value">{{ score.pp }}</h1></h3>
+                            <h2 class="title">Score: <h1 class="value">{{ score.score }}</h1></h2>
+                            <h2 class="title">Accuracy: <h1 class="value">{{ score.acc }}%</h1></h2>
+                        </div>
+                    </div>
+                    <div id="score-info" class="level-right column is-flex">
+                        <div id="score-perf-ext" class="score-info-block">
+                            <h5>Performance (Extended)</h5>
+                            <div class="column">
+                                <h2 class="title">300s: <h1 class="value">{{ score.n300 }}</h1></h2>
+                                <h2 class="title">Geki: <h1 class="value">{{ score.ngeki }}</h1></h2>
+                            </div>
+                            <div class="column">
+                                <h2 class="title">100s: <h1 class="value">{{ score.n100 }}</h1></h2>
+                                <h2 class="title">Katu: <h1 class="value">{{ score.nkatu }}</h1></h2>
+                            </div>
+                            <div class="column">
+                                <h2 class="title">50s: <h1 class="value">{{ score.n50 }}</h1></h2>
+                                <h2 class="title">Misses: <h1 class="value">{{ score.nmiss }}</h1></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    `
 });

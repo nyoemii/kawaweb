@@ -106,9 +106,9 @@ new Vue({
         });
     },
     template: `
-        <div class="modal" v-bind:class="{ 'is-active': show }">
+        <div id="search-window" class="modal" v-bind:class="{ 'is-active': show }">
             <div class="modal-background" @click="close"></div>
-            <div id="search" class="modal-content <!--search-bg-->">
+            <div id="search" class="modal-content" v-if="show">
                 <div id="search-box" class="box search-fg">
                     <div id="sw-search" class="field">
                         <p class="search-input control has-icons-left">
@@ -129,7 +129,33 @@ new Vue({
                                 <div class="avatar">
                                     <img :src="'https://a.kawata.pw/' + player.info.id" @error="this.onerror=null; this.src='https://a.kawata.pw/-1'">
                                 </div>
-                                <h3>{{ player.info.name }}</h3>
+                                <div class="player">
+                                    <h3>{{ player.info.name }}</h3>
+                                </div>
+                                <div class="player-stats">
+                                    <a id="ranks">
+                                        <p>Rank: {{ player.stats[player.info.preferred_mode].rank }}</p>
+                                        <p>Country Rank: {{ player.stats[player.info.preferred_mode].country_rank }}</p>
+                                    </a>
+                                    <a id="performance">
+                                        <p>PP: {{ player.stats[player.info.preferred_mode].pp }}</p>
+                                        <p>Acc: {{ player.stats[player.info.preferred_mode].acc }}</p>
+                                    </a>
+                                    <a id="score">
+                                        <a id="rscore">
+                                            <p>Ranked Score:</p>
+                                            <p>{{ player.stats[player.info.preferred_mode].rscore }}</p>
+                                        </a>
+                                        <a id="tscore">
+                                            <p>Total Score:</p>
+                                            <p>{{ player.stats[player.info.preferred_mode].tscore }}</p>
+                                        </a>
+                                    </a>
+                                </div>
+                                <div v-if="player.info.clan" class="player-clan">
+                                    <h2>{{ player.info.clan.name }}</h2>
+                                    <h1>[{{ player.info.clan.tag }}]</h1>
+                                </div>
                             </a>
                             </div>
                             <div class="search-divider"></div>
@@ -169,7 +195,7 @@ new Vue({
                                             <div v-if="map.ChildrenBeatmaps.length > 15">.</div>
                                         </div>
                                     </div>
-                                    <img :src="'https://assets.ppy.sh/beatmaps/' + map.SetID + '/covers/card@2x.jpg'" @error="this.onerror=null; this.src='/static/default-bg.png'">
+                                    <img id="bm-image" :src="'https://assets.ppy.sh/beatmaps/' + map.SetID + '/covers/card@2x.jpg'" @error="this.onerror=null; this.src='/static/default-bg.png'">
                                 </a>
                             </div>
                         </div>

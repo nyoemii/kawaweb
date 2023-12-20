@@ -49,7 +49,6 @@
     {% block content %}
     {% endblock %}
     <div id="beatmap-panel"></div>
-    <div id="search-window"></div>
   </div>
 
   <!-- Footer -->
@@ -61,14 +60,13 @@
 
   <!-- Customisation -->
   {% block bottom %}
+  <script>
+    var domain = {{ domain}}
+  </script>
   <style>
     :root {
       --main:180;
-      --main-hue-theme:180deg;
-    }
-    html {
-      --main:180;
-      --main-hue-theme:180deg;
+      --main-hue-theme:180;
     }
   </style>
   {% endblock %}

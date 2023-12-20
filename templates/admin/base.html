@@ -3,6 +3,9 @@
 <head>
   <!-- title -->
   <title>{{ appName() }} - Admin - {% block title %}{% endblock %}</title>
+  <!-- VueJS -->
+  <script src="/static/js/asserts/vue.js"></script>
+  <script src="/static/js/asserts/vue-axios.js"></script>
 
   <!-- favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
@@ -69,6 +72,7 @@
           </div>
           <section class="section">
             {% block content %}
+            
             {% endblock %}
           </section>
         </div>

@@ -6,7 +6,7 @@ import bcrypt
 import hashlib
 import os
 import time
-
+import orjson
 from cmyui.logging import Ansi
 from cmyui.logging import log
 from functools import wraps
@@ -18,6 +18,7 @@ from quart import render_template
 from quart import request
 from quart import session
 from quart import send_file
+from quart import Quart, request, redirect, Response
 
 from constants import regexes
 from objects import glob
@@ -25,7 +26,6 @@ from objects import utils
 from objects.privileges import Privileges
 from objects.utils import flash
 from objects.utils import flash_with_customizations
-from quart import Quart, request, redirect, Response
 
 VALID_MODES = frozenset({'std', 'taiko', 'catch', 'mania'})
 VALID_MODS = frozenset({'vn', 'rx', 'ap'})
@@ -338,6 +338,27 @@ async def settings_password_post():
     session.pop('authenticated', None)
     session.pop('user_data', None)
     return await flash('success', 'Your password has been changed! Please log in again.', 'login')
+
+@frontend.route('/settings/ordr')
+@login_required
+async def settings_ordr():
+    return await render_template('settings/ordr.html')
+
+@frontend.route('/settings/ordr', methods=["POST"])
+@login_required
+async def settings_ordr_post():
+    form = await request.form
+    skin = form.get('skin')
+
+    
+    await glob.db.execute(
+        'UPDATE users_ordr '
+        'SET skin = %s '
+        'WHERE userid = %s',
+        [skin, session['user_data']['id']]
+    )
+
+    return await flash('success', 'Your O!RDR Settings have been saved', 'home')
 
 
 @frontend.route('/u/<id>')
