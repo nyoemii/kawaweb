@@ -61,6 +61,15 @@ tr td {
   color: #fff;
 }
 
+  .column-player-rank.champ {
+    font-size: 16px;
+    color: #10c7ff !important;
+  }
+
+  .column-player-rank.leader {
+    font-size: 14px;
+    color: #e7c500 !important;
+  }
 .column-player-name {
   padding: 10px 10px;
   font-weight: 600;

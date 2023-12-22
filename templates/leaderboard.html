@@ -62,6 +62,7 @@
                         <tr>
                             <th class="t-heading"> </th>
                             <th class="t-heading t-heading--main"></th>
+                            <th class="t-heading"> Clan </th>
                             <th v-if="sort == 'pp' || sort == 'rscore'" class="t-heading table--selected">
                                 <% (sort=='pp' ? "PP" : "" ) %>
                                     <% (sort=='rscore' ? "Score" : "" ) %>
@@ -73,7 +74,8 @@
                     </thead>
                     <tbody>
                         <tr v-for="(user, index) in boards" class="leaderboard-column">
-                            <td class="column-player-rank">#<% index + 1 %>
+                            <td :class="{'column-player-rank': true, 'champ': index === 0, 'leader': index > 0 && index < 10}">
+                                #<% index + 1 %>
                             </td>
                             <td class="column-player-name text-left">
                                 <a :title="flags[user.country.toUpperCase()]"
@@ -86,6 +88,12 @@
                                 <a :href="'/u/'+user.player_id+'?mode='+mode+'&mods='+mods">
                                     <% user.name %>
                                 </a>
+                            </td>
+                            <td>
+                                <span v-if="user.clan_tag">
+                                    <a>
+                                        [<% user.clan_tag %>]
+                                    </a>
                             </td>
                             <td v-if="sort == 'pp' || sort == 'rscore'">
                                 <% (sort=='pp' ? user.pp+'pp' : "" ) %>
