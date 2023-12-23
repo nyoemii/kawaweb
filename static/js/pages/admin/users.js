@@ -1,35 +1,55 @@
 new Vue({
-    el: "#dashboard",
+    el: "#users",
     delimiters: ["<%", "%>"],
     data() {
         return {
             flags: window.flags,
             users: {},
             page: 1,
-            search: '',
+            userquery: '', // changed from 'search' to 'userquery'
             load: false,
             playersLoading: false,
+            searchTimeout: null,
         }
     },
     created() {
-        this.LoadData(users, page, search);
-        this.LoadUsers(users, page, search);
+        console.log('created');
+        console.log(users);
+        //this.LoadData(JSON.parse(users), parseInt(page), userquery);
+        //this.LoadUsers(JSON.parse(users), parseInt(page), userquery);
+        this.handleUserInput(userquery);
     },
     methods: {
-        LoadData(users, page, search) {
+        LoadData(users, page, userquery) { // changed from 'search' to 'userquery'
             this.$set(this, 'users', users);
             this.$set(this, 'page', page);
-            this.$set(this, 'search', search);
+            this.$set(this, 'userquery', userquery); // changed from 'search' to 'userquery'
         },
-        LoadUsers(users, page, search) {
+        LoadUsers(users, page, userquery) { // changed from 'search' to 'userquery'
             if (window.event)
                 window.event.preventDefault();
 
-            window.history.replaceState('', document.title, `/admin/users/${this.page}/${this.search}`);
+            window.history.replaceState('', document.title, `/admin/users/${this.page}`);
             this.$set(this, 'users', users);
             this.$set(this, 'page', page);
-            this.$set(this, 'search', search);
+            this.$set(this, 'userquery', userquery); // changed from 'search' to 'userquery'
             this.$set(this, 'load', true);
+        },
+        handleUserInput() {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => {
+                const queryUsers = this.userquery;
+                const url = `/admin/users/${this.page}?update=true&search=${queryUsers}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.users = data;
+                        console.log('users:', this.users);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }, 2000);
         },
     },
     computed: {

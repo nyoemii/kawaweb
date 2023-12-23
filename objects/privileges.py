@@ -15,7 +15,7 @@ class Privileges(IntFlag):
     Supporter           = 2 << 1   # user is a supporter.
     AccessPanel         = 2 << 2   # probably wont be used much.    
     ManageUsers         = 2 << 3   # can manage users? probably going to be used for changing passwords/email/etc
-    BanUsers            = 2 << 4   # can ban users
+    RestrictUsers            = 2 << 4   # can ban users
     SilenceUsers        = 2 << 5   # can silence users
     WipeUsers           = 2 << 6   # can wipe users
     ManageBeatmaps      = 2 << 7   # able to manage maps ranked status.
@@ -45,9 +45,30 @@ class Privileges(IntFlag):
 
 
     Nominator = ManageBeatmaps | AccessPanel
-    Mod = BanUsers | SilenceUsers | WipeUsers | KickUsers| ManagePrivs | ChatMod # define this as a moderator
+    Mod = RestrictUsers | SilenceUsers | WipeUsers | KickUsers| ManagePrivs | ChatMod # define this as a moderator
     Admin = Mod | ViewSensitiveInfo | ManageUsers  # has moderator privileges, can view sensitive info and manage users
     
 
     Donator = Supporter | Premium
     Staff = Mod | Admin | Dangerous
+
+def getintfrompriv(privs):
+    privint = 0
+    privs = [Privileges[priv] for priv in privs]
+    for priv in privs:
+        privint |= priv.value
+    return privint
+print(getintfrompriv(['Staff','Normal','Verified','Alumni','Premium','Supporter','Whitelisted']))
+def ComparePrivs(l1,l2):
+    if l1 is not list or l2 is not list:
+        l1 = getprivfromint(l1)
+        l2 = getprivfromint(l2)
+    s1 = set(l1)
+    s2 = set(l2)
+    return s2.issubset(s1)
+
+def getprivfromint(privint):
+    privs = [priv for priv in Privileges if privint & priv]
+    if len(privs) == 0:
+        raise ValueError("No Privileges")
+    return privs
