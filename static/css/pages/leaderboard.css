@@ -29,6 +29,10 @@ a:hover {
   height: 38px;
   font-size: 12px;
   background-color: hsl(var(--main), 15%, 25%);
+  border-radius: 8px;
+  border-bottom: 4px;
+  border-style: double;
+  border-color: hsl(var(--main), 15%, 35%);
 }
 
 .leaderboard-main-bg {
@@ -59,6 +63,7 @@ tr td {
   font-weight: 600;
   font-size: 13px;
   color: #fff;
+  border-radius: 8px;
 }
 
   .column-player-rank.champ {
@@ -79,6 +84,11 @@ tr td {
 
 .column-player-name a {
   color: #fff !important;
+}
+
+td#max-combo {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
 .t-heading {
@@ -106,7 +116,9 @@ tr td {
 
 tr.leaderboard-column td {
   font-weight: 600;
-  border-bottom: hsl(var(--main), 20%, 30%);
+  border-bottom: 4px;
+  border-bottom-style: double;
+  border-bottom-color: hsl(var(--main), 20%, 40%);
   transition: 0.1s background-color;
   color: #fff !important;
   text-align: center;

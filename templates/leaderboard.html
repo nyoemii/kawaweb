@@ -89,23 +89,23 @@
                                     <% user.name %>
                                 </a>
                             </td>
-                            <td>
+                            <td id="clan-tag" >
                                 <span v-if="user.clan_tag">
                                     <a>
                                         [<% user.clan_tag %>]
                                     </a>
                             </td>
-                            <td v-if="sort == 'pp' || sort == 'rscore'">
+                            <td id="pp-score"  v-if="sort == 'pp' || sort == 'rscore'">
                                 <% (sort=='pp' ? user.pp+'pp' : "" ) %>
                                     <% (sort=='rscore' ? scoreFormat(user.rscore) : "" ) %>
                             </td>
-                            <td>
+                            <td id="accuracy" >
                                 <% user.acc.toFixed(2) %>%
                             </td>
-                            <td>
+                            <td id="playcount" >
                                 <% addCommas(user.plays) %>
                             </td>
-                            <td>
+                            <td id="max-combo">
                                 <% addCommas(user.max_combo) %>
                             </td>
                         </tr>
