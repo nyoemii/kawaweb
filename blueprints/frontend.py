@@ -399,6 +399,10 @@ async def profile_select(id):
 async def leaderboard(mode='std', sort='pp', mods='vn'):
     return await render_template('leaderboard.html', mode=mode, sort=sort, mods=mods)
 
+@frontend.route('/clans')
+async def clans():
+    return await render_template('clans.html')
+
 @frontend.route('/login')
 async def login():
     if 'authenticated' in session:
