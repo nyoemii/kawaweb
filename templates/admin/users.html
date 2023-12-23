@@ -1,0 +1,68 @@
+{% extends 'admin/base.html' %}
+{% block title %} Users {% endblock %}
+{% block panel %} Users {% endblock %}
+{% block header %}
+<script src="/static/js/asserts/vue.js"></script>
+<script src="/static/js/asserts/vue-axios.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+<script>
+    var domain = "{{ domain() }}";
+    var users = "{{ users }}";
+    var page = "{{ page }}";
+    var search = "{{ search }}";
+</script>
+{% endblock%}
+
+{% block content %}
+
+<div class="dashboard" id="users">
+    <div class="container">
+        <div id="user-search" class="main-block">
+            <div class="search-bar">
+                <div class="search-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="search-input">
+                    <input type="text" v-model="searchQuery" placeholder="Search users" style="width: 300px; padding: 10px; border: 1px solid var(--main); border-radius: 5px;">
+                </div>
+                <div class="clear-icon">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column">
+                {% for user in users %}
+                    {% if loop.index is odd %}
+                        <div id="user" class="card" :key="user.id">
+                            <div class="card-background" style="background-image: url(/backgrounds/{{user.id}})"></div>
+                            <div class="card-avatar" style="background-image: url(https://a.{{ domain() }}/{{user.id}})"></div>
+                            <div class="card-content">
+                                <h3>{{ user.name }}</h3>
+                                <p>ID: {{ user.id }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="column">
+                {% for user in users %}
+                    {% if loop.index is even %}
+                        <div id="user" class="card" :key="user.id">
+                            <div class="card-background" style="background-image: url(/backgrounds/{{user.id}})"></div>
+                            <div class="card-avatar" style="background-image: url(https://a.{{ domain() }}/{{user.id}})"></div>
+                            <div class="card-content">
+                                <h3>{{ user.name }}</h3>
+                                <p>ID: {{ user.id }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/pages/admin/users.js"></script>
+
+{% endblock %}

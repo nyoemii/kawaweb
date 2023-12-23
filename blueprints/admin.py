@@ -46,3 +46,44 @@ async def home():
         recentusers=recent_users, recentscores=recent_scores,
         datetime=datetime, timeago=timeago
     )
+
+@admin.route('/users')
+@admin.route('/users/')
+@admin.route('/users/<int:page>')
+@admin.route('/users/<int:page>/<search>')
+async def users(page=None, search=None):
+    """Render the homepage of guweb's admin panel."""
+    if not 'authenticated' in session:
+        return await flash('error', 'Please login first.', 'login')
+
+    if not session['user_data']['is_staff']:
+        return await flash('error', f'You have insufficient privileges.', 'home')
+
+    # fetch data from database
+    if page == None or page < 1:
+        page = 1
+    Offset = 50 * (page - 1)  # for the page system to work
+
+    if search is not None:
+        if search.isdigit():
+            # search is an id
+            users = await glob.db.fetchall(
+                "SELECT id, name, priv, country FROM users WHERE id = %s",
+                (search,),
+            )
+        else:
+            # search is a name
+            users = await glob.db.fetchall(
+                "SELECT id, name, priv, country FROM users WHERE name LIKE %s",
+                (f"%{search}%",),
+            )
+    else:
+        users = await glob.db.fetchall(
+            "SELECT id, name, priv, country FROM users LIMIT 50 OFFSET %s",
+            (Offset,),
+        )
+
+    return await render_template(
+        'admin/users.html', users=users, page=page, search=search,
+        datetime=datetime, timeago=timeago
+    )
