@@ -1217,3 +1217,137 @@ body::-webkit-scrollbar-thumb {
 .kawata-icon.diff-easy {
     background-color: rgba(71, 210, 0, 0.8);
 }
+
+.profile-panel {
+  position: absolute;
+  display: flex !important;
+  width: fit-content;
+  z-index: 610;
+  opacity: 1;
+  flex-direction: row;
+  justify-content: flex-start; /* Updated */
+  align-items: center; /* Added */
+  background-position: center;
+  background-size: cover;
+  border-radius: 20px;
+  margin-top: -84px;
+  color: white;
+  background-color: hsl(var(--main-hue-theme), 10%, 20%);
+  transition: 200ms opacity, 200ms visibility;
+  transition-delay: 0s, 0s;
+  transition-delay: 250ms;
+  line-height: 1.35;
+  visibility: visible;
+  background-image: url(/static/images/default-bg.png);
+  overflow: hidden;
+}
+
+.profile-panel-background {
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+  position: absolute !important;
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+}
+
+.profile-panel > div {
+  position: relative;
+}
+
+.profile-panel-avatar {
+  height: 72px;
+  width: 72px;
+  background-size: cover;
+  background-position: center;
+}
+
+.profile-panel-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Updated */
+  margin-left: 8px; /* Added */
+}
+
+.profile-panel-info .name {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  margin-right: 12px;
+  text-align: left;
+}
+
+.profile-panel-info .badges {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.56);
+  height: fit-content;
+  padding: 4px;
+  width: fit-content;
+}
+  .badges {
+    margin-right: 2px;
+  }
+
+.beatmap-panel {
+  position: absolute;
+  display: flex !important;
+  width: 290px;
+  z-index: 610;
+  opacity: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  background-position: center;
+  background-size: cover;
+  border-radius: 20px;
+  margin-top: -120px;
+  color: white;
+  background-color: #222;
+  transition: 200ms opacity, 200ms visibility;
+    transition-delay: 0s, 0s;
+  transition-delay: 250ms;
+  line-height: 1.35;
+  visibility: visible;
+  background-image: url(/static/images/default-bg.png);
+  overflow: hidden;
+}
+
+.beatmap-panel-background {
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+  position: absolute !important;
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+}
+
+.beatmap-panel > div {
+  position: relative;
+}
+
+.beatmap-panel .panel-stats {
+  display: flex;
+  padding: 12px 18px;
+  justify-content: space-between;
+}
+
+.beatmap-panel .panel-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-style: normal;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.56);
+  font-weight: 600;
+}
+
+
+.main-block .search-bar {}
+
+.search-bar .search-icon {}
+
+.search-bar .clear-icon {}
+

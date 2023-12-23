@@ -85,15 +85,14 @@
                                         <% flags[user.country.toUpperCase()] %>
                                     </div>
                                 </a>
-                                <a :href="'/u/'+user.player_id+'?mode='+mode+'&mods='+mods">
-                                    <% user.name %>
-                                </a>
+                                <user-profile :user="user" :domain="domain"></user-profile>
                             </td>
                             <td id="clan-tag" >
                                 <span v-if="user.clan_tag">
                                     <a>
                                         [<% user.clan_tag %>]
                                     </a>
+                                </span>
                             </td>
                             <td id="pp-score"  v-if="sort == 'pp' || sort == 'rscore'">
                                 <% (sort=='pp' ? user.pp+'pp' : "" ) %>
