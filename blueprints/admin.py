@@ -96,6 +96,48 @@ async def users(page=None):
         datetime=datetime, timeago=timeago
     )
 
+@admin.route('/user/<int:userid>')
+async def user(userid):
+    """Render the homepage of guweb's admin panel."""
+    if not 'authenticated' in session:
+        return await flash('error', 'Please login first.', 'login')
+
+    if not session['user_data']['is_staff']:
+        return await flash('error', f'You have insufficient privileges.', 'home')
+
+    # Check if update query parameter is present
+    #update = request.args.get('update') == 'true'
+    user = await glob.db.fetch(
+        "SELECT * FROM users WHERE id = %s",
+        (userid,),
+    )
+
+    # Get user badges
+    user_badges = await glob.db.fetchall(
+        "SELECT badge_id FROM user_badges WHERE userid = %s",
+        (userid,),
+    )
+
+    # Get badge information for each badge
+    badges = []
+    for badge in user_badges:
+        badge_info = await glob.db.fetch(
+            "SELECT * FROM badges WHERE id = %s",
+            (badge['badge_id'],),
+        )
+        badge_styles = await glob.db.fetchall(
+            "SELECT * FROM badge_styles WHERE badge_id = %s",
+            (badge['badge_id'],),
+        )
+        badge_info['badge_styles'] = badge_styles
+        badges.append(badge_info)
+
+    user['badges'] = badges
+
+    # Return JSON response
+    return jsonify(user)
+
+
 @admin.route("/action/<action>", methods=["POST"])
 async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges", "rank", "unrank", "love", "unlove"]):
     """
