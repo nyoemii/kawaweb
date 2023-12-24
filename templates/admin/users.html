@@ -32,7 +32,7 @@
         </div>
         <div class="columns">
             <div class="column">
-                <div v-for="(user, index) in users" :key="user.id" v-if="index % 2 === 0" id="user" class="card" @onClick="editUser">
+                <div v-for="(user, index) in users" :key="user.id" v-if="index % 2 === 0" id="user" class="card" >
                     <div class="card-background" :style="'background-image: url(/backgrounds/' + user.id + ')'"></div>
                     <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + user.id + ')'"></div>
                     <div class="card-content">
@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="column">
-                <div v-for="(user, index) in users" :key="user.id" v-if="index % 2 !== 0" id="user" class="card" @onClick="editUser">
+                <div v-for="(user, index) in users" :key="user.id" v-if="index % 2 !== 0" id="user" class="card" >
                     <div class="card-background" :style="'background-image: url(/backgrounds/' + user.id + ')'"></div>
                     <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + user.id + ')'"></div>
                     <div class="card-content">
