@@ -37,11 +37,13 @@ new Vue({
                         }
                     }
                 },
+                badges: [],
                 status: {}
             },
             mode: mode,
             mods: mods,
             modegulag: 0,
+            load: 0,
             userid: userid
         };
     },
@@ -68,6 +70,10 @@ new Vue({
                 })
                 .then(res => {
                     this.$set(this.data.stats, 'out', res.data.player.stats);
+                    if (this.load == 0) {
+                        this.$set(this.data, 'badges', res.data.player.info.badges);
+                        this.load = 1;
+                    }
                     this.data.stats.load = false;
                 });
         },
@@ -245,6 +251,10 @@ new Vue({
         show: false,
         scoreId: '', // Add a data property to store the score ID
         score: null,
+        video: null,
+        videoheight: '360px',
+        renderedreplayurl: '',
+        progress: 0,
     },
     created: function() {
         bus.$on('show-score-window', (scoreId) => { // Receive the score ID as an argument
@@ -260,178 +270,265 @@ new Vue({
         // Remove the 'deg' from the value and convert it to a number
         mainHueTheme = Number(mainHueTheme.replace('deg', ''));
 
-        // Perform the calculation
-        let accent1 = mainHueTheme + 20;
+            // Perform the calculation
+            let accent1 = mainHueTheme + 20;
 
-        // Set the value of --accent1
-        document.documentElement.style.setProperty('--accent1', `${accent1}deg`);
-    },
-    methods: {
-        fetchScoreInfo: function() {
-            // Use the score ID to fetch score information from the API
-            fetch(`https://api.kawata.pw/v1/get_score_info?id=${this.scoreId}&b=1`)
+            // Set the value of --accent1
+            document.documentElement.style.setProperty('--accent1', `${accent1}deg`);
+        },
+        methods: {
+            fetchScoreInfo: function() {
+                // Use the score ID to fetch score information from the API
+                fetch(`https://api.kawata.pw/v1/get_score_info?id=${this.scoreId}&b=1`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the fetched score information
+                        console.log(data);
+                        this.score = data['score'];
+                        this.score.beatmap = data['beatmap_info'];
+                        this.renderedreplayurl = 'https://dl2.issou.best/ordr/videos/render' + this.score.r_replay_id + '.mp4';
+                    })
+                    
+                    .catch(error => {
+                        // Handle any errors
+                        console.error(error);
+                    });
+            },
+            renderReplay: function(scoreId) {
+                igf = 0;
+                fetch(`https://api.kawata.pw/v1/replays/rendered?id=${scoreId}`, {
+                    method: 'GET', // or 'GET' depending on your API
+                })
                 .then(response => response.json())
                 .then(data => {
-                    // Handle the fetched score information
+                    // Handle the response data
                     console.log(data);
-                    this.score = data['score'];
-                    this.score.beatmap = data['beatmap_info'];
-                    
                 })
-                
                 .catch(error => {
                     // Handle any errors
                     console.error(error);
                 });
+            },
+            play() {
+                if (this.video.paused) {
+                    this.video.play();
+                } else {
+                    this.video.pause();
+                }
+            },
+            fullScreen() {
+                //this.video.requestFullscreen(); // Disabled For new Container Fullscreen
+                const videoContainer = this.$refs.videoContainer;
+                if (videoContainer.requestFullscreen) {
+                    videoContainer.requestFullscreen();
+                } else if (videoContainer.mozRequestFullScreen) { // Firefox
+                    videoContainer.mozRequestFullScreen();
+                } else if (videoContainer.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                    videoContainer.webkitRequestFullscreen();
+                } else if (videoContainer.msRequestFullscreen) { // IE/Edge
+                    videoContainer.msRequestFullscreen();
+                }
+            },
+            download() {
+                let a = document.createElement('a');
+                a.href = this.video.src;
+                a.target = "_blank";
+                a.download = "";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            },
+            rewind() {
+                this.video.currentTime = this.video.currentTime - ((this.video.duration / 100) * 5);
+            },
+            forward() {
+                this.video.currentTime = this.video.currentTime + ((this.video.duration / 100) * 5);
+            },
+            close: function() {
+                this.show = false;
+            },
         },
-        renderReplay: function(scoreId) {
-            igf = 0;
-            fetch(`https://api.kawata.pw/v1/replays/rendered?id=${scoreId}`, {
-                method: 'GET', // or 'GET' depending on your API
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Handle the response data
-                console.log(data);
-            })
-            .catch(error => {
-                // Handle any errors
-                console.error(error);
-            });
+        mounted() {
+            
         },
-        close: function() {
-            this.show = false;
-        },
-    },
-    watch: {
-        score: function(newScore) {
-            if (newScore) {
-                this.$nextTick(() => {
-                    const videoElement = this.$el.querySelector('.responsive-video');
-                    const scoreBanner = this.$el.querySelector('.score-banner');
-                    const songInfo = this.$el.querySelector('#SongInfo');
-                    const songTitle = this.$el.querySelector('#score-banner-map.title');
-                    const artistCreator = this.$el.querySelector('#score-banner-map.artist-creator');
-
-                    const mapDifficulty = this.$el.querySelector('#difficulty.right');
-
-                    if (videoElement && scoreBanner) {
-                        videoElement.addEventListener('focus', function() {
-                            scoreBanner.classList.add('video-focused');
-                            mapDifficulty.classList.add('video-focused');
-                            songInfo.classList.add('video-focused');
-                            songTitle.classList.add('video-focused');
-                            artistCreator.classList.add('video-focused');
+        watch: {
+            score: function(newScore) {
+                if (newScore) {
+                    this.$nextTick(() => {
+                        this.video = this.$refs.video;
+                        this.video.addEventListener("timeupdate", () => {
+                            this.progress = (this.video.currentTime / this.video.duration) * 100;
                         });
-
-                        videoElement.addEventListener('blur', function() {
-                            scoreBanner.classList.remove('video-focused');
-                            mapDifficulty.classList.remove('video-focused');
-                            songInfo.classList.remove('video-focused');
-                            songTitle.classList.remove('video-focused');
-                            artistCreator.classList.remove('video-focused');
+                        this.video.addEventListener("ended", () => {
+                            this.video.currentTime = 0;
+                            this.video.pause();
                         });
+                        // Select the element with the class 'modal-content'
+                        const modalContent = document.querySelector('.modal-content');
 
-                        videoElement.addEventListener('mouseover', function() {
-                            scoreBanner.classList.add('video-hovered');
-                        });
+                        // Calculate the width of the 'modal-content' element
+                        const width = modalContent.offsetWidth;
 
-                        videoElement.addEventListener('mouseout', function() {
-                            scoreBanner.classList.remove('video-hovered');
-                        });
-                    }
-                });
+                        // Calculate the height for a 16:9 aspect ratio
+                        const height = (width * 9) / 16;
+
+
+                        // Set the height of the video element
+                        var videoheight = `${height}`;
+                        this.videoheight = videoheight + 'px';
+                        const videoElement = this.$el.querySelector('.responsive-video');
+                        const scoreBanner = this.$el.querySelector('.score-banner');
+                        const songInfo = this.$el.querySelector('#SongInfo');
+                        const songTitle = this.$el.querySelector('#score-banner-map.title');
+                        const artistCreator = this.$el.querySelector('#score-banner-map.artist-creator');
+                        const scoreWindow = this.$el.querySelector('#score-window');
+                        const mapDifficulty = this.$el.querySelector('#difficulty.right');
+                        const mapInfo = this.$el.querySelector('#bm-info.selector');
+
+                        if (videoElement && scoreBanner) {
+                            videoElement.addEventListener('focus', function() {
+                                scoreWindow.classList.add('video-focused');
+                                scoreBanner.classList.add('video-focused');
+                                mapDifficulty.classList.add('video-focused');
+                                songInfo.classList.add('video-focused');
+                                songTitle.classList.add('video-focused');
+                                artistCreator.classList.add('video-focused');
+                            });
+
+                            videoElement.addEventListener('blur', function() {
+                                scoreWindow.classList.remove('video-focused');
+                                scoreBanner.classList.remove('video-focused');
+                                mapDifficulty.classList.remove('video-focused');
+                                songInfo.classList.remove('video-focused');
+                                songTitle.classList.remove('video-focused');
+                                artistCreator.classList.remove('video-focused');
+                            });
+
+                            videoElement.addEventListener('mouseover', function() {
+                                scoreBanner.classList.add('video-hovered');
+                                songInfo.classList.add('video-hovered');
+                                songTitle.classList.add('video-hovered');
+                                mapInfo.classList.add('video-hovered');
+                            });
+
+                            videoElement.addEventListener('mouseout', function() {
+                                scoreBanner.classList.remove('video-hovered');
+                                songInfo.classList.remove('video-hovered');
+                                songTitle.classList.remove('video-hovered');
+                                mapInfo.classList.remove('video-hovered');
+                            });
+                        }
+                    });
+                }
             }
-        }
-    },
-    template: `
-        <div id="score-modal" class="modal" v-bind:class="{ 'is-active': show }">
-            <div class="modal-background" @click="close"></div>
-            <div id="score-window" class="modal-content" v-if="show">
-                <div class="main-block">
-                    <div class="score-banner" :style="{
-                        backgroundcolor: 'rgba(0, 0, 0, 0)',
-                        }">
-                        <div v-if="score.r_replay_id" class="replay-block" :style="{
-                            backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/card@2x.jpg)'
-                        }">
-                            <video class="responsive-video" controls :poster="'https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/cover@2x.jpg'">
-                                <source :src="'https://dl2.issou.best/ordr/videos/render'+ score.r_replay_id + '.mp4'" type="video/mp4">
-                            </video>
-                        </div>
-                        <div class="score-banner img" :style="{
-                            backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/card@2x.jpg)'
-                        }">
-                        </div>
-                        <div id="SongInfo">
-                            <div id="score-banner-map" class="title">{{ score.beatmap.title }}
-                            <div id="score-banner-map" class="artist-creator">{{ score.beatmap.artist }} || <a :href="'https://osu.ppy.sh/u/' + score.beatmap.creator + '/'">{{ score.beatmap.creator }}</a></div>
+        },
+        template: `
+            <div id="score-modal" class="modal" v-bind:class="{ 'is-active': show }">
+                <div class="modal-background" @click="close"></div>
+                <div id="score-window" class="modal-content" v-if="show">
+                    <style>
+                        .score-banner.video-focused {
+                            height: {{ videoheight }};
+                        }
+                    </style>
+                    <div class="main-block">
+                        <div class="score-banner" ref="videoContainer" :style="{
+                            backgroundcolor: 'rgba(0, 0, 0, 0)',
+                            }">
+                            <div v-if="score.r_replay_id" class="replay-block" :style="{
+                                backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/card@2x.jpg)'
+                            }">
+                                <video ref="video" id="video" class="responsive-video" @click="play" :poster="'https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/cover@2x.jpg'">
+                                    <source :src="renderedreplayurl" type="video/mp4">
+                                </video>
+                                <div class="controls">
+                                    <button @click="play"><i class="fa fa-play"></i><i class="fa fa-pause"></i></button>
+                                    <button @click="rewind"><i class="fa fa-fast-backward"></i></button>
+                                    <div class="timeline">
+                                        <div class="bar">
+                                            <div class="inner" :style="{ width: progress + '%' }"></div>
+                                        </div>
+                                    </div>
+                                    <button @click="forward"><i class="fa fa-fast-forward"></i></button>
+                                    <button @click="fullScreen"><i class="fa fa-expand"></i></button>
+                                    <button @click="download"><i class="fa fa-cloud-download"></i></button>
+                                </div>
                             </div>
-                        </div>
-                        <div id="render-replay" @click="renderReplay(score.id)" v-if="!score.r_replay_id" class="level-left" :style="{
-                            'position': 'absolute',
-                            'left': '0',
-                            'bottom': '13%',
-                        }">
-                            <div class="map-difficulty">
-                                <span class="kawata-icon"></span>
-                                <span id="" class="difficulty-title">Render this play?</span>
+                            <div class="score-banner img" :style="{
+                                backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/card@2x.jpg)'
+                            }">
                             </div>
-                        </div>
-                        <div id="bm-info" class="selector">
-                            <div class="left">
+                            <div id="SongInfo">
+                                <div id="score-banner-map" class="title">{{ score.beatmap.title }}
+                                <div id="score-banner-map" class="artist-creator">{{ score.beatmap.artist }} || <a :href="'https://osu.ppy.sh/u/' + score.beatmap.creator + '/'">{{ score.beatmap.creator }}</a></div>
+                                </div>
+                            </div>
+                            <div id="render-replay" @click="renderReplay(score.id)" v-if="!score.r_replay_id" class="level-left" :style="{
+                                'position': 'absolute',
+                                'left': '0',
+                                'bottom': '13%',
+                            }">
                                 <div class="map-difficulty">
                                     <span class="kawata-icon"></span>
-                                    <span class="difficulty-title">{{ score.beatmap.version }}</span>
+                                    <span id="" class="difficulty-title">Render this play?</span>
                                 </div>
                             </div>
-                            <div id="difficulty" class="right">
-                                <div class="map-difficulty">
-                                    <span class="difficulty-title">{{ score.beatmap.diff }}⭐</span>
+                            <div id="bm-info" class="selector">
+                                <div class="left">
+                                    <div class="map-difficulty">
+                                        <span class="kawata-icon"></span>
+                                        <span class="difficulty-title">{{ score.beatmap.version }}</span>
+                                    </div>
                                 </div>
-                                <div class="map-difficulty">
-                                    <span class="difficulty-title">CS: {{ score.beatmap.cs }}</span>
-                                </div>
-                                <div class="map-difficulty">
-                                    <span class="difficulty-title">AR: {{ score.beatmap.ar }}</span>
-                                </div>
-                                <div class="map-difficulty">
-                                    <span class="difficulty-title">OD: {{ score.beatmap.od }}</span>
-                                </div>
-                                <div class="map-difficulty">
-                                    <span class="difficulty-title">HP: {{ score.beatmap.hp }}</span>
-                                </div>
-                                <div class="map-difficulty">
-                                    <span class="difficulty-title">BPM: {{ score.beatmap.bpm }}</span>
+                                <div id="difficulty" class="right">
+                                    <div class="map-difficulty">
+                                        <span class="difficulty-title">{{ score.beatmap.diff }}⭐</span>
+                                    </div>
+                                    <div class="map-difficulty">
+                                        <span class="difficulty-title">CS: {{ score.beatmap.cs }}</span>
+                                    </div>
+                                    <div class="map-difficulty">
+                                        <span class="difficulty-title">AR: {{ score.beatmap.ar }}</span>
+                                    </div>
+                                    <div class="map-difficulty">
+                                        <span class="difficulty-title">OD: {{ score.beatmap.od }}</span>
+                                    </div>
+                                    <div class="map-difficulty">
+                                        <span class="difficulty-title">HP: {{ score.beatmap.hp }}</span>
+                                    </div>
+                                    <div class="map-difficulty">
+                                        <span class="difficulty-title">BPM: {{ score.beatmap.bpm }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                </div>
-                <div class="second-block level">
-                    <div id="score-info" class="level-left column is-one-quarter">
-                        <div id="score-perf" class="score-info-block">
-                            <h5>Performance</h5>
-                            <h3 class="title">PP: <h1 class="value">{{ score.pp }}</h1></h3>
-                            <h2 class="title">Score: <h1 class="value">{{ score.score }}</h1></h2>
-                            <h2 class="title">Accuracy: <h1 class="value">{{ score.acc }}%</h1></h2>
-                        </div>
                     </div>
-                    <div id="score-info" class="level-right column is-flex">
-                        <div id="score-perf-ext" class="score-info-block">
-                            <h5>Performance (Extended)</h5>
-                            <div class="column">
-                                <h2 class="title">300s: <h1 class="value">{{ score.n300 }}</h1></h2>
-                                <h2 class="title">Geki: <h1 class="value">{{ score.ngeki }}</h1></h2>
+                    <div class="second-block">
+                        <div class="level">
+                            <div id="score-info" class="level-left column is-one-quarter">
+                                <div id="score-perf" class="score-info-block">
+                                    <h5>Performance</h5>
+                                    <h3 class="title">PP: <h1 class="value">{{ score.pp }}</h1></h3>
+                                    <h2 class="title">Score: <h1 class="value">{{ score.score }}</h1></h2>
+                                    <h2 class="title">Accuracy: <h1 class="value">{{ score.acc }}%</h1></h2>
+                                </div>
                             </div>
-                            <div class="column">
-                                <h2 class="title">100s: <h1 class="value">{{ score.n100 }}</h1></h2>
-                                <h2 class="title">Katu: <h1 class="value">{{ score.nkatu }}</h1></h2>
-                            </div>
-                            <div class="column">
-                                <h2 class="title">50s: <h1 class="value">{{ score.n50 }}</h1></h2>
-                                <h2 class="title">Misses: <h1 class="value">{{ score.nmiss }}</h1></h2>
+                        <div id="score-info" class="level-right column is-flex">
+                            <div id="score-perf-ext" class="score-info-block">
+                                <h5>Performance (Extended)</h5>
+                                <div class="column">
+                                    <h2 class="title">300s: <h1 class="value">{{ score.n300 }}</h1></h2>
+                                    <h2 class="title">Geki: <h1 class="value">{{ score.ngeki }}</h1></h2>
+                                </div>
+                                <div class="column">
+                                    <h2 class="title">100s: <h1 class="value">{{ score.n100 }}</h1></h2>
+                                    <h2 class="title">Katu: <h1 class="value">{{ score.nkatu }}</h1></h2>
+                                </div>
+                                <div class="column">
+                                    <h2 class="title">50s: <h1 class="value">{{ score.n50 }}</h1></h2>
+                                    <h2 class="title">Misses: <h1 class="value">{{ score.nmiss }}</h1></h2>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -86,46 +86,66 @@ new Vue({
     },
 });
 Vue.component('user-profile', {
-    props: ['user'],
-    template: `
-      <span :id="user.player_id" class="user-name" @mouseover="showProfile" @mouseout="hideProfile">
-        <a :href="'/u/'+user.player_id+'?mode='+mode+'&mods='+mods">
-          {{ user.name }}
-        </a>
-        <div :id="user.player_id" class="profile-panel" v-bind:style="{ display: profileStyle }">
-          <div class="profile-panel-background" :style="'background-image: url(/backgrounds/' + user.player_id + ')'"></div>
-          <div class="profile-panel-avatar" :style="'background-image: url(https://a.' + domain + '/' + user.player_id + ')'"></div>
-          <div class="profile-panel-info">
-            <div class="name" >
-              <span v-if="user.clan_tag">
-                <a>
-                  [{{ user.clan_tag }}]
+        props: ['user'],
+        template: `
+        <span :id="user.player_id" class="user-name" @mouseover="showProfile" @mouseout="hideProfile">
+                <a :href="'/u/'+user.player_id+'?mode='+mode+'&mods='+mods">
+                        {{ user.name }}
                 </a>
-              </span> 
-              {{ user.name }}
-            </div>
-            <div class="Badges">
-            </div>
-          </div>
-        </div>
-      </span>
-    `,
-    data: function() {
-      return {
-        profileVisible: false
-      };
-    },
-    methods: {
-      showProfile: function() {
-        this.profileVisible = true;
-      },
-      hideProfile: function() {
-        this.profileVisible = false;
-      }
-    },
-    computed: {
-        profileStyle: function() {
-            return this.profileVisible ? 'flex !important' : 'none !important';
+                <div :id="user.player_id" class="profile-panel" v-bind:style="{ display: profileStyle }">
+                        <div class="profile-panel-background" :style="'background-image: url(/backgrounds/' + user.player_id + ')'"></div>
+                        <div class="profile-panel-avatar" :style="'background-image: url(https://a.' + domain + '/' + user.player_id + ')'"></div>
+                        <div class="profile-panel-info">
+                        <div class="name" >
+                                <span v-if="user.clan_tag">
+                                        <a>
+                                                [{{ user.clan_tag }}]
+                                        </a>
+                                </span> 
+                                {{ user.name }}
+                        </div>
+                        <div class="Badges">
+                                <span v-for="badge in user.badges">
+                                        <i :class="'badge ' + badge.styles.icon" :style="'color: hsl(' + badge.styles.color + ', 80%, 80%);'" @mouseover="showBadgePopup(badge)" @mouseout="hideBadgePopup"></i>
+                                        <div class="badge-popup" v-if="badgePopupVisible" :style="{ top: badgePopupTop, left: badgePopupLeft }">
+                                                <div class="badge-name">{{ badge.name }}</div>
+                                                <div class="badge-description">{{ badge.description }}</div>
+                                        </div>
+                                </span>
+                        </div>
+                </div>
+        </span>
+        `,
+        data: function() {
+            return {
+                profileVisible: false,
+                badgePopupVisible: false,
+                badgePopupTop: 0,
+                badgePopupLeft: 0,
+            };
+        },
+        methods: {
+            showProfile: function() {
+                this.profileVisible = true;
+            },
+            hideProfile: function() {
+                this.profileVisible = false;
+            },
+            showBadgePopup: function(badge) {
+                this.badgePopupVisible = true;
+                // Calculate the position of the badge popup relative to the badge icon
+                const badgeIcon = event.target;
+                const badgeIconRect = badgeIcon.getBoundingClientRect();
+                this.badgePopupTop = badgeIconRect.top + badgeIconRect.height + 'px';
+                this.badgePopupLeft = badgeIconRect.left + 'px';
+            },
+            hideBadgePopup: function() {
+                this.badgePopupVisible = true;
+            }
+        },
+        computed: {
+                profileStyle: function() {
+                        return this.profileVisible ? 'flex !important' : 'none !important';
+                }
         }
-    }
-  });
+});

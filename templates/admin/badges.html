@@ -1,0 +1,55 @@
+{% extends 'admin/base.html' %}
+{% block title %} Badges {% endblock %}
+{% block panel %} Badges {% endblock %}
+{% block header %}
+<link rel="stylesheet" href="/static/css/pages/admin/badges.css">
+<script src="/static/js/asserts/vue.js"></script>
+<script src="/static/js/asserts/vue-axios.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+<script>
+    var domain = "{{ domain() }}";
+    var badges = '{{ badges|tojson }}';
+</script>
+{% endblock%}
+
+{% block content %}
+
+<div class="dashboard" id="badges">
+    <div class="container">
+        <div id="" class="main-block">
+            
+        </div>
+        <button onclick="newBadge()">New Badge</button>
+        <div class="columns">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Styles</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for badge in badges %}
+                    <tr>
+                        <td>{{ badge.id }}</td>
+                        <td>{{ badge.name }}</td>
+                        <td>{{ badge.description }}</td>
+                        <td>{{ badge.priority }}</td>
+                        <td>{{ badge.styles|length }}</td>
+                        <td><button @click="editBadge({{ badge.id }})">Edit</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="editBadgeWindow"></div>
+<script src="/static/js/pages/admin/badges.js"></script>
+
+{% endblock %}

@@ -137,6 +137,67 @@ async def user(userid):
     # Return JSON response
     return jsonify(user)
 
+@admin.route('/badges')
+async def badges():
+    """Render the homepage of guweb's admin panel."""
+    if not 'authenticated' in session:
+        return await flash('error', 'Please login first.', 'login')
+
+    if not session['user_data']['is_staff']:
+        return await flash('error', f'You have insufficient privileges.', 'home')
+
+    # Get all badges
+    badges = await glob.db.fetchall("SELECT * FROM badges")
+
+    # Get badge styles for each badge
+    for badge in badges:
+        badge_styles = await glob.db.fetchall(
+            "SELECT * FROM badge_styles WHERE badge_id = %s",
+            (badge['id'],),
+        )
+        badge['styles'] = badge_styles
+
+    # Return JSON response
+    return await render_template(
+        'admin/badges.html', badges=badges, 
+        datetime=datetime, timeago=timeago
+    )
+
+@admin.route('/badge/<int:badgeid>')
+async def badge(badgeid):
+    """Render the homepage of guweb's admin panel."""
+    if not 'authenticated' in session:
+        return await flash('error', 'Please login first.', 'login')
+
+    if not session['user_data']['is_staff']:
+        return await flash('error', f'You have insufficient privileges.', 'home')
+
+    # Get the badge from the database
+    badge = await glob.db.fetch(
+        "SELECT * FROM badges WHERE id = %s",
+        (badgeid,),
+    )
+
+    if not badge:
+        return await flash('error', f'Badge with ID {badgeid} not found.', 'home')
+
+    # Get badge styles for the badge
+    badge_styles = await glob.db.fetchall(
+        "SELECT * FROM badge_styles WHERE badge_id = %s",
+        (badgeid,),
+    )
+
+    badge['styles'] = badge_styles
+
+    
+    update = request.args.get('update') == 'true'
+    search = str(request.args.get('search') or '')
+    
+    #if update:
+        
+    
+    # Return JSON response
+    return jsonify(badge)
 
 @admin.route("/action/<action>", methods=["POST"])
 async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges", "rank", "unrank", "love", "unlove"]):
@@ -276,7 +337,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             modes = [0, 1, 2, 3, 4, 5, 6, 7, 8]
             for mode in modes:
                 query = f"""
-                INSERT INTO newkawata.stats (id, mode, tscore, rscore, pp, plays, playtime, acc, max_combo, total_hits, replay_views, xh_count, x_count, sh_count, s_count, a_count)
+                INSERT INTO stats (id, mode, tscore, rscore, pp, plays, playtime, acc, max_combo, total_hits, replay_views, xh_count, x_count, sh_count, s_count, a_count)
                 VALUES
                 ({user['id']}, '{mode}', 0, 0, 0, 0, 0, 0.000, 0, 0, 0, 0, 0, 0, 0, 0);
                 """

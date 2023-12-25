@@ -201,9 +201,22 @@
                 </div>
             </div>
             <div class="bar-selection badge-selects">
-                <span>
-                    Badges not yet implemented!
-                </span>
+                <div v-if="data.badges.length != 0" v-for="badge in data.badges" class="select-left badge-block">
+                    <div class="badge" :style="'background-color: hsl(' + badge.styles.color + ', 20%, 30%); color: hsl(' + badge.styles.color + ', 100%, 80%);'">
+                        <span v-if="badge.styles.icon">
+                            <i v-bind:class="'fas fa-' + badge.styles.icon"></i>
+                        </span>
+                        <span class="badge-name">
+                            <% badge.name %>
+                        </span>
+                    </div>
+                </div>
+                <div v-else class="select-left">
+                    <div class="badge-block">
+                        <span>
+                            This user has no badges.
+                        </span>
+                    </div>
             </div>
         </div>
     </div>

@@ -90,6 +90,18 @@ new Vue({
                 .catch(error => {
                     console.error('Error:', error);
                 });
+        },
+        postAction(url, userId) {
+            const formData = new URLSearchParams();
+            formData.append('user', userId);
+        
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData
+            });
         }
     },
     created: function() {
@@ -153,12 +165,25 @@ new Vue({
                             <div class="content">
                                 <div class="column">
                                     <span class="title is-4 is-centered">Quick Actions</span>
-                                    <div class="level is-centered">
+                                    <div id="quickActions" class="level is-centered">
                                         <div class="level-item">
+                                            <button class="button is-danger" @click="postAction('/admin/action/wipe', user.id)">Wipe</button>
+                                        </div>
+                                        <div class="level-item">
+                                            <button class="button is-warning" @click="postAction('/admin/action/restrict', user.id)">Restrict</button>
+                                        </div>
+                                        <div class="level-item">
+                                            <button class="button is-success" @click="postAction('/admin/action/unrestrict', user.id)">Unrestrict</button>
+                                        </div>
+                                        <div class="level-item">
+                                            <button class="button is-info" @click="postAction('/admin/action/silence', user.id)">Silence</button>
+                                        </div>
+                                        <div class="level-item">
+                                            <button class="button is-primary" @click="postAction('/admin/action/unsilence', user.id)">Unsilence</button>
                                         </div>
                                     </div>
                                 </div>
-                                <p>Account editor placeholder</p> <!-- placeholder print statement -->
+                                
                             </div>
                         </div>
                         <div v-if="module === 'Badges'">
