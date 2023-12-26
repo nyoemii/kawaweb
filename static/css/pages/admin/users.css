@@ -87,6 +87,21 @@
     overflow: hidden;
 }
 
+.badge {
+    display: inline-block;
+    border-radius: 6px;
+    padding: 4.5px 7px;
+    font-size: 12px;
+    margin-left: 10px;
+    background-color: hsl(var(--main), 30%, 30%);
+    transition: 0.2s color;
+    transition: 0.2s ease;
+  }
+    .badge:hover {
+      scale: 1.10;
+      box-shadow: 0 0px 20px color;
+    }
+
 #editUser.main-block {
     background-color: hsl(var(--main), 10%, 15%);
     border-radius: 8px;
@@ -246,12 +261,14 @@
     border-bottom-style: ridge;
     border-bottom-width: 4px;
     border-bottom-color: hsl(var(--main),15%,35%);
+    transition: 0.2s ease;
 }
 
 #badge.card.selected {
     border-bottom-color: hsl(var(--main), 50%, 50%);
-    box-shadow: 0 2px 4px rgba(var(--main), 0.5);
+    box-shadow: 0 0px 20px hsla(var(--main), 50%, 50%, 0.8);
     border-bottom-color: hsl(var(--main), 50%, 50%);
+    scale: 1.05;
 }
 
 #badge.card-image {

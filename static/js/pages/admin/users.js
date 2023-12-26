@@ -122,9 +122,10 @@ new Vue({
         toggleBadgeSelection(badgeid) {
             console.log(`Toggling badge ${badgeid}...`);
             console.log('User badges before toggling:', this.user.badges);
-            
+            this.$refs[badgeid][0].classList.toggle('selected');
             if (this.user.badges.includes(badgeid)) {
                 this.user.badges.splice(this.user.badges.indexOf(badgeid), 1);
+                
                 console.log('Badge removed:', badgeid);
             } else {
                 this.user.badges.push(badgeid);
@@ -323,7 +324,7 @@ new Vue({
                             <div id="badges" class="columns is-multiline">
                                 <!-- Display badges in two columns -->
                                 <div v-for="(badge, index) in badges" :key="badge.id" class="column is-half">
-                                    <div id="badge" class="card" :class="{ 'selected': user.badges.includes(badge.id) }" @click="toggleBadgeSelection(badge.id)">
+                                    <div id="badge" class="card" :class="{ 'selected': user.badges.find(b => b.id === badge.id) }" :ref="badge.id" @click="toggleBadgeSelection(badge.id)">
                                         <div id="badge" class="card-image">
                                             <i :class="'badge-icon ' + badge.styles.icon" :style="'color: hsl('+ badge.styles.color +', 80%, 80%);'"></i>
                                         </div>
