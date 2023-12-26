@@ -65,6 +65,7 @@ new Vue({
             flags: window.flags,
             show: false,
             user: {},
+            badges: {},
             load: false,
             playerLoading: false,
             module: 'Account' // added module data property
@@ -91,17 +92,46 @@ new Vue({
                     console.error('Error:', error);
                 });
         },
-        postAction(url, userId) {
-            const formData = new URLSearchParams();
-            formData.append('user', userId);
-        
+        postAction(url, formData) {
+            const params = new URLSearchParams();
+            for (const [key, value] of Object.entries(formData)) {
+                params.append(key, value);
+            }
+
             fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: formData
+                body: params
             });
+        },
+        getAllBadges() {
+            const url = `/admin/badges?json=true`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    this.badges = data;
+                    console.log('Badges:', this.badges);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            return this.badges;
+        },
+        toggleBadgeSelection(badgeid) {
+            console.log(`Toggling badge ${badgeid}...`);
+            console.log('User badges before toggling:', this.user.badges);
+            
+            if (this.user.badges.includes(badgeid)) {
+                this.user.badges.splice(this.user.badges.indexOf(badgeid), 1);
+                console.log('Badge removed:', badgeid);
+            } else {
+                this.user.badges.push(badgeid);
+                console.log('Badge added:', badgeid);
+            }
+            
+            console.log('User badges after toggling:', this.user.badges);
         }
     },
     created: function() {
@@ -109,6 +139,7 @@ new Vue({
             console.log('Edit User Window Triggered')
             this.userid = userid;
             this.fetchSelectedUser(userid);
+            this.getAllBadges();
             this.show = true;
         });
     },
@@ -121,7 +152,6 @@ new Vue({
                 <div id="editUser" class="box">
                     <div id="editUser" class="user-banner" >
                         <div id="editUserBanner" class="user-banner-background" :style="'background-image: url(/banners/' + userid + ')'" alt="User Banner">
-                        
                             <div class="info-block">
                                 <h1 class="title">
                                     <p class="ranks">
@@ -129,7 +159,6 @@ new Vue({
                                         <span class="bgf"><% user.name %></span>
                                     </p>
                                 </h1>
-
                             </div>
                         </div>
                         <div class="user-flex">
@@ -154,66 +183,394 @@ new Vue({
                         </div>
                             </div>
                             <div class="bar-selection badge-selects">
-                                <span>
-                                    This user has no badges.
-                                </span>
+                                <div v-if="user.badges.length != 0" v-for="badge in user.badges" class="select-left badge-block">
+                                    <div class="badge" :style="'background-color: hsl(' + badge.styles.color + ', 20%, 30%); color: hsl(' + badge.styles.color + ', 100%, 80%);'">
+                                        <span v-if="badge.styles.icon">
+                                            <i v-bind:class="'fas fa-' + badge.styles.icon"></i>
+                                        </span>
+                                        <span class="badge-name">
+                                            <% badge.name %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div v-else class="select-left">
+                                    <div class="badge-block">
+                                        <span>
+                                            This user has no badges.
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div id="editUser" class="main-block">
-                        <div v-if="module === 'Account'">
-                            <div class="content">
-                                <div class="column">
-                                    <span class="title is-4 is-centered">Quick Actions</span>
-                                    <div id="quickActions" class="level is-centered">
-                                        <div class="level-item">
-                                            <button class="button is-danger" @click="postAction('/admin/action/wipe', user.id)">Wipe</button>
+                        <div class="content" v-if="module === 'Account'">
+                            <div class="column">
+                                <span class="title is-4 is-centered">Quick Actions</span>
+                                <div id="quickActions" class="level is-centered">
+                                    <div class="level-item">
+                                        <div class="dropdown is-hoverable">
+                                            <div class="dropdown-trigger">
+                                                <button class="button is-danger" aria-haspopup="true" aria-controls="wipe-dropdown-menu">
+                                                    Wipe
+                                                </button>
+                                            </div>
+                                            <div class="dropdown-menu" id="wipe-dropdown-menu" role="menu">
+                                                <div class="dropdown-content">
+                                                    <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'Auto mod' })">
+                                                        Auto mod
+                                                    </a>
+                                                    <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'FL abuse' })">
+                                                        FL abuse
+                                                    </a>
+                                                    <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'Requested Wipe' })">
+                                                        Requested Wipe
+                                                    </a>
+                                                    <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'Overcheating' })">
+                                                        Overcheating
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="level-item">
-                                            <button class="button is-warning" @click="postAction('/admin/action/restrict', user.id)">Restrict</button>
+                                    </div>
+                                    <div class="level-item">
+                                        <div class="dropdown is-hoverable">
+                                            <div class="dropdown-trigger">
+                                                <button class="button is-warning" aria-haspopup="true" aria-controls="silence-dropdown-menu">
+                                                    Restrict
+                                                </button>
+                                            </div>
+                                            <div class="dropdown-menu" id="wipe-dropdown-menu" role="menu">
+                                                <div class="dropdown-content">
+                                                    <a class="dropdown-item" @click="postAction('/admin/action/restrict', { user: user.id, reason: 'Repeated Offenses' })">
+                                                        Repeated Offenses
+                                                    </a>
+                                                    <a class="dropdown-item" @click="postAction('/admin/action/restrict', { user: user.id, reason: '3rd Wipe' })">
+                                                        3rd Wipe
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="level-item">
-                                            <button class="button is-success" @click="postAction('/admin/action/unrestrict', user.id)">Unrestrict</button>
+                                    </div>
+                                    <div class="level-item">
+                                        <button class="button is-success" @click="postAction('/admin/action/unrestrict', { user: user.id })">Unrestrict</button>
+                                    </div>
+                                    <div class="level-item">
+                                        <div class="dropdown is-hoverable">
+                                            <div class="dropdown-trigger">
+                                                <button class="button is-info" aria-haspopup="true" aria-controls="silence-dropdown-menu">
+                                                    Silence
+                                                </button>
+                                            </div>
+                                            <div class="dropdown-menu" id="wipe-dropdown-menu" role="menu">
+                                                <div class="dropdown-content">
+                                                    <a class="dropdown-item" @click="postAction('/admin/action/silence', { user: user.id, duration: '2', reason: 'Spam' })">
+                                                        Spam
+                                                    </a>
+                                                    <a class="dropdown-item" @click="postAction('/admin/action/silence', { user: user.id, duration: '6', reason: 'Consistent usage of inappropriate language' })">
+                                                        Consistent usage of inappropriate language
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="level-item">
-                                            <button class="button is-info" @click="postAction('/admin/action/silence', user.id)">Silence</button>
-                                        </div>
-                                        <div class="level-item">
-                                            <button class="button is-primary" @click="postAction('/admin/action/unsilence', user.id)">Unsilence</button>
+                                    </div>
+                                    <div class="level-item">
+                                        <button class="button is-primary" @click="postAction('/admin/action/unsilence', { user: user.id })">Unsilence</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <form>
+                                <div class="field">
+                                    <label class="label">User ID</label>
+                                    <div class="control">
+                                        <input class="input" type="text" :value="user.id" readonly>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Username</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="username" :value="user.name">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Email</label>
+                                    <div class="control">
+                                        <input class="input" type="email" name="email" :value="user.email">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Country</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <country-select v-model="user.country"></country-select>
                                         </div>
                                     </div>
                                 </div>
-                                
+                                <div class="field">
+                                    <label class="label">User Page</label>
+                                    <div class="control">
+                                        <textarea id="userpage" class="input" name="userpage" :value="user.userpage_content"></textarea>
+                                    </div>
+                                </div>
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <button class="button is-primary" type="submit">Save</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="content" v-if="module === 'Badges'">
+                            <div id="badges" class="columns is-multiline">
+                                <!-- Display badges in two columns -->
+                                <div v-for="(badge, index) in badges" :key="badge.id" class="column is-half">
+                                    <div id="badge" class="card" :class="{ 'selected': user.badges.includes(badge.id) }" @click="toggleBadgeSelection(badge.id)">
+                                        <div id="badge" class="card-image">
+                                            <i :class="'badge-icon ' + badge.styles.icon" :style="'color: hsl('+ badge.styles.color +', 80%, 80%);'"></i>
+                                        </div>
+                                        <div id="badge" class="card-content">
+                                            <h3 class="title" :style="'color: hsl('+ badge.styles.color +', 80%, 80%);'"><% badge.name %></h3>
+                                            <p><% badge.description %></p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div v-if="module === 'Badges'">
-                            <div class="content">
-                                <div class="column">
-                                    <span class="title is-4 is-centered">Quick Actions</span>
-                                    <div class="level is-centered">
-                                        <div class="level-item">
-                                        </div>
+                        <div class="content" v-if="module === 'Logs'">
+                            <div class="column">
+                                <span class="title is-4 is-centered">Quick Actions</span>
+                                <div class="level is-centered">
+                                    <div class="level-item">
                                     </div>
                                 </div>
-                                <p>Badges editor placeholder</p> <!-- placeholder print statement -->
                             </div>
-                        </div>
-                        <div v-if="module === 'Logs'">
-                            <div class="content">
-                                <div class="column">
-                                    <span class="title is-4 is-centered">Quick Actions</span>
-                                    <div class="level is-centered">
-                                        <div class="level-item">
-                                        </div>
-                                    </div>
-                                </div>
-                                <p>Logs editor placeholder</p> <!-- placeholder print statement -->
-                            </div>
-                            
+                            <p>Logs editor placeholder</p> <!-- placeholder print statement -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     `
+});
+
+
+
+Vue.component('country-select', {
+    props: ['value'],
+    data() {
+        return {
+            countries: [
+                { name: 'United States', code: 'US' },
+                { name: 'United Kingdom', code: 'GB' },
+                { name: 'Afghanistan', code: 'AF' },
+                { name: 'Albania', code: 'AL' },
+                { name: 'Algeria', code: 'DZ' },
+                { name: 'Andorra', code: 'AD' },
+                { name: 'Angola', code: 'AO' },
+                { name: 'Antigua and Barbuda', code: 'AG' },
+                { name: 'Argentina', code: 'AR' },
+                { name: 'Armenia', code: 'AM' },
+                { name: 'Australia', code: 'AU' },
+                { name: 'Austria', code: 'AT' },
+                { name: 'Azerbaijan', code: 'AZ' },
+                { name: 'Bahamas', code: 'BS' },
+                { name: 'Bahrain', code: 'BH' },
+                { name: 'Bangladesh', code: 'BD' },
+                { name: 'Barbados', code: 'BB' },
+                { name: 'Belarus', code: 'BY' },
+                { name: 'Belgium', code: 'BE' },
+                { name: 'Belize', code: 'BZ' },
+                { name: 'Benin', code: 'BJ' },
+                { name: 'Bermuda', code: 'BM' },
+                { name: 'Bhutan', code: 'BT' },
+                { name: 'Bolivia', code: 'BO' },
+                { name: 'Bosnia and Herzegovina', code: 'BA' },
+                { name: 'Botswana', code: 'BW' },
+                { name: 'Brazil', code: 'BR' },
+                { name: 'Brunei', code: 'BN' },
+                { name: 'Bulgaria', code: 'BG' },
+                { name: 'Burkina Faso', code: 'BF' },
+                { name: 'Burundi', code: 'BI' },
+                { name: 'Cambodia', code: 'KH' },
+                { name: 'Cameroon', code: 'CM' },
+                { name: 'Canada', code: 'CA' },
+                { name: 'Cape Verde', code: 'CV' },
+                { name: 'Central African Republic', code: 'CF' },
+                { name: 'Chad', code: 'TD' },
+                { name: 'Chile', code: 'CL' },
+                { name: 'China', code: 'CN' },
+                { name: 'Colombia', code: 'CO' },
+                { name: 'Comoros', code: 'KM' },
+                { name: 'Congo', code: 'CG' },
+                { name: 'Costa Rica', code: 'CR' },
+                { name: 'Croatia', code: 'HR' },
+                { name: 'Cuba', code: 'CU' },
+                { name: 'Cyprus', code: 'CY' },
+                { name: 'Czech Republic', code: 'CZ' },
+                { name: 'Denmark', code: 'DK' },
+                { name: 'Djibouti', code: 'DJ' },
+                { name: 'Dominica', code: 'DM' },
+                { name: 'Dominican Republic', code: 'DO' },
+                { name: 'East Timor', code: 'TL' },
+                { name: 'Ecuador', code: 'EC' },
+                { name: 'Egypt', code: 'EG' },
+                { name: 'El Salvador', code: 'SV' },
+                { name: 'Equatorial Guinea', code: 'GQ' },
+                { name: 'Eritrea', code: 'ER' },
+                { name: 'Estonia', code: 'EE' },
+                { name: 'Eswatini', code: 'SZ' },
+                { name: 'Ethiopia', code: 'ET' },
+                { name: 'Fiji', code: 'FJ' },
+                { name: 'Finland', code: 'FI' },
+                { name: 'France', code: 'FR' },
+                { name: 'Gabon', code: 'GA' },
+                { name: 'Gambia', code: 'GM' },
+                { name: 'Georgia', code: 'GE' },
+                { name: 'Germany', code: 'DE' },
+                { name: 'Ghana', code: 'GH' },
+                { name: 'Greece', code: 'GR' },
+                { name: 'Grenada', code: 'GD' },
+                { name: 'Guatemala', code: 'GT' },
+                { name: 'Guinea', code: 'GN' },
+                { name: 'Guinea-Bissau', code: 'GW' },
+                { name: 'Guyana', code: 'GY' },
+                { name: 'Haiti', code: 'HT' },
+                { name: 'Honduras', code: 'HN' },
+                { name: 'Hungary', code: 'HU' },
+                { name: 'Iceland', code: 'IS' },
+                { name: 'India', code: 'IN' },
+                { name: 'Indonesia', code: 'ID' },
+                { name: 'Iran', code: 'IR' },
+                { name: 'Iraq', code: 'IQ' },
+                { name: 'Ireland', code: 'IE' },
+                { name: 'Israel', code: 'IL' },
+                { name: 'Italy', code: 'IT' },
+                { name: 'Jamaica', code: 'JM' },
+                { name: 'Japan', code: 'JP' },
+                { name: 'Jordan', code: 'JO' },
+                { name: 'Kazakhstan', code: 'KZ' },
+                { name: 'Kenya', code: 'KE' },
+                { name: 'Kiribati', code: 'KI' },
+                { name: 'Korea, North', code: 'KP' },
+                { name: 'Korea, South', code: 'KR' },
+                { name: 'Kosovo', code: 'XK' },
+                { name: 'Kuwait', code: 'KW' },
+                { name: 'Kyrgyzstan', code: 'KG' },
+                { name: 'Laos', code: 'LA' },
+                { name: 'Latvia', code: 'LV' },
+                { name: 'Lebanon', code: 'LB' },
+                { name: 'Lesotho', code: 'LS' },
+                { name: 'Liberia', code: 'LR' },
+                { name: 'Libya', code: 'LY' },
+                { name: 'Liechtenstein', code: 'LI' },
+                { name: 'Lithuania', code: 'LT' },
+                { name: 'Luxembourg', code: 'LU' },
+                { name: 'Madagascar', code: 'MG' },
+                { name: 'Malawi', code: 'MW' },
+                { name: 'Malaysia', code: 'MY' },
+                { name: 'Maldives', code: 'MV' },
+                { name: 'Mali', code: 'ML' },
+                { name: 'Malta', code: 'MT' },
+                { name: 'Marshall Islands', code: 'MH' },
+                { name: 'Mauritania', code: 'MR' },
+                { name: 'Mauritius', code: 'MU' },
+                { name: 'Mexico', code: 'MX' },
+                { name: 'Micronesia', code: 'FM' },
+                { name: 'Moldova', code: 'MD' },
+                { name: 'Monaco', code: 'MC' },
+                { name: 'Mongolia', code: 'MN' },
+                { name: 'Montenegro', code: 'ME' },
+                { name: 'Morocco', code: 'MA' },
+                { name: 'Mozambique', code: 'MZ' },
+                { name: 'Myanmar', code: 'MM' },
+                { name: 'Namibia', code: 'NA' },
+                { name: 'Nauru', code: 'NR' },
+                { name: 'Nepal', code: 'NP' },
+                { name: 'Netherlands', code: 'NL' },
+                { name: 'New Zealand', code: 'NZ' },
+                { name: 'Nicaragua', code: 'NI' },
+                { name: 'Niger', code: 'NE' },
+                { name: 'Nigeria', code: 'NG' },
+                { name: 'North Macedonia', code: 'MK' },
+                { name: 'Norway', code: 'NO' },
+                { name: 'Oman', code: 'OM' },
+                { name: 'Pakistan', code: 'PK' },
+                { name: 'Palau', code: 'PW' },
+                { name: 'Panama', code: 'PA' },
+                { name: 'Papua New Guinea', code: 'PG' },
+                { name: 'Paraguay', code: 'PY' },
+                { name: 'Peru', code: 'PE' },
+                { name: 'Philippines', code: 'PH' },
+                { name: 'Poland', code: 'PL' },
+                { name: 'Portugal', code: 'PT' },
+                { name: 'Qatar', code: 'QA' },
+                { name: 'Romania', code: 'RO' },
+                { name: 'Russia', code: 'RU' },
+                { name: 'Rwanda', code: 'RW' },
+                { name: 'Saint Kitts and Nevis', code: 'KN' },
+                { name: 'Saint Lucia', code: 'LC' },
+                { name: 'Saint Vincent and the Grenadines', code: 'VC' },
+                { name: 'Samoa', code: 'WS' },
+                { name: 'San Marino', code: 'SM' },
+                { name: 'Sao Tome and Principe', code: 'ST' },
+                { name: 'Saudi Arabia', code: 'SA' },
+                { name: 'Senegal', code: 'SN' },
+                { name: 'Serbia', code: 'RS' },
+                { name: 'Seychelles', code: 'SC' },
+                { name: 'Sierra Leone', code: 'SL' },
+                { name: 'Singapore', code: 'SG' },
+                { name: 'Slovakia', code: 'SK' },
+                { name: 'Slovenia', code: 'SI' },
+                { name: 'Solomon Islands', code: 'SB' },
+                { name: 'Somalia', code: 'SO' },
+                { name: 'South Africa', code: 'ZA' },
+                { name: 'South Sudan', code: 'SS' },
+                { name: 'Spain', code: 'ES' },
+                { name: 'Sri Lanka', code: 'LK' },
+                { name: 'Sudan', code: 'SD' },
+                { name: 'Suriname', code: 'SR' },
+                { name: 'Sweden', code: 'SE' },
+                { name: 'Switzerland', code: 'CH' },
+                { name: 'Syria', code: 'SY' },
+                { name: 'Taiwan', code: 'TW' },
+                { name: 'Tajikistan', code: 'TJ' },
+                { name: 'Tanzania', code: 'TZ' },
+                { name: 'Thailand', code: 'TH' },
+                { name: 'Togo', code: 'TG' },
+                { name: 'Tonga', code: 'TO' },
+                { name: 'Trinidad and Tobago', code: 'TT' },
+                { name: 'Tunisia', code: 'TN' },
+                { name: 'Turkey', code: 'TR' },
+                { name: 'Turkmenistan', code: 'TM' },
+                { name: 'Turks and Caicos Islands', code: 'TC' },
+                { name: 'Tuvalu', code: 'TV' },
+                { name: 'Uganda', code: 'UG' },
+                { name: 'Ukraine', code: 'UA' },
+                { name: 'United Arab Emirates', code: 'AE' },
+                { name: 'Uruguay', code: 'UY' },
+                { name: 'Uzbekistan', code: 'UZ' },
+                { name: 'Vanuatu', code: 'VU' },
+                { name: 'Vatican City', code: 'VA' },
+                { name: 'Venezuela', code: 'VE' },
+                { name: 'Vietnam', code: 'VN' },
+                { name: 'Yemen', code: 'YE' },
+                { name: 'Zambia', code: 'ZM' },
+                { name: 'Zimbabwe', code: 'ZW' }
+            ]
+        };
+    },
+    template: `
+        <select v-model="selectedCountry">
+            <option v-for="country in countries" :value="country.code">{{ country.name }}</option>
+        </select>
+    `,
+    computed: {
+        selectedCountry: {
+            get() {
+                return this.value;
+            },
+            set(value) {
+                this.$emit('input', value);
+            }
+        }
+    }
 });

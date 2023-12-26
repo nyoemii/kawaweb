@@ -4,6 +4,7 @@ __all__ = ()
 
 import datetime
 import hashlib
+from operator import is_
 from typing import Literal
 import bcrypt
 
@@ -162,7 +163,10 @@ async def badges():
             "SELECT * FROM badge_styles WHERE badge_id = %s",
             (badge['id'],),
         )
-        badge['styles'] = badge_styles
+        if is_json:
+            badge['styles'] = {style['type']: style['value'] for style in badge_styles}
+        else:
+            badge['styles'] = badge_styles
 
     # Return JSON response if is_json is True
     if is_json:
