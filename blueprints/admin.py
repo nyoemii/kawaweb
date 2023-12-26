@@ -112,25 +112,29 @@ async def user(userid):
         (userid,),
     )
 
-    # Get user badges
     user_badges = await glob.db.fetchall(
         "SELECT badge_id FROM user_badges WHERE userid = %s",
         (userid,),
     )
-
-    # Get badge information for each badge
     badges = []
-    for badge in user_badges:
-        badge_info = await glob.db.fetch(
+    for user_badge in user_badges:
+        badge_id = user_badge["badge_id"]
+        
+        badge = await glob.db.fetch(
             "SELECT * FROM badges WHERE id = %s",
-            (badge['badge_id'],),
+            (badge_id,),
         )
+        
         badge_styles = await glob.db.fetchall(
             "SELECT * FROM badge_styles WHERE badge_id = %s",
-            (badge['badge_id'],),
+            (badge_id,),
         )
-        badge_info['badge_styles'] = badge_styles
-        badges.append(badge_info)
+        
+        badge = dict(badge)
+        badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
+        
+        badges.append(badge)
+        
 
     user['badges'] = badges
 
@@ -146,6 +150,9 @@ async def badges():
     if not session['user_data']['is_staff']:
         return await flash('error', f'You have insufficient privileges.', 'home')
 
+    # Check if JSON query parameter is present
+    is_json = request.args.get('json') == 'true'
+
     # Get all badges
     badges = await glob.db.fetchall("SELECT * FROM badges")
 
@@ -157,7 +164,11 @@ async def badges():
         )
         badge['styles'] = badge_styles
 
-    # Return JSON response
+    # Return JSON response if is_json is True
+    if is_json:
+        return jsonify(badges)
+
+    # Return HTML response
     return await render_template(
         'admin/badges.html', badges=badges, 
         datetime=datetime, timeago=timeago
@@ -213,7 +224,8 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
     if not "authenticated" in session:
         return jsonify({"status": "error", "message": "Please login first."}), 401
 
-    if not request.content_type == "x-www-form-urlencoded":
+    if not request.content_type == "application/x-www-form-urlencoded":
+        print(request.content_type)
         return jsonify({"status": "error","message": "Invalid content type. use application/x-www-form-urlencoded."}), 400
 
     if action == "restrict":
@@ -221,6 +233,9 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}),403
         if request.form.get("user") is None:
             return jsonify({"status": "error", "message": "'user' not specified."}), 400
+        reason = (await request.form).get("reason")
+        if reason is None:
+            return jsonify({"status": "error", "message": "'reason' not specified."}), 400
         user = await glob.db.fetch(
             "SELECT id, name, priv FROM users WHERE id = %s", [request.form.get("user")]
         )
@@ -265,6 +280,11 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
 
         if request.form.get("duration") is None:  # in hours, jsyk.
             return jsonify({"status": "error", "message": "'duration' not specified."}), 400
+        
+        reason = (await request.form).get("reason")
+        if reason is None:
+            return jsonify({"status": "error", "message": "'reason' not specified."}), 400
+        
         try:
             duration = int(request.form.get("duration"))
         except ValueError:
@@ -323,28 +343,57 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
         if (session["user_data"]["priv"] and Privileges.WipeUsers) == 0:
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
 
-        if request.form.get("user") is None:
+        print(session["user_data"])
+        if (await request.form).get("user") is None:
             return jsonify({"status": "error", "message": "'user' not specified."}), 400
 
         user = await glob.db.fetch(
-            "SELECT id, name FROM users WHERE id = %s", [request.form.get("user")]
+            "SELECT id, name FROM users WHERE id = %s", [(await request.form).get("user")]
         )
-
         if user is None:
             return jsonify({"status": "error", "message": "User not found."}), 404
+        reason = (await request.form).get("reason")
+        if reason is None:
+            return jsonify({"status": "error", "message": "'reason' not specified."}), 400
 
         try:
             modes = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+            # Move scores to wiped_scores table
+            await glob.db.execute(
+                f"""
+                INSERT INTO wiped_scores (id, map_md5, score, pp, acc, max_combo, mods, n300, n100, n50, nmiss, ngeki, nkatu, grade, status, mode, play_time, time_elapsed, client_flags, userid, perfect, online_checksum, r_replay_id)
+                SELECT id, map_md5, score, pp, acc, max_combo, mods, n300, n100, n50, nmiss, ngeki, nkatu, grade, status, mode, play_time, time_elapsed, client_flags, userid, perfect, online_checksum, r_replay_id
+                FROM scores
+                WHERE userid = {user['id']};
+                """
+            )
+            # Delete scores from scores table
+            await glob.db.execute(
+                f"""
+                DELETE FROM scores
+                WHERE userid = {user['id']};
+                """
+            )
+            # Reset Players Stats
             for mode in modes:
                 query = f"""
-                INSERT INTO stats (id, mode, tscore, rscore, pp, plays, playtime, acc, max_combo, total_hits, replay_views, xh_count, x_count, sh_count, s_count, a_count)
-                VALUES
-                ({user['id']}, '{mode}', 0, 0, 0, 0, 0, 0.000, 0, 0, 0, 0, 0, 0, 0, 0);
+                UPDATE stats
+                SET tscore = 0, rscore = 0, pp = 0, plays = 0, playtime = 0, acc = 0.000, max_combo = 0, total_hits = 0, replay_views = 0, xh_count = 0, x_count = 0, sh_count = 0, s_count = 0, a_count = 0
+                WHERE id = {user['id']} AND mode = '{mode}';
                 """
 
                 await glob.db.execute(query)
+            # Log Action
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                return jsonify({"status": "success", "message": f"Successfully wiped {user['name']} ({user['id']})!"}), 200
+            await glob.db.execute(
+                """
+                INSERT INTO logs (from, to, action, msg, time)
+                VALUES (%s, %s, 'wipe', %s, %s)
+                """,
+                [session["user_data"]["id"], user["id"], reason, current_time]
+            )
+            return jsonify({"status": "success", "message": f"Successfully wiped {user['name']} ({user['id']})!"}), 200
 
         except Exception as e:
             return jsonify({"status": "error","message": f"Failed to wipe {user['name']} ({user['id']}).","Error": f"{e}"}), 500
@@ -467,3 +516,4 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
 
     else:
         return jsonify({"status": "error","message": "Invalid action. {action} is not a valid action."}),400
+    
