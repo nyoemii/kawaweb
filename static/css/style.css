@@ -1239,7 +1239,6 @@ body::-webkit-scrollbar-thumb {
   line-height: 1.35;
   visibility: visible;
   background-image: url(/static/images/default-bg.png);
-  overflow: hidden;
 }
 
 .profile-panel-background {
@@ -1288,8 +1287,29 @@ body::-webkit-scrollbar-thumb {
   padding: 4px;
   width: fit-content;
 }
-  .badges {
+  .badges .badge {
     margin-right: 2px;
+    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.56);
+  }
+
+  .badge-popup {
+    position: absolute;
+    width: fit-content;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    height: fit-content;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-wrap: wrap;
+    opacity: 1;
+    transition: .2s ease;
+    z-index: 99;
+    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.56);
   }
 
 .beatmap-panel {
@@ -1350,17 +1370,3 @@ body::-webkit-scrollbar-thumb {
 .search-bar .search-icon {}
 
 .search-bar .clear-icon {}
-
-.badge-popup {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  background: rgba(0, 0, 0, .5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 1;
-  transition: .2s ease;
-  z-index: 99
-}
