@@ -92,19 +92,21 @@ new Vue({
                     console.error('Error:', error);
                 });
         },
-        postAction(url, formData) {
+        async postAction(url, formData) {
             const params = new URLSearchParams();
             for (const [key, value] of Object.entries(formData)) {
                 params.append(key, value);
             }
 
-            fetch(url, {
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: params
             });
+
+            return response.status;
         },
         getAllBadges() {
             const url = `/admin/badges?json=true`;
@@ -122,14 +124,34 @@ new Vue({
         toggleBadgeSelection(badgeid) {
             console.log(`Toggling badge ${badgeid}...`);
             console.log('User badges before toggling:', this.user.badges);
-            this.$refs[badgeid][0].classList.toggle('selected');
-            if (this.user.badges.includes(badgeid)) {
+            if (this.user.badges.find(b => b.id === badgeid)) {
                 this.user.badges.splice(this.user.badges.indexOf(badgeid), 1);
-                
-                console.log('Badge removed:', badgeid);
+                this.postAction('/admin/action/removebadge', { user: this.user.id, badge: badgeid })
+                    .then(status => {
+                        if (status === 200) {
+                            console.log('Badge removed:', badgeid);
+                            this.$refs[badgeid][0].classList.toggle('selected');
+                        } else {
+                            console.error('Failed to remove badge:', badgeid);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             } else {
                 this.user.badges.push(badgeid);
-                console.log('Badge added:', badgeid);
+                this.postAction('/admin/action/addbadge', { user: this.user.id, badge: badgeid })
+                    .then(status => {
+                        if (status === 200) {
+                            console.log('Badge added:', badgeid);
+                            this.$refs[badgeid][0].classList.toggle('selected');
+                        } else {
+                            console.error('Failed to add badge:', badgeid);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             }
             
             console.log('User badges after toggling:', this.user.badges);

@@ -538,6 +538,81 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
     elif action == "unlove":
         pass
 
+    elif action == "addbadge":
+        if (session["user_data"]["priv"] and Privileges.ManageBadges) == 0:
+            return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
+
+        if (await request.form).get("user") is None:
+            return jsonify({"status": "error", "message": "'user' not specified."}), 400
+
+        user = await glob.db.fetch(
+            "SELECT id, name FROM users WHERE id = %s", [(await request.form).get("user")]
+        )
+        if user is None:
+            return jsonify({"status": "error", "message": "User not found."}), 404
+        badgeid = (await request.form).get("badge")
+        if badgeid is None:
+            return jsonify({"status": "error", "message": "'badge' not specified."}), 400
+        
+        try:
+            query = f"""
+                INSERT INTO user_badges (userid, badge_id)
+                VALUES ({user['id']}, {badgeid});
+                """
+
+            await glob.db.execute(query)
+            # Log Action
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            #await glob.db.execute(
+            #    """
+            #    INSERT INTO logs (from, to, action, time)
+            #    VALUES (%s, %s, 'addbadge', %s)
+            #    """,
+            #    [session["user_data"]["id"], user["id"], current_time]
+            #)
+            return jsonify({"status": "success", "message": f"Successfully added badge to {user['name']} ({user['id']})!"}), 200
+        except Exception as e:
+            return jsonify({"status": "error","message": f"Failed to add badge to {user['name']} ({user['id']}).","Error": f"{e}"}), 500
+        
+    elif action == "removebadge":
+        if (session["user_data"]["priv"] & Privileges.ManageBadges) == 0:
+            return jsonify({"status": "error", "message": "You have insufficient privileges to perform this action."}), 403
+
+        user = (await request.form).get("user")
+        if user is None:
+            return jsonify({"status": "error", "message": "'user' not specified."}), 400
+
+        user = await glob.db.fetch("SELECT id, name FROM users WHERE id = %s", [user])
+        if user is None:
+            return jsonify({"status": "error", "message": "User not found."}), 404
+
+        badgeid = (await request.form).get("badge")
+        if badgeid is None:
+            return jsonify({"status": "error", "message": "'badge' not specified."}), 400
+
+        try:
+            query = f"""
+                DELETE FROM user_badges
+                WHERE userid = {user['id']} AND badge_id = {badgeid};
+                """
+
+            await glob.db.execute(query)
+            # Log Action
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            #await glob.db.execute(
+            #    """
+            #    INSERT INTO logs (from, to, action, time)
+            #    VALUES (%s, %s, 'removebadge', %s)
+            #    """,
+            #    [session["user_data"]["id"], user["id"], current_time]
+            #)
+            return jsonify({"status": "success", "message": f"Successfully removed badge from {user['name']} ({user['id']})!"}), 200
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"Failed to remove badge from {user['name']} ({user['id']}).", "Error": f"{e}"}), 500
+        
+
     else:
         return jsonify({"status": "error","message": "Invalid action. {action} is not a valid action."}),400
     
