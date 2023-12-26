@@ -250,6 +250,16 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             await glob.db.execute(
                 "UPDATE users SET priv = 0 WHERE id = %s", [user["id"]]
             )
+            # Log Action
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            await glob.db.execute(
+                """
+                INSERT INTO logs (from, to, action, msg, time)
+                VALUES (%s, %s, 'restrict', %s, %s)
+                """,
+                [session["user_data"]["id"], user["id"], reason, current_time]
+            )
             return jsonify({"status": "success","message": f"Successfully restricted {user['name']} ({user['id']})!"}),200
 
         else:
@@ -311,6 +321,16 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
                 await glob.db.execute(
                     "UPDATE users SET silence_end = %s WHERE id = %s",
                     [finaltime, user["id"]],
+                )
+                # Log Action
+                current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                await glob.db.execute(
+                    """
+                    INSERT INTO logs (from, to, action, msg, time)
+                    VALUES (%s, %s, 'silence', %s, %s)
+                    """,
+                    [session["user_data"]["id"], user["id"], reason, current_time]
                 )
                 return jsonify({"status": "success","message": f"Successfully silenced {user['name']} ({user['id']})!"}),200
 
