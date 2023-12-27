@@ -4,9 +4,14 @@
     transition: 0.2s ease; /* for responsive animation */
     border-radius: 20px;
     overflow: visible;
+    position: absolute;
+    top: auto;
+    bottom: auto;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 #score-window.modal-content.video-focused {
-    margin-bottom: 15%;
+    margin-bottom: 0%;
 }
 
 @media (min-width: 1000px) {
@@ -44,12 +49,10 @@
             }
         .score-banner {
             /*background-color: hsl(var(--main), 30%, 50%);*/
-            max-height: 280px;
-            height: 100%; 
+            max-height: fit-content;
             min-height: 194px;
-            border-radius: 0;
-            border-top-right-radius: 8px;
-            border-top-left-radius: 8px;
+            border-top-right-radius: 20px;
+            border-top-left-radius: 20px;
             display: flex;
             position: relative;
             flex-direction: column;
@@ -60,6 +63,9 @@
             transition: max-height 0.4s ease;
             z-index: 0;
         }
+            .score-banner.video-focused {
+                height: 563px;
+            }
             .replay-block {
                 display: flex;
                 flex-direction: row;
@@ -73,6 +79,8 @@
                 bottom: 0;
                 pointer-events: auto;
                 z-index: 1;
+                border-top-right-radius: 20px;
+                border-top-left-radius: 20px;
             }
                 .responsive-video {
                     width: 100%;
@@ -87,8 +95,7 @@
                     z-index: auto;
                 }
                 .video-focused {
-                    max-height: 563px;
-                    transition: max-height 0.4s ease;
+                    transition: 0.4s ease;
                 }
                 .responsive-video::-webkit-media-controls {
                     width: 100%;
@@ -276,29 +283,78 @@
             
     #score-window .second-block {
         background: var(--container-bg);
+        max-height: 55vh;
+        display: flex;
+        overflow-y: auto;
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+        margin-bottom: 10px;
     }
+        #score-info.content {
+            display: flex;
+            flex-direction: row;
+            background-color: hsl(var(--main), 15%, 25%);
+            padding: 4px;
+            margin: 1%;
+            margin-bottom: 2%;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transition: 0.2s ease;
+            border-bottom-right-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+        #score-cheats {
+            display: flex;
+            flex-direction: column;
+            background-color: hsl(var(--main), 15%, 25%);
+            padding: 4px;
+            margin: 1%;
+            margin-bottom: 2%;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transition: 0.2s ease;
+            border-bottom-right-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
         #score-info {
-            background-color: hsl(var(--main-hue-theme), 15%, 15%);
+            background-color: hsl(var(--main), 15%, 15%);
         }
             .score-info-block {
-                background-color: var(--segment-bg);
+                background-color: hsl(var(--main), 15%, 15%);
                 border-radius: 8px;
                 padding: 2px 2px;
                 display: flex;
                 flex-direction: column;
                 height: fit-content;
+                width: 100%;
                 box-sizing: border-box; /* Include padding in width and height calculations */
             }
+                #score-perf {
+                    text-align: right;
+                }
                 .score-info-block .title {
                     font-size: 18px;
-                    color: hsl(var(--accent1), 45%, 80%);
+                    color: hsl(var(--accent1), 35%, 40%);
                     font-weight: 600;
                     opacity: 0.7;
+                    background: linear-gradient(45deg, hsla(var(--main), 50%, 35%, 0.2), hsla(var(--main), 50%, 40%, 0.1));
+                    border: 1px solid rgba(0, 0, 0, 0.2);
+                    border-bottom: 1px solid hsl(var(--main), 100%, 65%);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                    padding: 8px;
+                    transform: skewX(-15deg);
+                    display: inline-block;
+                    margin-left: 6px;
+                    margin-right: 6px;
                 }
                 .score-info-block .value {
                     font-size: 14px;
                     color: hsl(var(--accent1), 25%, 60%);
                     font-weight: 600;
+                    margin-left: 6px;
+                    margin-right: 6px;
                 }
                     .title {
                         margin-bottom: 0px !important;

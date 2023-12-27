@@ -268,6 +268,7 @@ new Vue({
         videoheight: '360px',
         renderedreplayurl: '',
         progress: 0,
+        replayIsLoading: false,
     },
     created: function() {
         bus.$on('show-score-window', (scoreId) => { 
@@ -308,20 +309,65 @@ new Vue({
                         console.error(error);
                     });
             },
-            renderReplay: function(scoreId) {
-                igf = 0;
-                fetch(`https://api.kawata.pw/v1/replays/rendered?id=${scoreId}`, {
-                    method: 'GET', // or 'GET' depending on your API
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Handle the response data
-                    console.log(data);
-                })
-                .catch(error => {
-                    // Handle any errors
-                    console.error(error);
+            addCommas(nStr) {
+                nStr += '';
+                var x = nStr.split('.');
+                var x1 = x[0];
+                var x2 = x.length > 1 ? '.' + x[1] : '';
+                var rgx = /(\d+)(\d{3})/;
+                while (rgx.test(x1)) {
+                    x1 = x1.replace(rgx, '$1' + ',' + '$2');
+                }
+                return x1 + x2;
+            },
+            async renderReplay(scoreId) {
+                this.replayIsLoading = true;
+        
+                // Fetch the rendered replay
+                const response = await fetch(`https://api.kawata.pw/v1/replays/rendered?id=${scoreId}`, {
+                    method: 'GET',
                 });
+                console.log(response.status);
+                if (response.status === 200) {
+                    // Fetch the score info
+                    await this.fetchScoreInfo(scoreId);
+        
+                    // Create a new WebSocket connection
+                    const socket = new WebSocket('wss://ordr-ws.issou.best');
+        
+                    // Listen for messages
+                    socket.addEventListener('message', (event) => {
+                        // Parse the received message
+                        const message = JSON.parse(event.data);
+                        console.log('Received message:', message);
+        
+                        // Check if the message is 'render_done_json' and the renderID matches
+                        if (message.type === 'render_done_json' && message.data.score["r_replay_id"] === scoreId) {
+                            // Handle the message
+                            console.log('Render done:', message.data);
+        
+                            // Close the WebSocket connection
+                            socket.close();
+        
+                            // Update the loading state
+                            this.replayIsLoading = false;
+                        }
+                    });
+        
+                    // Connection closed
+                    socket.addEventListener('close', (event) => {
+                        console.log('WebSocket connection closed');
+                    });
+        
+                    // Connection error
+                    socket.addEventListener('error', (event) => {
+                        console.error('WebSocket error:', event);
+                    });
+                } else {
+                    // Handle non-201 response status
+                    console.error('Unexpected response status:', response.status);
+                    this.replayIsLoading = false;
+                }
             },
             play() {
                 if (this.video.paused) {
@@ -495,14 +541,14 @@ new Vue({
                                 <div id="score-banner-map" class="artist-creator">{{ score.beatmap.artist }} || <a :href="'https://osu.ppy.sh/u/' + score.beatmap.creator + '/'">{{ score.beatmap.creator }}</a></div>
                                 </div>
                             </div>
-                            <div id="render-replay" @click="renderReplay(score.id)" v-if="!score.r_replay_id" class="level-left" :style="{
+                            <div id="render-replay" @click="renderReplay(score.id)" :disabled="replayIsLoading" v-if="!score.r_replay_id" class="level-left" :style="{
                                 'position': 'absolute',
-                                'left': '0',
-                                'bottom': '13%',
+                                'left': '1',
+                                'bottom': '19%',
                             }">
                                 <div class="map-difficulty">
                                     <span class="kawata-icon"></span>
-                                    <span id="" class="difficulty-title">Render this play?</span>
+                                    <span id="" class="difficulty-title">{{ replayIsLoading ? 'Loading...' : 'Render Replay?' }}</span>
                                 </div>
                             </div>
                             <div id="bm-info" class="selector">
@@ -537,29 +583,59 @@ new Vue({
 
                     </div>
                     <div class="second-block">
-                        <div class="level">
-                            <div id="score-info" class="level-left column is-one-quarter">
-                                <div id="score-perf" class="score-info-block">
-                                    <h5>Performance</h5>
-                                    <h3 class="title">PP: <h1 class="value">{{ score.pp }}</h1></h3>
-                                    <h2 class="title">Score: <h1 class="value">{{ score.score }}</h1></h2>
-                                    <h2 class="title">Accuracy: <h1 class="value">{{ score.acc }}%</h1></h2>
+                        <div id="score-info" class="content">
+                            <div id="score-perf-ext" class="score-info-block">
+                                <div class="info-container">
+                                    <h5 class="title">Performance (Extended)</h5>
+                                    <div class="column">
+                                        <div class="info-value">
+                                            <h3 class="title">300s:</h3>
+                                            <h1 class="value">{{ score.n300 }}</h1>
+                                        </div>
+                                        <div class="info-value">
+                                            <h3 class="title">Geki:</h3>
+                                            <h1 class="value">{{ score.ngeki }}</h1>
+                                        </div>
+                                    </div>
+                                    <div class="column">
+                                        <div class="info-value">
+                                            <h3 class="title">100s:</h3>
+                                            <h1 class="value">{{ score.n100 }}</h1>
+                                        </div>
+                                        <div class="info-value">
+                                            <h3 class="title">Katu:</h3>
+                                            <h1 class="value">{{ score.nkatu }}</h1>
+                                        </div>
+                                    </div>
+                                    <div class="column">
+                                        <div class="info-value">
+                                            <h3 class="title">50s:</h3>
+                                            <h1 class="value">{{ score.n50 }}</h1>
+                                        </div>
+                                        <div class="info-value">
+                                            <h3 class="title">Misses:</h3>
+                                            <h1 class="value">{{ score.nmiss }}</h1>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        <div id="score-info" class="level-right column is-flex">
-                            <div id="score-perf-ext" class="score-info-block">
-                                <h5>Performance (Extended)</h5>
-                                <div class="column">
-                                    <h2 class="title">300s: <h1 class="value">{{ score.n300 }}</h1></h2>
-                                    <h2 class="title">Geki: <h1 class="value">{{ score.ngeki }}</h1></h2>
-                                </div>
-                                <div class="column">
-                                    <h2 class="title">100s: <h1 class="value">{{ score.n100 }}</h1></h2>
-                                    <h2 class="title">Katu: <h1 class="value">{{ score.nkatu }}</h1></h2>
-                                </div>
-                                <div class="column">
-                                    <h2 class="title">50s: <h1 class="value">{{ score.n50 }}</h1></h2>
-                                    <h2 class="title">Misses: <h1 class="value">{{ score.nmiss }}</h1></h2>
+                            <div id="score-cheats" class="score-info-block">
+                            </div>
+                            <div id="score-perf" class="score-info-block">
+                                <div class="info-container">
+                                    <h5 class="title">Performance</h5>
+                                    <div class="info-value">
+                                        <h3 class="title">PP:</h3>
+                                        <h1 class="value">{{ addCommas(score.pp) }}</h1>
+                                    </div>
+                                    <div class="info-value">
+                                        <h3 class="title">Score:</h3>
+                                        <h1 class="value">{{ addCommas(score.score) }}</h1>
+                                    </div>
+                                    <div class="info-value">
+                                        <h3 class="title">Accuracy:</h3>
+                                        <h1 class="value">{{ score.acc }}%</h1>
+                                    </div>
                                 </div>
                             </div>
                         </div>
