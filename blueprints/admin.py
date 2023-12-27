@@ -14,6 +14,7 @@ from quart import Blueprint, jsonify, request, render_template, session
 from objects import glob
 from objects.utils import flash, get_safe_name
 from objects.privileges import Privileges, ComparePrivs
+from datetime import datetime
 
 admin = Blueprint('admin', __name__)
 
@@ -615,4 +616,33 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
 
     else:
         return jsonify({"status": "error","message": "Invalid action. {action} is not a valid action."}),400
+    
+
+async def log(mod: int, user: int, action: str, msg: str, time: datetime) -> None:
+    """
+    Logs an action performed by a user.
+
+    Args:
+        mod (int): The moderator ID, usually session['user_data']['id'].
+        user (int): The user ID.
+        action (str): The action performed.
+        msg (str): Additional message.
+        time (datetime): The timestamp of the action.
+
+    Returns:
+        None
+    """
+    
+    #NOTE, cuz loki didn't know; from, to and action are reserved keywords in mysql. so we have to use backticks around them.
+    query = f"""
+    INSERT INTO logs (`from`, `to`, `action`, msg, time)
+    VALUES ({mod}, {user}, '{action}', {msg}, {time});
+    """
+
+    # if you really want, put this in a try/except block.
+    await glob.db.execute(query)
+    
+    #TODO: post to discord webhook. use env for the url, please.
+
+    
     
