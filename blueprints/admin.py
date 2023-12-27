@@ -14,7 +14,6 @@ from quart import Blueprint, jsonify, request, render_template, session
 from objects import glob
 from objects.utils import flash, get_safe_name
 from objects.privileges import Privileges, ComparePrivs
-from datetime import datetime
 
 admin = Blueprint('admin', __name__)
 
@@ -236,13 +235,13 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
     if action == "restrict":
         if (session["user_data"]["priv"] and Privileges.RestrictUsers) == 0:
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}),403
-        if request.form.get("user") is None:
+        if (await request.form).get("user") is None:
             return jsonify({"status": "error", "message": "'user' not specified."}), 400
         reason = (await request.form).get("reason")
         if reason is None:
             return jsonify({"status": "error", "message": "'reason' not specified."}), 400
         user = await glob.db.fetch(
-            "SELECT id, name, priv FROM users WHERE id = %s", [request.form.get("user")]
+            "SELECT id, name, priv FROM users WHERE id = %s", [(await request.form).get("user")]
         )
         if user is None:
             return jsonify({"status": "error", "message": "User not found."}), 404
@@ -270,10 +269,10 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
         if (session["user_data"]["priv"] and Privileges.RestrictUsers) == 0:
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
 
-        if request.form.get("user") is None:
+        if (await request.form).get("user") is None:
             return jsonify({"status": "error", "message": "'user' not specified."}), 400
         user = await glob.db.fetch(
-            "SELECT id, name, priv FROM users WHERE id = %s", [request.form.get("user")]
+            "SELECT id, name, priv FROM users WHERE id = %s", [(await request.form).get("user")]
         )
         if user is None:
             return jsonify({"status": "error", "message": "User not found."}), 404
@@ -290,10 +289,10 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
         if (session["user_data"]["priv"] and Privileges.SilenceUsers) == 0:
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
 
-        if request.form.get("user") is None:
+        if (await request.form).get("user") is None:
             return jsonify({"status": "error", "message": "'user' not specified."}), 400
 
-        if request.form.get("duration") is None:  # in hours, jsyk.
+        if (await request.form).get("duration") is None:  # in hours, jsyk.
             return jsonify({"status": "error", "message": "'duration' not specified."}), 400
         
         reason = (await request.form).get("reason")
@@ -301,13 +300,13 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             return jsonify({"status": "error", "message": "'reason' not specified."}), 400
         
         try:
-            duration = int(request.form.get("duration"))
+            duration = int((await request.form).get("duration"))
         except ValueError:
             return jsonify({"status": "error", "message": "Invalid duration."}), 400
 
         user = await glob.db.fetch(
             "SELECT id, name, silence_end FROM users WHERE id = %s",
-            [request.form.get("user")],
+            [(await request.form).get("user")],
         )
 
         if user is None:
@@ -341,12 +340,12 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
     elif action == "unsilence":
         if (session["user_data"]["priv"] and Privileges.SilenceUsers) == 0:
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
-        if request.form.get("user") is None:
+        if (await request.form).get("user") is None:
             return jsonify({"status": "error", "message": "'user' not specified."}), 400
 
         user = await glob.db.fetch(
             "SELECT id, name, silence_end FROM users WHERE id = %s",
-            [request.form.get("user")],
+            [(await request.form).get("user")],
         )
 
         if user is None:
@@ -618,7 +617,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
         return jsonify({"status": "error","message": "Invalid action. {action} is not a valid action."}),400
     
 
-async def log(mod: int, user: int, action: str, msg: str, time: datetime) -> None:
+async def log(mod: int, user: int, action: str, msg: str, time) -> None:
     """
     Logs an action performed by a user.
 
