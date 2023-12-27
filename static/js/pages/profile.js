@@ -1,3 +1,5 @@
+
+var bus = new Vue();
 new Vue({
     el: "#app",
     delimiters: ["<%", "%>"],
@@ -47,12 +49,24 @@ new Vue({
             userid: userid
         };
     },
-    created() {
+    async created() {
         // starting a page
         this.modegulag = this.StrtoGulagInt();
         this.LoadProfileData();
         this.LoadAllofdata();
         this.LoadUserStatus();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const score = urlParams.get('score');
+
+        // If 'score' parameter is present, call showScoreWindow after 1 second
+        if (score) {
+            console.log("Showing score: " + score);
+
+            await setTimeout(() => {
+                this.showScoreWindow(score);
+            }, 100); // 1 second delay
+        }
     },
     methods: {
         LoadAllofdata() {
@@ -244,12 +258,11 @@ new Vue({
     },
     computed: {}
 });
-var bus = new Vue();
 new Vue({
     el: '#score-window',
     data: {
         show: false,
-        scoreId: '', // Add a data property to store the score ID
+        scoreId: '', 
         score: null,
         video: null,
         videoheight: '360px',
@@ -257,23 +270,24 @@ new Vue({
         progress: 0,
     },
     created: function() {
-        bus.$on('show-score-window', (scoreId) => { // Receive the score ID as an argument
+        bus.$on('show-score-window', (scoreId) => { 
+            // Reset Score Window Data
+            this.score = null;
+            this.video = null;
+            this.renderedreplayurl = '';
+            this.progress = 0;
+            this.scoreId = scoreId; 
+            this.fetchScoreInfo(); 
             this.show = true;
-            this.scoreId = scoreId; // Store the score ID in the data property
-            this.fetchScoreInfo(); // Call a method to fetch score information
         });
-        // Get the value of --main-hue-theme
         let mainHueTheme = getComputedStyle(document.documentElement)
         .getPropertyValue('--main-hue-theme')
         .trim();
         
-        // Remove the 'deg' from the value and convert it to a number
         mainHueTheme = Number(mainHueTheme.replace('deg', ''));
 
-            // Perform the calculation
             let accent1 = mainHueTheme + 20;
 
-            // Set the value of --accent1
             document.documentElement.style.setProperty('--accent1', `${accent1}deg`);
         },
         methods: {
@@ -338,6 +352,23 @@ new Vue({
                 a.click();
                 document.body.removeChild(a);
             },
+            shareScore() {
+                // Get the current URL without any query parameters
+                const baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+        
+                // Get the scoreId
+                const scoreId = this.scoreId; // Replace this with how you get the scoreId
+        
+                // Create the share URL
+                const shareUrl = `${baseUrl}?score=${scoreId}`;
+        
+                // Copy the share URL to the clipboard
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    console.log('Share URL copied to clipboard');
+                }).catch(err => {
+                    console.error('Could not copy text: ', err);
+                });
+            },
             rewind() {
                 this.video.currentTime = this.video.currentTime - ((this.video.duration / 100) * 5);
             },
@@ -346,10 +377,10 @@ new Vue({
             },
             close: function() {
                 this.show = false;
+                const url = new URL(window.location.href);
+                url.searchParams.delete('score');
+                window.history.replaceState({}, '', url);
             },
-        },
-        mounted() {
-            
         },
         watch: {
             score: function(newScore) {
@@ -451,6 +482,7 @@ new Vue({
                                     </div>
                                     <button @click="forward"><i class="fa fa-fast-forward"></i></button>
                                     <button @click="fullScreen"><i class="fa fa-expand"></i></button>
+                                    <button @click="shareScore"><i class="fa fa-share-alt"></i></button>
                                     <button @click="download"><i class="fa fa-cloud-download"></i></button>
                                 </div>
                             </div>
