@@ -68,6 +68,9 @@ new Vue({
             badges: {},
             load: false,
             playerLoading: false,
+            postresponse: null,
+            postresponsestatus: null,
+            postresponsetimer: 0,
             module: 'Account' // added module data property
         }
     },
@@ -106,7 +109,20 @@ new Vue({
                 body: params
             });
 
-            return response.status;
+            this.postresponsetimer = 5;
+            this.postresponse = await response.json(); // Parse the response as JSON
+            this.postresponsestatus = response.status; 
+            const message = this.postresponse.message; // Get the message from the JSON response
+
+            let timer = setInterval(() => {
+                this.postresponsetimer--;
+                if (this.postresponsetimer === 0) {
+                    clearInterval(timer);
+                    this.postresponse = null;
+                }
+            }, 1000);
+
+            return message; // Return the message from the JSON response
         },
         getAllBadges() {
             const url = `/admin/badges?json=true`;
@@ -197,7 +213,11 @@ new Vue({
                             </a>
                             <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Badges' }"
                             @click="LoadUserEditor('Badges', module)">
-                                <i class="fas fa-certificate"></i><span class="modetext"> Badges </span>
+                                <i class="fas fa-shield"></i><span class="modetext"> Badges </span>
+                            </a>
+                            <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Privileges' }"
+                            @click="LoadUserEditor('Privileges', module)">
+                                <i class="fas fa-lock"></i><span class="modetext"> Privileges </span>
                             </a>
                             <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Logs' }"
                             @click="LoadUserEditor('Logs', module)">
@@ -227,6 +247,11 @@ new Vue({
                         </div>
                     </div>
                     <div id="editUser" class="main-block">
+                        <div class="alert" v-if="postresponse" :style="'background-color: var(--alert-' + postresponsestatus + ');'">
+                            <div class="alert-content">
+                                <p><% postresponse.message %></p>
+                            </div>
+                        </div>
                         <div class="content" v-if="module === 'Account'">
                             <div class="column">
                                 <span class="title is-4 is-centered">Quick Actions</span>
@@ -302,7 +327,13 @@ new Vue({
                                     </div>
                                 </div>
                             </div>
-                            <form>
+                            <form @submit.prevent="postAction('/admin/action/editaccount', {
+                                userId: user.id,
+                                username: user.name,
+                                email: user.email,
+                                country: user.country,
+                                userpage: user.userpage_content
+                            })">
                                 <div class="field">
                                     <label class="label">User ID</label>
                                     <div class="control">
@@ -312,16 +343,16 @@ new Vue({
                                 <div class="field">
                                     <label class="label">Username</label>
                                     <div class="control">
-                                        <input class="input" type="text" name="username" :value="user.name">
+                                        <input class="input" type="text" name="username" v-model="user.name">
                                     </div>
                                 </div>
                                 <div class="field">
                                     <label class="label">Email</label>
                                     <div class="control">
-                                        <input class="input" type="email" name="email" :value="user.email">
+                                        <input class="input" type="email" name="email" v-model="user.email">
                                     </div>
                                 </div>
-                                <div class="field">
+                                <div class="field" v-if="user.country">
                                     <label class="label">Country</label>
                                     <div class="control">
                                         <div class="select is-fullwidth">
@@ -332,7 +363,7 @@ new Vue({
                                 <div class="field">
                                     <label class="label">User Page</label>
                                     <div class="control">
-                                        <textarea id="userpage" class="input" name="userpage" :value="user.userpage_content"></textarea>
+                                        <textarea id="userpage" class="input" name="userpage" v-model="user.userpage_content"></textarea>
                                     </div>
                                 </div>
                                 <div class="field is-grouped">
@@ -344,7 +375,6 @@ new Vue({
                         </div>
                         <div class="content" v-if="module === 'Badges'">
                             <div id="badges" class="columns is-multiline">
-                                <!-- Display badges in two columns -->
                                 <div v-for="(badge, index) in badges" :key="badge.id" class="column is-half">
                                     <div id="badge" class="card" :class="{ 'selected': user.badges.find(b => b.id === badge.id) }" :ref="badge.id" @click="toggleBadgeSelection(badge.id)">
                                         <div id="badge" class="card-image">
@@ -358,15 +388,33 @@ new Vue({
                                 </div>
                             </div>
                         </div>
+                        <div class="content" v-if="module === 'Privileges'">
+                            <p>Privileges editor placeholder</p> <!-- placeholder print statement -->
+                        </div>
                         <div class="content" v-if="module === 'Logs'">
-                            <div class="column">
-                                <span class="title is-4 is-centered">Quick Actions</span>
-                                <div class="level is-centered">
-                                    <div class="level-item">
+                            <h5 class="title">Admin Logs</h5>
+                            <div id="logs" class="columns is-multiline">
+                                <div v-for="(log, index) in user.logs.admin_logs" :key="log.id" class="column is-half">
+                                    <div id="log" class="card">
+                                        <div id="log" class="card-content">
+                                            <h3 class="title"><% log.action %></h3>
+                                            <p><% log.reason %></p>
+                                            <p><% log.time %></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <p>Logs editor placeholder</p> <!-- placeholder print statement -->
+                            <h5 class="title">Client Hashes</h5>
+                            <div id="hashes" class="columns is-multiline">
+                                <div v-for="(hash, index) in user.logs.hashes" :key="index" class="column is-half">
+                                    <div id="hash" class="card">
+                                        <div id="hash" class="card-content">
+                                            <h3 class="title"><% hash.latest_time %></h3>
+                                            <p><% hash.occurrences %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -379,6 +427,21 @@ new Vue({
 
 Vue.component('country-select', {
     props: ['value'],
+    template: `
+        <select v-model="selectedCountry">
+            <option v-for="country in countries" :value="country.code">{{ country.name }}</option>
+        </select>
+    `,
+    computed: {
+        selectedCountry: {
+            get() {
+                return this.value;
+            },
+            set(value) {
+                this.$emit('input', value);
+            }
+        }
+    },
     data() {
         return {
             countries: [
@@ -581,19 +644,4 @@ Vue.component('country-select', {
             ]
         };
     },
-    template: `
-        <select v-model="selectedCountry">
-            <option v-for="country in countries" :value="country.code">{{ country.name }}</option>
-        </select>
-    `,
-    computed: {
-        selectedCountry: {
-            get() {
-                return this.value;
-            },
-            set(value) {
-                this.$emit('input', value);
-            }
-        }
-    }
 });

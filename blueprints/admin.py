@@ -135,10 +135,24 @@ async def user(userid):
         badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
         
         badges.append(badge)
+
+        # Sort the badges based on priority
+        badges.sort(key=lambda x: x['priority'], reverse=True)
         
-
+    
+    logs = {}
+    hashes = await glob.db.fetchall(
+        "SELECT * FROM client_hashes WHERE userid = %s ORDER BY latest_time DESC",
+        (userid,),
+    )
+    admin_logs = await glob.db.fetchall(
+        "SELECT * FROM logs WHERE 'to' = %s ORDER BY 'time' DESC",
+        (userid,),
+    )
+    logs['hashes'] = hashes
+    logs['admin_logs'] = admin_logs
     user['badges'] = badges
-
+    user['logs'] = logs
     # Return JSON response
     return jsonify(user)
 
@@ -253,13 +267,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             # Log Action
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            await glob.db.execute(
-                """
-                INSERT INTO logs (from, to, action, msg, time)
-                VALUES (%s, %s, 'restrict', %s, %s)
-                """,
-                [session["user_data"]["id"], user["id"], reason, current_time]
-            )
+            await log(session["user_data"]["id"], user["id"], "restrict", reason, current_time)
             return jsonify({"status": "success","message": f"Successfully restricted {user['name']} ({user['id']})!"}),200
 
         else:
@@ -283,6 +291,8 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             await glob.db.execute(
                 "UPDATE users SET priv = 1 WHERE id = %s", [user["id"]]
             )
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            await log(session["user_data"]["id"], user["id"], "unrestrict", "", current_time)
             return jsonify({"status": "success","message": f"Successfully unrestricted {user['name']} ({user['id']})!"}), 200
 
     elif action == "silence":
@@ -325,13 +335,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
                 # Log Action
                 current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                await glob.db.execute(
-                    """
-                    INSERT INTO logs (from, to, action, msg, time)
-                    VALUES (%s, %s, 'silence', %s, %s)
-                    """,
-                    [session["user_data"]["id"], user["id"], reason, current_time]
-                )
+                await log(session["user_data"]["id"], user["id"], "silence", reason, current_time)
                 return jsonify({"status": "success","message": f"Successfully silenced {user['name']} ({user['id']})!"}),200
 
             except Exception as e:
@@ -358,6 +362,8 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
                 await glob.db.execute(
                     "UPDATE users SET silence_end = 0 WHERE id = %s", [user["id"]]
                 )
+                current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                await log(session["user_data"]["id"], user["id"], "unsilence", "", current_time)
                 return jsonify({"status": "success","message": f"Successfully unsilenced {user['name']} ({user['id']})!"}), 200
 
             except Exception as e:
@@ -410,13 +416,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             # Log Action
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            await glob.db.execute(
-                """
-                INSERT INTO logs (from, to, action, msg, time)
-                VALUES (%s, %s, 'wipe', %s, %s)
-                """,
-                [session["user_data"]["id"], user["id"], reason, current_time]
-            )
+            await log(session["user_data"]["id"], user["id"], "wipe", reason, current_time)
             return jsonify({"status": "success", "message": f"Successfully wiped {user['name']} ({user['id']})!"}), 200
 
         except Exception as e:
@@ -525,6 +525,30 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
 
         return jsonify({"status": "success", "message": "Privileges changed successfully."}), 200
 
+    elif action == "editaccount":
+        if (session["user_data"]["priv"] & Privileges.ManageUsers) == 0:
+            return jsonify({"status": "error", "message": "You have insufficient privileges to perform this action."}), 403
+        try:
+            safename = get_safe_name((await request.form).get("username"))
+            await glob.db.execute(
+                "UPDATE users SET name = %s, safe_name = %s, email = %s, country = %s, userpage_content = %s WHERE id = %s",
+                [
+                    (await request.form).get("username"),
+                    safename,
+                    (await request.form).get("email"),
+                    (await request.form).get("country"),
+                    (await request.form).get("userpage"),
+                    (await request.form).get("userId"),
+                ],
+            )
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            await log(session["user_data"]["id"], (await request.form).get("userId"), "editaccount", "", current_time)
+            return jsonify({"status": "success", "message": f"Successfully edited {(await request.form).get('username')} ({(await request.form).get('userId')})!"}), 200
+
+        except Exception as e:
+            print(await request.form)
+            return jsonify({"status": "error","message": f"Failed to edit {(await request.form).get('username')} ({(await request.form).get('userId')}).","Error": f"{e}"}), 500
+
     #TODO: implement these. since i forgor initially
     elif action == "rank":
         pass
@@ -564,13 +588,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             # Log Action
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            #await glob.db.execute(
-            #    """
-            #    INSERT INTO logs (from, to, action, time)
-            #    VALUES (%s, %s, 'addbadge', %s)
-            #    """,
-            #    [session["user_data"]["id"], user["id"], current_time]
-            #)
+            await log(session["user_data"]["id"], user["id"], "addbadge", "", current_time)
             return jsonify({"status": "success", "message": f"Successfully added badge to {user['name']} ({user['id']})!"}), 200
         except Exception as e:
             return jsonify({"status": "error","message": f"Failed to add badge to {user['name']} ({user['id']}).","Error": f"{e}"}), 500
@@ -601,18 +619,11 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             # Log Action
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            #await glob.db.execute(
-            #    """
-            #    INSERT INTO logs (from, to, action, time)
-            #    VALUES (%s, %s, 'removebadge', %s)
-            #    """,
-            #    [session["user_data"]["id"], user["id"], current_time]
-            #)
+            await log(session["user_data"]["id"], user["id"], "removebadge", "", current_time)
             return jsonify({"status": "success", "message": f"Successfully removed badge from {user['name']} ({user['id']})!"}), 200
         except Exception as e:
             return jsonify({"status": "error", "message": f"Failed to remove badge from {user['name']} ({user['id']}).", "Error": f"{e}"}), 500
         
-
     else:
         return jsonify({"status": "error","message": "Invalid action. {action} is not a valid action."}),400
     
@@ -631,11 +642,12 @@ async def log(mod: int, user: int, action: str, msg: str, time) -> None:
     Returns:
         None
     """
-    
+    if msg == "":
+        msg = "No reason specified."
     #NOTE, cuz loki didn't know; from, to and action are reserved keywords in mysql. so we have to use backticks around them.
     query = f"""
     INSERT INTO logs (`from`, `to`, `action`, msg, time)
-    VALUES ({mod}, {user}, '{action}', {msg}, {time});
+    VALUES ({mod}, {user}, '{action}', '{msg}', '{time}');
     """
 
     # if you really want, put this in a try/except block.
