@@ -333,6 +333,10 @@
             }
                 #score-perf {
                     text-align: right;
+                    width: 28%;
+                }
+                #score-perf-ext {
+                    width: 47%;
                 }
                 .score-info-block .title {
                     font-size: 18px;
