@@ -322,7 +322,7 @@ new Vue({
             },
             async renderReplay(scoreId) {
                 this.replayIsLoading = true;
-        
+
                 // Fetch the rendered replay
                 const response = await fetch(`https://api.kawata.pw/v1/replays/rendered?id=${scoreId}`, {
                     method: 'GET',
@@ -330,38 +330,40 @@ new Vue({
                 console.log(response.status);
                 if (response.status === 200) {
                     // Fetch the score info
-                    await this.fetchScoreInfo(scoreId);
-        
-                    // Create a new WebSocket connection
-                    const socket = new WebSocket('wss://ordr-ws.issou.best');
-        
-                    // Listen for messages
-                    socket.addEventListener('message', (event) => {
+                    //await this.fetchScoreInfo(scoreId);
+                    const renderResponse = await response.json();
+                    const renderId = renderResponse.render_id;
+                    // Create a new Socket.IO connection
+                    const socket = io.connect('https://ordr-ws.issou.best');
+
+                    // Listen for 'render_done_json' event
+                    socket.on('render_done_json', (message) => {
                         // Parse the received message
-                        const message = JSON.parse(event.data);
                         console.log('Received message:', message);
-        
-                        // Check if the message is 'render_done_json' and the renderID matches
-                        if (message.type === 'render_done_json' && message.data.score["r_replay_id"] === scoreId) {
+
+                        // Check if the renderID matches
+                        if (message.renderID === renderId) {
                             // Handle the message
                             console.log('Render done:', message.data);
-        
-                            // Close the WebSocket connection
-                            socket.close();
-        
+
+                            // Disconnect from the Socket.IO server
+                            socket.disconnect();
+
                             // Update the loading state
                             this.replayIsLoading = false;
+                            this.fetchScoreInfo(scoreId);
                         }
                     });
-        
+
                     // Connection closed
-                    socket.addEventListener('close', (event) => {
-                        console.log('WebSocket connection closed');
+                    socket.on('disconnect', () => {
+                        console.log('Socket.IO connection closed');
                     });
-        
+
                     // Connection error
-                    socket.addEventListener('error', (event) => {
-                        console.error('WebSocket error:', event);
+                    socket.on('error', (error) => {
+                        console.error('Socket.IO error:', error);
+                        this.fetchScoreInfo(scoreId);
                     });
                 } else {
                     // Handle non-201 response status
@@ -548,7 +550,7 @@ new Vue({
                             }">
                                 <div class="map-difficulty">
                                     <span class="kawata-icon"></span>
-                                    <span id="" class="difficulty-title">{{ replayIsLoading ? 'Loading...' : 'Render Replay?' }}</span>
+                                    <span id="" class="difficulty-title">{{ replayIsLoading ? 'Replay Rendering...' : 'Render Replay?' }}</span>
                                 </div>
                             </div>
                             <div id="bm-info" class="selector">
