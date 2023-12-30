@@ -15,13 +15,19 @@
         <div class="flex avatar-flex">
           <div class="column">
             <div class="single-block-content avatar-block-content">
+              <h4 class="mb-4">Note:</h4>
+              <div class="subtitle">
+                You need to clear your browser cache to see the changes.
+                <br>
+                Press Ctrl + F5 or Ctrl + Shift + R to clear your cache.
+              </div>
               <h4 class="mb-4">Avatar</h4>
               <div class="subtitle">
-                {% if session['user_data']['is_donator'] %} 
                 We recommend an image of at least 512x512 (or 1:1 ratio).
+                <br>
+                {% if session['user_data']['is_donator'] %} 
                 You can upload a PNG, JPG, GIF under 128MB
                 {% else %}
-                We recommend an image of at least 512x512 (or 1:1 ratio).
                 You can upload a PNG, or JPG under 32MB
                 {% endif %}
               </div>

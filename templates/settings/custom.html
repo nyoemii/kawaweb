@@ -16,6 +16,12 @@
           <div class="column">
             <form id="upload-profile" action="/settings/custom" method="post" enctype="multipart/form-data">
               <div class="single-block-content avatar-block-content mb-6">
+                <h4 class="mb-4">Note:</h4>
+                <div class="subtitle">
+                  You need to clear your browser cache to see the changes.
+                  <br>
+                  Press Ctrl + F5 or Ctrl + Shift + R to clear your cache.
+                </div>
                 <h4 class="mb-4">Banner</h4>
                 <div class="subtitle">
                   {% if session['user_data']['is_donator'] %}
@@ -69,7 +75,7 @@
           <div class="column">
             <h4 class="mb-4">Preview</h4>
             <div class="preview-block" id="avatar">
-              <div class="top-block" {% if customizations['banner'] == True %}style="background: linear-gradient(hsl(var(--main), 25%, 25%, 20%), hsl(var(--main), 25%, 25%, 60%)), url(/profbanner/{{ session['user_data']['id'] }}); background-size: cover"{% endif %}></div>
+              <div class="top-block" {% if customizations['banner'] == True %}style="background: linear-gradient(hsl(var(--main), 25%, 25%, 20%), hsl(var(--main), 25%, 25%, 60%)), url(/banners/{{ session['user_data']['id'] }}); background-size: cover"{% endif %}></div>
               <div class="bottom-block">
                 <div class="profile-avatar-area">
                   <img id="avatar-img" src="https://a.{{ domain() }}/{{ session.user_data['id']}}" alt="avatar"
