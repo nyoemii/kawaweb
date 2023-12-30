@@ -87,7 +87,12 @@ async def users(page=None):
             "SELECT id, name, priv, country FROM users LIMIT 50 OFFSET %s",
             (Offset,),
         )
-
+    
+    for user in users:
+        user['customisations'] = await glob.db.fetch(
+            "SELECT * FROM user_customisations WHERE userid = %s",
+            [user['id']]
+        )
     if update:
         # Return JSON response
         return jsonify(users)

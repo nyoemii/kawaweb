@@ -34,7 +34,8 @@
         <div class="columns">
             <div class="column">
                 <div v-for="(user, index) in users" :key="user.id" v-if="index % 2 === 0" id="user" class="card" @click="editUser(user.id)">
-                    <div class="card-background" :style="'background-image: url(/banners/' + user.id + ')'" @click="editUser(user.id)"></div>
+                    <div v-if="user.customisations?.has_banner" class="card-background" :style="'background-image: url(/banners/' + user.id + ')'" @click="editUser(user.id)"></div>
+                    <div v-else class="card-background" @click="editUser(user.id)"></div>
                     <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + user.id + ')'"></div>
                     <div class="card-content">
                         <h3><% user.name %></h3>
@@ -44,7 +45,8 @@
             </div>
             <div class="column">
                 <div v-for="(user, index) in users" :key="user.id" v-if="index % 2 !== 0" id="user" class="card" @click="editUser(user.id)">
-                    <div class="card-background" :style="'background-image: url(/banners/' + user.id + ')'" @click="editUser(user.id)"></div>
+                    <div v-if="user.customisations?.has_banner" class="card-background" :style="'background-image: url(/banners/' + user.id + ')'" @click="editUser(user.id)"></div>
+                    <div v-else class="card-background" @click="editUser(user.id)"></div>
                     <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + user.id + ')'"></div>
                     <div class="card-content">
                         <h3><% user.name %></h3>
@@ -58,7 +60,6 @@
 </div>
 
 <div id="editUserWindow"></div>
-
 
 <script src="/static/js/pages/admin/users.js"></script>
 

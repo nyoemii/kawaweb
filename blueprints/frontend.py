@@ -217,6 +217,10 @@ async def settings_custom_post():
     if banner is None and background is None:
         return await flash_with_customizations('error', 'No image was selected!', 'settings/custom')
 
+    query = 'SELECT COUNT(*) FROM user_customisations WHERE userid = %s'
+    row = await glob.db.fetch(query, [session['user_data']['id']])
+    user_has_customisations_entry = row['COUNT(*)']
+    print(user_has_customisations_entry)
     if banner is not None and banner.filename:
         _, file_extension = os.path.splitext(banner.filename.lower())
         if not file_extension in ALLOWED_EXTENSIONS and not session['user_data']['is_donator']:
@@ -236,6 +240,23 @@ async def settings_custom_post():
                 os.remove(banner_file_with_ext)
 
         await banner.save(f'{banner_file_no_ext}{file_extension}')
+        try:
+            if user_has_customisations_entry == 1:
+                await glob.db.execute(
+                    'UPDATE user_customisations '
+                    'SET has_banner = 1 '
+                    'WHERE userid = %s',
+                    [session['user_data']['id']]
+                )
+            else:
+                await glob.db.execute(
+                    'INSERT INTO user_customisations '
+                    '(userid, has_banner) '
+                    'VALUES (%s, 1)',
+                    [session['user_data']['id']]
+                )
+        except Exception as e:
+            return await flash_with_customizations('error', f'Error updating banner in database: {e}', 'settings/custom')
 
     if background is not None and background.filename:
         _, file_extension = os.path.splitext(background.filename.lower())
@@ -255,6 +276,23 @@ async def settings_custom_post():
                 os.remove(background_file_with_ext)
 
         await background.save(f'{background_file_no_ext}{file_extension}')
+        try:
+            if user_has_customisations_entry == 1:
+                await glob.db.execute(
+                    'UPDATE user_customisations '
+                    'SET has_background = 1 '
+                    'WHERE userid = %s',
+                    [session['user_data']['id']]
+                )
+            else:
+                await glob.db.execute(
+                    'INSERT INTO user_customisations '
+                    '(userid, has_background) '
+                    'VALUES (%s, 1)',
+                    [session['user_data']['id']]
+                )
+        except Exception as e:
+            return await flash_with_customizations('error', f'Error updating background in database: {e}', 'settings/custom')
 
     return await flash_with_customizations('success', 'Your customisation has been successfully changed!', 'settings/custom')
 

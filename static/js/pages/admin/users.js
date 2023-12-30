@@ -398,8 +398,8 @@ new Vue({
                                 <div v-for="(log, index) in user.logs.admin_logs" :key="log.id" class="column is-half">
                                     <div id="log" class="card">
                                         <div id="log" class="card-content">
-                                            <h3 class="title"><% log.action %></h3>
-                                            <p><% log.reason %></p>
+                                            <h4 class="title"><% log.action %></h3>
+                                            <h1><% log.msg %></p>
                                             <p><% log.time %></p>
                                         </div>
                                     </div>
