@@ -1,0 +1,63 @@
+{% extends 'admin/base.html' %}
+{% block title %} Beatmaps {% endblock %}
+{% block panel %} Beatmaps {% endblock %}
+{% block header %}
+<link rel="stylesheet" href="/static/css/pages/admin/users.css">
+<script src="/static/js/asserts/vue.js"></script>
+<script src="/static/js/asserts/vue-axios.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+<script>
+    var domain = "{{ domain() }}";
+    var reqs = {{ requests|tojson }};
+</script>
+{% endblock%}
+
+{% block content %}
+
+<div class="dashboard" id="users">
+    <div class="container">
+        <!--<div id="user-search" class="main-block">
+            <div class="search-bar">
+                <div id="sw-search" class="field">
+                    <p class="search-input control has-icons-left">
+                        <input class="input" type="search" placeholder="Search by username or id..." v-model="userquery" @input="handleUserInput" ref="searchInput">
+                        <span class="icon is-left">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </p>
+                </div>
+                
+            </div>
+        </div>-->
+        <div class="columns">
+            <div class="column">
+                <div v-for="(map, index) in reqs" :key="map.id" v-if="index % 2 === 0" id="map" class="card" @click="editMap(map.id)">
+                    <div class="card-background"  @click="editMap(map.id)"></div>
+                    <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + map.player_id + ')'"></div>
+                    <div class="card-content">
+                        <h3><% map.map.name %></h3>
+                        <p>ID: <% map.player_id %></p>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <!--<div v-for="(user, index) in users" :key="user.id" v-if="index % 2 !== 0" id="user" class="card" @click="editUser(user.id)">
+                    <div class="card-background" :style="'background-image: url(/banners/' + user.id + ')'" @click="editUser(user.id)"></div>
+                    <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + user.id + ')'"></div>
+                    <div class="card-content">
+                        <h3><% user.name %></h3>
+                        <p>ID: <% user.id %></p>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div id="editBeatmapWindow"></div>
+
+
+<script src="/static/js/pages/admin/beatmaps.js"></script>
+
+{% endblock %}

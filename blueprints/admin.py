@@ -194,7 +194,7 @@ async def badges():
 
 @admin.route('/badge/<int:badgeid>')
 async def badge(badgeid):
-    """Render the homepage of guweb's admin panel."""
+    """Return information about the provided badge."""
     if not 'authenticated' in session:
         return await flash('error', 'Please login first.', 'login')
 
@@ -227,6 +227,29 @@ async def badge(badgeid):
     
     # Return JSON response
     return jsonify(badge)
+
+@admin.route('/beatmaps')
+async def beatmaps():
+    """Render the beatmaps page of guweb's admin panel."""
+    if not 'authenticated' in session:
+        return await flash('error', 'Please login first.', 'login')
+
+    if not session['user_data']['is_staff']:
+        return await flash('error', f'You have insufficient privileges.', 'home')
+    
+    if (session["user_data"]["priv"] and Privileges.ManageBeatmaps) == 0:
+            return await flash('error', f'You have insufficient privileges.', 'home')
+    
+    requests = await glob.db.fetchall(
+        "SELECT * FROM map_requests WHERE active = 1"
+    )
+        
+    # Return HTML response
+    return await render_template(
+        'admin/beatmaps.html', requests=requests, 
+        datetime=datetime, timeago=timeago
+    )
+
 
 @admin.route("/action/<action>", methods=["POST"])
 async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges", "rank", "unrank", "love", "unlove"]):
@@ -423,7 +446,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             return jsonify({"status": "error","message": f"Failed to wipe {user['name']} ({user['id']}).","Error": f"{e}"}), 500
 
     elif action == "changepassword":
-        form = request.form
+        form = await request.form
         user = form.get("user")
         password = form.get("password")
 
