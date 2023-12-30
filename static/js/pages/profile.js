@@ -40,6 +40,10 @@ new Vue({
                     }
                 },
                 badges: [],
+                userpage: {
+                    load: true,
+                    content: ''
+                },
                 status: {}
             },
             mode: mode,
@@ -84,6 +88,7 @@ new Vue({
                 })
                 .then(res => {
                     this.$set(this.data.stats, 'out', res.data.player.stats);
+                    this.data.userpage.content = res.data.player.info.userpage_content;
                     if (this.load == 0) {
                         this.$set(this.data, 'badges', res.data.player.info.badges);
                         this.load = 1;
@@ -282,7 +287,7 @@ new Vue({
             this.show = true;
         });
         let mainHueTheme = getComputedStyle(document.documentElement)
-        .getPropertyValue('--main-hue-theme')
+        .getPropertyValue('--main')
         .trim();
         
         mainHueTheme = Number(mainHueTheme.replace('deg', ''));

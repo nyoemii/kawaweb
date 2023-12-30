@@ -122,7 +122,11 @@
     </div>
 </div>
 {% endmacro %}
-
+{% macro userpage(title, id) %}
+<!-- TODO: make userpage based on BBCode -->
+<div class="log-block" v-bind:class="{ 'load' : data.userpage.load }">
+</div>
+{% endmacro %}
 {% block header %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
 <link rel="stylesheet" href="/static/css/pages/profile.css">
@@ -223,19 +227,19 @@
     <div class="second-block">
         <div class="columns is-marginless two-sides">
             <div class="column is-one-third" v-cloak>
-                <!--<div class="header" v-if='data.stats[`rank_global_${modegulag}`] != -1'>
+                <div class="header" v-if='(data.stats.out[modegulag].rank) != 0'>
                     <div class="title">
                         <i class="fas fa-user-friends"></i> Rank
                     </div>
                 </div>
-                <div class="stats-block rank-block" v-if='data.stats[`rank_global_${modegulag}`] != -1'>
+                <div class="stats-block rank-block" v-if='(data.stats.out[modegulag].rank) != 0'>
                     <table class="is-striped">
                         <tbody>
                             <tr>
                                 <td>Global rank</td>
                                 <td class="right-aligned">
                                     <span id="global-rank">
-                                        <% '#' + data.stats[`rank_global_${modegulag}`] %>
+                                        <% '#' + (data.stats.out[modegulag].rank) %>
                                     </span>
                                 </td>
                             </tr>
@@ -243,13 +247,13 @@
                                 <td>Country rank</td>
                                 <td class="right-aligned">
                                     <span id="country-rank">
-                                        <% '#' + data.stats[`rank_country_${modegulag}`] %>
+                                        <% '#' + (data.stats.out[modegulag].country_rank) %>
                                     </span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                </div>-->
+                </div>
                 <div class="header">
                     <div class="title">
                         <i class="fas fa-chart-pie"></i> Statistics
@@ -355,6 +359,7 @@
                 </div>-->
             </div>
             <div class="column">
+                {{ userpage('Userpage | Bio | !me', 'bio') }}
                 {{ scores('Best Scores', 'best')}}
                 {{ scores('Recent Scores', 'recent')}}
                 {{ maps('Most Beatmaps Played', 'most')}}
@@ -371,12 +376,12 @@
 <style>
     :root {
         --main:180;
-        --main-hue-theme: var(--main);
+        --main: var(--main);
         --accent1: 0;
     }
     :html {
         --main:180;
-        --main-hue-theme:180deg;
+        --main:180deg;
     }
     {% if user['customisation']['banner'] == True or user['customisation']['background'] == True %}
     {% if user['customisation']['banner'] == True %}
