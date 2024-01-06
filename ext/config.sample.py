@@ -36,6 +36,15 @@ mysql = {
     'password': os.environ["MYSQL_PASSWORD"],
 }
 
+REDIS_HOST = os.environ["REDIS_HOST"]
+REDIS_PORT = int(os.environ["REDIS_PORT"])
+REDIS_USER = os.environ["REDIS_USER"]
+REDIS_PASS = os.environ["REDIS_PASS"]
+REDIS_DB = int(os.environ["REDIS_DB"])
+
+REDIS_AUTH_STRING = f"{REDIS_USER}:{REDIS_PASS}@" if REDIS_USER and REDIS_PASS else ""
+REDIS_DSN = f"redis://{REDIS_AUTH_STRING}{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+
 # path to gulag root (must have leading and following slash)
 path_to_gulag = os.environ["PATH_TO_GULAG"]
 
