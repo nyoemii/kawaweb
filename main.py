@@ -6,6 +6,7 @@ __all__ = ()
 import os
 
 import aiohttp
+from redis import asyncio as aioredis
 import orjson
 from quart import Quart
 from quart import render_template
@@ -35,6 +36,13 @@ async def mysql_conn() -> None:
 async def http_conn() -> None:
     glob.http = aiohttp.ClientSession(json_serialize=lambda x: orjson.dumps(x).decode())
     log('Got our Client Session!', Ansi.LGREEN)
+
+@app.before_serving
+async def redis_conn() -> None:
+    glob.redis = aioredis
+    glob.redis = await aioredis.from_url(glob.config.REDIS_DSN)
+    log('Connected to Redis!', Ansi.LGREEN)
+
 
 @app.after_serving
 async def shutdown() -> None:
