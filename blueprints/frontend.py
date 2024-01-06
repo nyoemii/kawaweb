@@ -70,6 +70,7 @@ async def settings_profile_post():
 
     new_name = form.get('username', type=str)
     new_email = form.get('email', type=str)
+    hue = form.get('hue', type=int)
 
     if new_name is None or new_email is None:
         return await flash('error', 'Invalid parameters.', 'home')
@@ -132,7 +133,16 @@ async def settings_profile_post():
             'WHERE id = %s',
             [new_email, session['user_data']['id']]
         )
-
+    if hue < 0 or hue > 360:
+        return await flash('error', 'Your hue value is invalid.', 'settings/profile')
+    
+    await glob.db.execute(
+        'UPDATE user_customisations '
+        'SET hue = %s '
+        'WHERE userid = %s',
+        [hue, session['user_data']['id']]
+    )
+    
     # logout
     session.pop('authenticated', None)
     session.pop('user_data', None)
@@ -465,10 +475,11 @@ async def login_post():
 
     # check if account exists
     user_info = await glob.db.fetch(
-        'SELECT id, name, email, priv, '
-        'pw_bcrypt, silence_end '
-        'FROM users '
-        'WHERE safe_name = %s',
+        'SELECT users.id, users.name, users.email, user_customizations.priv, '
+        'users.pw_bcrypt, uusers.silence_end, user_customisations.hue '
+        'FROM users'
+        'LEFT JOIN user_customisations ON users.id = users_customizations.userid '
+        'WHERE users.safe_name = %s',
         [utils.get_safe_name(username)]
     )
 
@@ -524,7 +535,8 @@ async def login_post():
         'priv': user_info['priv'],
         'silence_end': user_info['silence_end'],
         'is_staff': user_info['priv'] & Privileges.Staff != 0,
-        'is_donator': user_info['priv'] & Privileges.Donator != 0
+        'is_donator': user_info['priv'] & Privileges.Donator != 0,
+        'hue': user_info['hue']
     }
 
     if glob.config.debug:
