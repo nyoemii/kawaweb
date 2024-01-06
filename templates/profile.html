@@ -373,10 +373,10 @@
 {% block bottom %}
 <script src="/static/js/pages/profile.js"></script>
 
-<style>
+<style id="style">
     :root {
         --main:180;
-        --accent1: 0;
+        --accent1: calc(var(--main) + 20);
     }
     :html {
         --main:180;

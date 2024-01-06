@@ -261,7 +261,7 @@ new Vue({
             }
         },
     },
-    computed: {}
+    computed: {},
 });
 new Vue({
     el: '#score-window',
@@ -286,17 +286,8 @@ new Vue({
             this.fetchScoreInfo(); 
             this.show = true;
         });
-        let mainHueTheme = getComputedStyle(document.documentElement)
-        .getPropertyValue('--main')
-        .trim();
-        
-        mainHueTheme = Number(mainHueTheme.replace('deg', ''));
-
-            let accent1 = mainHueTheme + 20;
-
-            document.documentElement.style.setProperty('--accent1', `${accent1}deg`);
-        },
-        methods: {
+    },
+    methods: {
             fetchScoreInfo: function() {
                 // Use the score ID to fetch score information from the API
                 fetch(`https://api.kawata.pw/v1/get_score_info?id=${this.scoreId}&b=1`)
@@ -434,8 +425,8 @@ new Vue({
                 url.searchParams.delete('score');
                 window.history.replaceState({}, '', url);
             },
-        },
-        watch: {
+    },
+    watch: {
             score: function(newScore) {
                 if (newScore) {
                     this.$nextTick(() => {
@@ -492,6 +483,7 @@ new Vue({
                                 scoreBanner.classList.add('video-hovered');
                                 songInfo.classList.add('video-hovered');
                                 songTitle.classList.add('video-hovered');
+                                artistCreator.classList.add('video-hovered');
                                 mapInfo.classList.add('video-hovered');
                             });
 
@@ -499,150 +491,149 @@ new Vue({
                                 scoreBanner.classList.remove('video-hovered');
                                 songInfo.classList.remove('video-hovered');
                                 songTitle.classList.remove('video-hovered');
+                                artistCreator.classList.remove('video-hovered');
                                 mapInfo.classList.remove('video-hovered');
                             });
                         }
                     });
                 }
             }
-        },
-        template: `
-            <div id="score-modal" class="modal" v-bind:class="{ 'is-active': show }">
-                <div class="modal-background" @click="close"></div>
-                <div id="score-window" class="modal-content" v-if="show">
-                    <style>
-                        .score-banner.video-focused {
-                            height: {{ videoheight }};
-                        }
-                    </style>
-                    <div class="main-block">
-                        <div class="score-banner" ref="videoContainer" :style="{
-                            backgroundcolor: 'rgba(0, 0, 0, 0)',
-                            }">
-                            <div v-if="score.r_replay_id" class="replay-block" :style="{
-                                backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/card@2x.jpg)'
-                            }">
-                                <video ref="video" id="video" class="responsive-video" @click="play" :poster="'https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/cover@2x.jpg'">
-                                    <source :src="renderedreplayurl" type="video/mp4">
-                                </video>
-                                <div class="controls">
-                                    <button @click="play"><i class="fa fa-play"></i><i class="fa fa-pause"></i></button>
-                                    <button @click="rewind"><i class="fa fa-fast-backward"></i></button>
-                                    <div class="timeline">
-                                        <div class="bar">
-                                            <div class="inner" :style="{ width: progress + '%' }"></div>
-                                        </div>
+    },
+    template: `
+        <div id="score-modal" class="modal" v-bind:class="{ 'is-active': show }">
+            <div class="modal-background" @click="close"></div>
+            <div id="score-window" class="modal-content" v-if="show">
+                <style>
+                    .score-banner.video-focused {
+                        height: {{ videoheight }};
+                    }
+                </style>
+                <div class="main-block">
+                    <div class="score-banner" ref="videoContainer" :style="{
+                        backgroundcolor: 'rgba(0, 0, 0, 0)',
+                        }">
+                        <div v-if="score.r_replay_id" class="replay-block" :style="{
+                            backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/card@2x.jpg)'
+                        }">
+                            <video ref="video" id="video" class="responsive-video" @click="play" :poster="'https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/cover@2x.jpg'">
+                                <source :src="renderedreplayurl" type="video/mp4">
+                            </video>
+                            <div class="controls">
+                                <button @click="play"><i class="fa fa-play"></i><i class="fa fa-pause"></i></button>
+                                <button @click="rewind"><i class="fa fa-fast-backward"></i></button>
+                                <div class="timeline">
+                                    <div class="bar">
+                                        <div class="inner" :style="{ width: progress + '%' }"></div>
                                     </div>
-                                    <button @click="forward"><i class="fa fa-fast-forward"></i></button>
-                                    <button @click="fullScreen"><i class="fa fa-expand"></i></button>
-                                    <button @click="shareScore"><i class="fa fa-share-alt"></i></button>
-                                    <button @click="download"><i class="fa fa-cloud-download"></i></button>
                                 </div>
+                                <button @click="forward"><i class="fa fa-fast-forward"></i></button>
+                                <button @click="fullScreen"><i class="fa fa-expand"></i></button>
+                                <button @click="shareScore"><i class="fa fa-share-alt"></i></button>
+                                <button @click="download"><i class="fa fa-cloud-download"></i></button>
                             </div>
-                            <div class="score-banner img" :style="{
-                                backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/card@2x.jpg)'
-                            }">
+                        </div>
+                        <div class="score-banner img" :style="{
+                            backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + score.beatmap.set_id + '/covers/card@2x.jpg)'
+                        }">
+                        </div>
+                        <div id="SongInfo">
+                            <div id="score-banner-map" class="title">{{ score.beatmap.title }}
+                            <div id="score-banner-map" class="artist-creator">{{ score.beatmap.artist }} || <a :href="'https://osu.ppy.sh/u/' + score.beatmap.creator + '/'">{{ score.beatmap.creator }}</a></div>
                             </div>
-                            <div id="SongInfo">
-                                <div id="score-banner-map" class="title">{{ score.beatmap.title }}
-                                <div id="score-banner-map" class="artist-creator">{{ score.beatmap.artist }} || <a :href="'https://osu.ppy.sh/u/' + score.beatmap.creator + '/'">{{ score.beatmap.creator }}</a></div>
-                                </div>
+                        </div>
+                        <div id="render-replay" @click="renderReplay(score.id)" :disabled="replayIsLoading" v-if="!score.r_replay_id" class="level-left" :style="{
+                            'position': 'absolute',
+                            'left': '1',
+                            'bottom': '19%',
+                        }">
+                            <div class="map-difficulty">
+                                <span class="kawata-icon"></span>
+                                <span id="" class="difficulty-title">{{ replayIsLoading ? 'Replay Rendering...' : 'Render Replay?' }}</span>
                             </div>
-                            <div id="render-replay" @click="renderReplay(score.id)" :disabled="replayIsLoading" v-if="!score.r_replay_id" class="level-left" :style="{
-                                'position': 'absolute',
-                                'left': '1',
-                                'bottom': '19%',
-                            }">
+                        </div>
+                        <div id="bm-info" class="selector">
+                            <div class="left">
                                 <div class="map-difficulty">
                                     <span class="kawata-icon"></span>
-                                    <span id="" class="difficulty-title">{{ replayIsLoading ? 'Replay Rendering...' : 'Render Replay?' }}</span>
+                                    <span class="difficulty-title">{{ score.beatmap.version }}</span>
                                 </div>
                             </div>
-                            <div id="bm-info" class="selector">
-                                <div class="left">
-                                    <div class="map-difficulty">
-                                        <span class="kawata-icon"></span>
-                                        <span class="difficulty-title">{{ score.beatmap.version }}</span>
+                            <div id="difficulty" class="right">
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">{{ score.beatmap.diff }}⭐</span>
+                                </div>
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">CS: {{ score.beatmap.cs }}</span>
+                                </div>
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">AR: {{ score.beatmap.ar }}</span>
+                                </div>
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">OD: {{ score.beatmap.od }}</span>
+                                </div>
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">HP: {{ score.beatmap.hp }}</span>
+                                </div>
+                                <div class="map-difficulty">
+                                    <span class="difficulty-title">BPM: {{ score.beatmap.bpm }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="second-block">
+                    <div id="score-info" class="content">
+                        <div id="score-perf-ext" class="score-info-block">
+                            <div class="info-container">
+                                <h5 class="title">Performance (Extended)</h5>
+                                <div class="column">
+                                    <div class="info-value">
+                                        <h3 class="title">300s:</h3>
+                                        <h1 class="value">{{ score.n300 }}</h1>
+                                    </div>
+                                    <div class="info-value">
+                                        <h3 class="title">Geki:</h3>
+                                        <h1 class="value">{{ score.ngeki }}</h1>
                                     </div>
                                 </div>
-                                <div id="difficulty" class="right">
-                                    <div class="map-difficulty">
-                                        <span class="difficulty-title">{{ score.beatmap.diff }}⭐</span>
+                                <div class="column">
+                                    <div class="info-value">
+                                        <h3 class="title">100s:</h3>
+                                        <h1 class="value">{{ score.n100 }}</h1>
                                     </div>
-                                    <div class="map-difficulty">
-                                        <span class="difficulty-title">CS: {{ score.beatmap.cs }}</span>
+                                    <div class="info-value">
+                                        <h3 class="title">Katu:</h3>
+                                        <h1 class="value">{{ score.nkatu }}</h1>
                                     </div>
-                                    <div class="map-difficulty">
-                                        <span class="difficulty-title">AR: {{ score.beatmap.ar }}</span>
+                                </div>
+                                <div class="column">
+                                    <div class="info-value">
+                                        <h3 class="title">50s:</h3>
+                                        <h1 class="value">{{ score.n50 }}</h1>
                                     </div>
-                                    <div class="map-difficulty">
-                                        <span class="difficulty-title">OD: {{ score.beatmap.od }}</span>
-                                    </div>
-                                    <div class="map-difficulty">
-                                        <span class="difficulty-title">HP: {{ score.beatmap.hp }}</span>
-                                    </div>
-                                    <div class="map-difficulty">
-                                        <span class="difficulty-title">BPM: {{ score.beatmap.bpm }}</span>
+                                    <div class="info-value">
+                                        <h3 class="title">Misses:</h3>
+                                        <h1 class="value">{{ score.nmiss }}</h1>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                    </div>
-                    <div class="second-block">
-                        <div id="score-info" class="content">
-                            <div id="score-perf-ext" class="score-info-block">
-                                <div class="info-container">
-                                    <h5 class="title">Performance (Extended)</h5>
-                                    <div class="column">
-                                        <div class="info-value">
-                                            <h3 class="title">300s:</h3>
-                                            <h1 class="value">{{ score.n300 }}</h1>
-                                        </div>
-                                        <div class="info-value">
-                                            <h3 class="title">Geki:</h3>
-                                            <h1 class="value">{{ score.ngeki }}</h1>
-                                        </div>
-                                    </div>
-                                    <div class="column">
-                                        <div class="info-value">
-                                            <h3 class="title">100s:</h3>
-                                            <h1 class="value">{{ score.n100 }}</h1>
-                                        </div>
-                                        <div class="info-value">
-                                            <h3 class="title">Katu:</h3>
-                                            <h1 class="value">{{ score.nkatu }}</h1>
-                                        </div>
-                                    </div>
-                                    <div class="column">
-                                        <div class="info-value">
-                                            <h3 class="title">50s:</h3>
-                                            <h1 class="value">{{ score.n50 }}</h1>
-                                        </div>
-                                        <div class="info-value">
-                                            <h3 class="title">Misses:</h3>
-                                            <h1 class="value">{{ score.nmiss }}</h1>
-                                        </div>
-                                    </div>
+                        <div id="score-cheats" class="score-info-block">
+                        </div>
+                        <div id="score-perf" class="score-info-block">
+                            <div class="info-container">
+                                <h5 class="title">Performance</h5>
+                                <div class="info-value">
+                                    <h3 class="title">PP:</h3>
+                                    <h1 class="value">{{ addCommas(score.pp) }}</h1>
                                 </div>
-                            </div>
-                            <div id="score-cheats" class="score-info-block">
-                            </div>
-                            <div id="score-perf" class="score-info-block">
-                                <div class="info-container">
-                                    <h5 class="title">Performance</h5>
-                                    <div class="info-value">
-                                        <h3 class="title">PP:</h3>
-                                        <h1 class="value">{{ addCommas(score.pp) }}</h1>
-                                    </div>
-                                    <div class="info-value">
-                                        <h3 class="title">Score:</h3>
-                                        <h1 class="value">{{ addCommas(score.score) }}</h1>
-                                    </div>
-                                    <div class="info-value">
-                                        <h3 class="title">Accuracy:</h3>
-                                        <h1 class="value">{{ score.acc }}%</h1>
-                                    </div>
+                                <div class="info-value">
+                                    <h3 class="title">Score:</h3>
+                                    <h1 class="value">{{ addCommas(score.score) }}</h1>
+                                </div>
+                                <div class="info-value">
+                                    <h3 class="title">Accuracy:</h3>
+                                    <h1 class="value">{{ score.acc }}%</h1>
                                 </div>
                             </div>
                         </div>
@@ -650,6 +641,7 @@ new Vue({
                 </div>
             </div>
         </div>
+    </div>
     </div>
     `
 });
