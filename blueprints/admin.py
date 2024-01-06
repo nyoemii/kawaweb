@@ -406,7 +406,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             return jsonify({"status": "error", "message": "'user' not specified."}), 400
 
         user = await glob.db.fetch(
-            "SELECT id, name FROM users WHERE id = %s", [(await request.form).get("user")]
+            "SELECT id, name, country FROM users WHERE id = %s", [(await request.form).get("user")]
         )
         if user is None:
             return jsonify({"status": "error", "message": "User not found."}), 404
@@ -417,7 +417,6 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
         try:
             modes = [0, 1, 2, 3, 4, 5, 6, 7, 8]
             # Move scores to wiped_scores table
-            ep = "Moving scores to wiped_scores table"
             await glob.db.execute(
                 f"""
                 INSERT INTO wiped_scores (id, map_md5, score, pp, acc, max_combo, mods, n300, n100, n50, nmiss, ngeki, nkatu, grade, status, mode, play_time, time_elapsed, client_flags, userid, perfect, online_checksum, r_replay_id)
@@ -427,7 +426,6 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
                 """
             )
             # Delete scores from scores table
-            ep = "Deleting scores from scores table"
             await glob.db.execute(
                 f"""
                 DELETE FROM scores
@@ -436,7 +434,6 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             )
             # Reset Players Stats
             for mode in modes:
-                ep = f"Resetting stats for mode {mode}"
                 query = f"""
                 UPDATE stats
                 SET tscore = 0, rscore = 0, pp = 0, plays = 0, playtime = 0, acc = 0.000, max_combo = 0, total_hits = 0, replay_views = 0, xh_count = 0, x_count = 0, sh_count = 0, s_count = 0, a_count = 0
@@ -444,14 +441,25 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
                 """
 
                 await glob.db.execute(query)
+                
+                await glob.redis.zrem(
+                    f"bancho:leaderboard:{mode}",
+                    user['id'],
+                )
+
+                await glob.redis.zrem(
+                    f'bancho:leaderboard:{mode}:{user["country"]}',
+                    user['id'],
+            )
+
             # Log Action
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
+            
             await log(session["user_data"]["id"], user["id"], "wipe", reason, current_time)
             return jsonify({"status": "success", "message": f"Successfully wiped {user['name']} ({user['id']})!"}), 200
 
         except Exception as e:
-            return jsonify({"status": "error","message": f"Failed to wipe {user['name']} ({user['id']}).","Error": f"{e} on {ep}"}), 500
+            return jsonify({"status": "error","message": f"Failed to wipe {user['name']} ({user['id']}).","Error": f"{e}"}), 500
 
     elif action == "changepassword":
         form = await request.form
