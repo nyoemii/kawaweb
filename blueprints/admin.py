@@ -13,7 +13,7 @@ from quart import Blueprint, jsonify, request, render_template, session
 
 from objects import glob
 from objects.utils import flash, get_safe_name
-from objects.privileges import Privileges, ComparePrivs
+from objects.privileges import Privileges, ComparePrivs, GetPriv
 
 admin = Blueprint('admin', __name__)
 
@@ -243,7 +243,7 @@ async def beatmaps():
     if not session['user_data']['is_staff']:
         return await flash('error', f'You have insufficient privileges.', 'home')
     
-    if (session["user_data"]["priv"] and Privileges.ManageBeatmaps) == 0:
+    if Privileges.ManageBeatmaps not in GetPriv(session["user_data"]["priv"]):
             return await flash('error', f'You have insufficient privileges.', 'home')
     
     requests = await glob.db.fetchall(
@@ -276,7 +276,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
         return jsonify({"status": "error","message": "Invalid content type. use application/x-www-form-urlencoded."}), 400
 
     if action == "restrict":
-        if (session["user_data"]["priv"] and Privileges.RestrictUsers) == 0:
+        if Privileges.RestrictUsers not in GetPriv(session["user_data"]["priv"]):
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}),403
         if (await request.form).get("user") is None:
             return jsonify({"status": "error", "message": "'user' not specified."}), 400
@@ -303,7 +303,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             return jsonify({"status": "error","message": f"{user['name']} ({user['id']}) is already restricted."}),400
 
     elif action == "unrestrict":
-        if (session["user_data"]["priv"] and Privileges.RestrictUsers) == 0:
+        if Privileges.RestrictUsers not in GetPriv(session["user_data"]["priv"]):
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
 
         if (await request.form).get("user") is None:
@@ -325,7 +325,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             return jsonify({"status": "success","message": f"Successfully unrestricted {user['name']} ({user['id']})!"}), 200
 
     elif action == "silence":
-        if (session["user_data"]["priv"] and Privileges.SilenceUsers) == 0:
+        if Privileges.SilenceUsers not in GetPriv(session["user_data"]["priv"]):
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
 
         if (await request.form).get("user") is None:
@@ -371,7 +371,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
                 return jsonify({"status": "error","message": f"Failed to silence {user['name']} ({user['id']}).","Error": f"{e}"}), 500
 
     elif action == "unsilence":
-        if (session["user_data"]["priv"] and Privileges.SilenceUsers) == 0:
+        if Privileges.SilenceUsers not in GetPriv(session["user_data"]["priv"]):
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
         if (await request.form).get("user") is None:
             return jsonify({"status": "error", "message": "'user' not specified."}), 400
@@ -399,10 +399,9 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
                 return jsonify({"status": "error","message": f"Failed to unsilence {user['name']} ({user['id']}).","Error": f"{e}"}),500
 
     elif action == "wipe":
-        if (session["user_data"]["priv"] and Privileges.WipeUsers) == 0:
+        if Privileges.WipeUsers not in GetPriv(session["user_data"]["priv"]):
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
 
-        print(session["user_data"])
         if (await request.form).get("user") is None:
             return jsonify({"status": "error", "message": "'user' not specified."}), 400
 
@@ -459,7 +458,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
         user = form.get("user")
         password = form.get("password")
 
-        if (session["user_data"]["priv"] and Privileges.ManageUsers) == 0:
+        if Privileges.ManageUsers not in GetPriv(session["user_data"]["priv"]):
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
 
         if user is None:
@@ -526,7 +525,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
 
         newpriv = int(newpriv)
 
-        if (session["user_data"]["priv"] & (Privileges.ManageUsers | Privileges.ManagePrivs)) == 0:
+        if Privileges.ManageUsers not in GetPriv(session["user_data"]["priv"]) and Privileges.ManagePrivs not in GetPriv(session["user_data"]["priv"]):
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
 
         if user is None:
@@ -558,7 +557,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
         return jsonify({"status": "success", "message": "Privileges changed successfully."}), 200
 
     elif action == "editaccount":
-        if (session["user_data"]["priv"] & Privileges.ManageUsers) == 0:
+        if Privileges.ManageUsers not in GetPriv(session["user_data"]["priv"]):
             return jsonify({"status": "error", "message": "You have insufficient privileges to perform this action."}), 403
         try:
             safename = get_safe_name((await request.form).get("username"))
@@ -581,21 +580,109 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             print(await request.form)
             return jsonify({"status": "error","message": f"Failed to edit {(await request.form).get('username')} ({(await request.form).get('userId')}).","Error": f"{e}"}), 500
 
-    #TODO: implement these. since i forgor initially
     elif action == "rank":
-        pass
+        if Privileges.ManageBeatmaps not in GetPriv(session["user_data"]["priv"]):
+            return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
+        
+        if map is None:
+            return jsonify({"status": "error", "message": "'map' not specified."}), 400
+    
+        mapdb = await glob.db.fetch("SELECT * FROM maps WHERE id = '{map}'")
+        if mapdb is None:
+            return jsonify({"status": "error", "message": "Map not found."}), 404
+        
+        elif mapdb["status"] == 2:
+            return jsonify({"status": "error", "message": "Map is already ranked."}), 400   
+        
+        elif mapdb["frozen"] == 1:
+            return jsonify({"status": "error", "message": "Map is frozen, ranking is not allowed."}), 400
+        
+        try:
+            glob.db.execute("UPDATE maps SET status = 2 WHERE id = %s", [map])
+        
+        except Exception as e:
+            return jsonify({"status": "error","message": f"Failed to rank map {map}.","Error": f"{e}"}), 500
+        
+        return jsonify({"status": "success", "message": f"Successfully ranked map {map}!"}), 200
 
     elif action == "unrank":
-        pass
+        if Privileges.ManageBeatmaps not in GetPriv(session["user_data"]["priv"]):
+            return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
+        
+        if map is None:
+            return jsonify({"status": "error", "message": "'map' not specified."}), 400
+    
+        mapdb = await glob.db.fetch("SELECT * FROM maps WHERE id = '{map}'")
+        if mapdb is None:
+            return jsonify({"status": "error", "message": "Map not found."}), 404
+        
+        elif mapdb["status"] == 0:
+            return jsonify({"status": "error", "message": "Map is not already ranked."}), 400   
+        
+        elif mapdb["frozen"] == 1:
+            return jsonify({"status": "error", "message": "Map is frozen, ranking is not allowed."}), 400
+        
+        try:
+            glob.db.execute("UPDATE maps SET status = 2 WHERE id = %s", [map])
+        
+        except Exception as e:
+            return jsonify({"status": "error","message": f"Failed to unrank map {map}.","Error": f"{e}"}), 500
+        
+        return jsonify({"status": "success", "message": f"Successfully unranked map {map}!"}), 200
 
     elif action == "love":
-        pass
+        if Privileges.ManageBeatmaps not in GetPriv(session["user_data"]["priv"]):
+            return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
+        
+        if map is None:
+            return jsonify({"status": "error", "message": "'map' not specified."}), 400
+    
+        mapdb = await glob.db.fetch("SELECT * FROM maps WHERE id = '{map}'")
+
+        if mapdb is None:
+            return jsonify({"status": "error", "message": "Map not found."}), 404
+        
+        elif mapdb["status"] == 5:
+            return jsonify({"status": "error", "message": "Map is already loved.."}), 400   
+        
+        elif mapdb["frozen"] == 1:
+            return jsonify({"status": "error", "message": "Map is frozen, loving is not allowed."}), 400
+        
+        try:
+            glob.db.execute("UPDATE maps SET status = 2 WHERE id = %s", [map])
+        
+        except Exception as e:
+            return jsonify({"status": "error","message": f"Failed to love map {map}.","Error": f"{e}"}), 500
+        
+        return jsonify({"status": "success", "message": f"Successfully loved map {map}!"}), 200
 
     elif action == "unlove":
-        pass
+        if Privileges.ManageBeatmaps not in GetPriv(session["user_data"]["priv"]):
+            return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
+        
+        if map is None:
+            return jsonify({"status": "error", "message": "'map' not specified."}), 400
+    
+        mapdb = await glob.db.fetch("SELECT * FROM maps WHERE id = '{map}'")
+        if mapdb is None:
+            return jsonify({"status": "error", "message": "Map not found."}), 404
+        
+        elif mapdb["status"] != 5:
+            return jsonify({"status": "error", "message": "Map is not already loved."}), 400   
+        
+        elif mapdb["frozen"] == 1:
+            return jsonify({"status": "error", "message": "Map is frozen, loving is not allowed."}), 400
+        
+        try:
+            glob.db.execute("UPDATE maps SET status = 2 WHERE id = %s", [map])
+        
+        except Exception as e:
+            return jsonify({"status": "error","message": f"Failed to unlove map {map}.","Error": f"{e}"}), 500
+        
+        return jsonify({"status": "success", "message": f"Successfully unlove map {map}!"}), 200
 
     elif action == "addbadge":
-        if (session["user_data"]["priv"] and Privileges.ManageBadges) == 0:
+        if Privileges.ManageBadges not in GetPriv(session["user_data"]["priv"]):
             return jsonify({"status": "error","message": "You have insufficient privileges to perform this action."}), 403
 
         if (await request.form).get("user") is None:
@@ -626,7 +713,7 @@ async def Action(action: Literal["wipe", "restrict", "unrestrict", "silence", "u
             return jsonify({"status": "error","message": f"Failed to add badge to {user['name']} ({user['id']}).","Error": f"{e}"}), 500
         
     elif action == "removebadge":
-        if (session["user_data"]["priv"] & Privileges.ManageBadges) == 0:
+        if Privileges.ManageBadges not in GetPriv(session["user_data"]["priv"]):
             return jsonify({"status": "error", "message": "You have insufficient privileges to perform this action."}), 403
 
         user = (await request.form).get("user")
