@@ -25,7 +25,7 @@ if service nginx restart; then
     echo "Nginx restarted successfully"
 else
     echo "Failed to restart nginx. Status:"
-    service nginx status
+    nginx
 fi
 
 
