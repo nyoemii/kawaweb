@@ -480,7 +480,7 @@ async def login_post():
         'SELECT users.id, users.name, users.email, users.priv, '
         'users.pw_bcrypt, users.silence_end, user_customisations.hue '
         'FROM users '
-        'LEFT JOIN user_customisations ON users.id = users_customisations.userid '
+        'LEFT JOIN user_customisations ON users.id = user_customisations.userid '
         'WHERE users.safe_name = %s',
         [utils.get_safe_name(username)]
     )
