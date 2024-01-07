@@ -63,7 +63,7 @@
           </div>
         </div>
         -->
-        <div class="single-blcok-content">
+        <div class="single-block-content">
           <div class="block-content--left">
             <div class="field-label is-normal">
               <label class="label">Hue</label>
@@ -71,7 +71,7 @@
           </div>
           <div class="block-content--right">
             <div class="field">
-              <p class="control">
+              <p class="control" id="HueControl">
                 <input class="slider" id="HueSlider" type="range" min="0" max="360" value="{{ session.user_data['hue'] or 180}}">
                 <input class="input"  id="HueInput" name="hue"  type="number"min="0" max="360" value="{{ session.user_data['hue'] or 180}}">
               </p>
@@ -83,6 +83,41 @@
     </div>
   </div>
 </div>
+
+<style>
+  #HueInput {
+    max-width: 60;
+    appearance: textfield;
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    
+  }
+
+  #HueSlider {
+    margin-right: 51px;
+    appearance: none;
+    background: hsl(var(--main), 10%, 20%);
+    opacity: 0.25;
+    transition: opacity 0.2s ease-in;
+    outline: none;
+  }
+
+  #HueSlider:hover {
+    opacity: 1;
+  }
+
+  #HueSlider:-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: hsl(var(--main), 100%, 50%);
+    cursor: pointer;
+  }
+  #HueControl {
+    display: flex;
+    align-items: center;
+  }
+</style>
 
 <script>
   var slider = document.querySelector('#HueSlider');
