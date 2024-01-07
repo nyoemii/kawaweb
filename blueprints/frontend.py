@@ -135,14 +135,14 @@ async def settings_profile_post():
             'WHERE id = %s',
             [new_email, session['user_data']['id']]
         )
-    if hue < 0 or hue > 360:
+    if new_hue < 0 or new_hue > 360:
         return await flash('error', 'Your hue value is invalid.', 'settings/profile')
     
     await glob.db.execute(
         'UPDATE user_customisations '
         'SET hue = %s '
         'WHERE userid = %s',
-        [hue, session['user_data']['id']]
+        [new_hue, session['user_data']['id']]
     )
 
     # logout
