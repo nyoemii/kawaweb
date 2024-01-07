@@ -478,7 +478,7 @@ async def login_post():
     # check if account exists
     user_info = await glob.db.fetch(
         'SELECT users.id, users.name, users.email, users.priv, '
-        'users.pw_bcrypt, uusers.silence_end, user_customisations.hue '
+        'users.pw_bcrypt, users.silence_end, user_customisations.hue '
         'FROM users '
         'LEFT JOIN user_customisations ON users.id = users_customisations.userid '
         'WHERE users.safe_name = %s',
