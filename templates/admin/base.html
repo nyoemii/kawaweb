@@ -100,7 +100,7 @@
   </footer>
   <style>
     :root {
-      {% if 'user_data' in session and session['user_data']['hue'] %}
+      {% if 'user_data' in session and 'hue' in session['user_data'] and session['user_data']['hue'] %}
         --main: {{ session['user_data']['hue'] }};
       {% else %}
         --main: 180;
