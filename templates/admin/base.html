@@ -100,8 +100,12 @@
   </footer>
   <style>
     :root {
-      --main: {{ session['user_data']['hue'] or 180 }};
-    }
+      {% if 'user_data' in session and 'hue' in session['user_data'] %}
+        --main: {{ session['user_data']['hue'] }};
+      {% else %}
+        --main: 180;
+      {% endif %}
+  }
   </style>
   <!-- main js script -->
   <script src="/static/js/main.js" crossorigin="anonymous"></script>
