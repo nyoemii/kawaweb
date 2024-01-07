@@ -417,9 +417,10 @@ async def profile_select(id):
     mode = request.args.get('mode', 'std', type=str) # 1. key 2. default value
     mods = request.args.get('mods', 'vn', type=str)
     user_data = await glob.db.fetch(
-        'SELECT name, safe_name, id, priv, country '
+        'SELECT users.name, users.safe_name, users.id, users.priv, users.country, user_customisation.hue '
         'FROM users '
-        'WHERE safe_name = %s OR id = %s LIMIT 1',
+        'LEFT JOIN user_customisation ON users.id = user_customisation.user_id '
+        'WHERE users.safe_name = %s OR users.id = %s LIMIT 1',
         [utils.get_safe_name(id), id]
     )
 

@@ -375,12 +375,10 @@
 
 <style id="style">
     :root {
-        --main:180;
+        --main: {{ user_data['hue'] or 180 }};
         --accent1: calc(var(--main) + 20);
     }
-    :html {
-        --main:180;
-    }
+
     {% if user['customisation']['banner'] == True or user['customisation']['background'] == True %}
     {% if user['customisation']['banner'] == True %}
         .profile-bg {

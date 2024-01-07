@@ -76,7 +76,7 @@
   </script>
   <style>
     :root {
-      --main:180;
+      --main: {{ session['user_data']['hue'] or 180 }};
     }
   </style>
   {% endblock %}
