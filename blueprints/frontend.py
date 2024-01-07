@@ -139,10 +139,10 @@ async def settings_profile_post():
         return await flash('error', 'Your hue value is invalid.', 'settings/profile')
     
     await glob.db.execute(
-        'UPDATE user_customisations '
-        'SET hue = %s '
-        'WHERE userid = %s',
-        [new_hue, session['user_data']['id']]
+        'INSERT INTO user_customisations (userid, hue) '
+        'VALUES (%s, %s) '
+        'ON DUPLICATE KEY UPDATE hue = %s',
+        [session['user_data']['id'], new_hue, new_hue]
     )
 
     # logout
