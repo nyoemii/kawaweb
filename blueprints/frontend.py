@@ -479,7 +479,7 @@ async def login_post():
     user_info = await glob.db.fetch(
         'SELECT users.id, users.name, users.email, user_customizations.priv, '
         'users.pw_bcrypt, uusers.silence_end, user_customisations.hue '
-        'FROM users'
+        'FROM users '
         'LEFT JOIN user_customisations ON users.id = users_customizations.userid '
         'WHERE users.safe_name = %s',
         [utils.get_safe_name(username)]
