@@ -70,18 +70,20 @@ async def settings_profile_post():
 
     new_name = form.get('username', type=str)
     new_email = form.get('email', type=str)
-    hue = form.get('hue', type=int)
+    new_hue = form.get('hue', type=int)
 
     if new_name is None or new_email is None:
         return await flash('error', 'Invalid parameters.', 'home')
 
-    old_name = session['user_data']['name']
+    old_name  = session['user_data']['name']
     old_email = session['user_data']['email']
+    old_hue   = session['user_data']['hue']
 
     # no data has changed; deny post
     if (
         new_name == old_name and
-        new_email == old_email
+        new_email == old_email and
+        new_hue == old_hue
     ):
         return await flash('error', 'No changes have been made.', 'settings/profile')
 
@@ -142,7 +144,7 @@ async def settings_profile_post():
         'WHERE userid = %s',
         [hue, session['user_data']['id']]
     )
-    
+
     # logout
     session.pop('authenticated', None)
     session.pop('user_data', None)
