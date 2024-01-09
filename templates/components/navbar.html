@@ -39,6 +39,9 @@
                 </div>
             </div>-->
 
+            <a class="navbar-item" @click="showDocsPanel">
+                Docs
+            </a>
             {% if session.authenticated and session.user_data['is_staff'] %}
             <a class="navbar-item" href="/admin">
                 Admin
@@ -90,4 +93,5 @@
 </nav>
 {% block content %}
 <div id="search-window"></div>
+<div id="docs-panel"></div>
 {% endblock %}

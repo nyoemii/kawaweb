@@ -325,6 +325,33 @@ new Vue({
                                     <div class="level-item">
                                         <button class="button is-primary" @click="postAction('/admin/action/unsilence', { user: user.id })">Unsilence</button>
                                     </div>
+                                    <div class="level-item">
+                                        <div class="dropdown is-hoverable">
+                                            <div class="dropdown-trigger">
+                                                <button class="button is-primary" aria-haspopup="true" aria-controls="change-password-dropdown-menu">
+                                                    Change Password
+                                                </button>
+                                            </div>
+                                            <div class="dropdown-menu" id="change-password-dropdown-menu" role="menu">
+                                                <div class="dropdown-content">
+                                                    <div class="field">
+                                                        <label class="label">New Password</label>
+                                                        <div class="control">
+                                                            <input class="input" type="password" id="new-password-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="field">
+                                                        <div class="control">
+                                                            <button class="button is-success" @click="postAction('/admin/action/changepassword', { user: user.id, password: document.getElementById('new-password-input').value })">
+                                                                Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                             <form @submit.prevent="postAction('/admin/action/editaccount', {
