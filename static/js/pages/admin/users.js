@@ -185,261 +185,259 @@ new Vue({
     computed: {
     },
     template: `
-        <div id="editUserWindow" class="modal" v-bind:class="{ 'is-active': show }">
-            <div class="modal-background" @click="close"></div>
-            <div id="editUserWindow" class="modal-content" v-if="show">
-                <div id="editUser" class="box">
-                    <div id="editUser" class="user-banner" >
-                        <div id="editUserBanner" class="user-banner-background" :style="'background-image: url(/banners/' + userid + ')'" alt="User Banner">
-                            <div class="info-block">
-                                <h1 class="title">
-                                    <p class="ranks">
-                                        <img :src="'/static/images/flags/' + user.country.toUpperCase() + '.png'" class="user-flag">
-                                        <span class="bgf"><% user.name %></span>
-                                    </p>
-                                </h1>
-                            </div>
+    <div id="editUserWindow" class="modal" v-bind:class="{ 'is-active': show }">
+        <div class="modal-background" @click="close"></div>
+        <div id="editUserWindow" class="modal-content" v-if="show">
+            <div id="editUser" class="box">
+                <div id="editUser" class="user-banner" >
+                    <div id="editUserBanner" class="user-banner-background" :style="'background-image: url(/banners/' + userid + ')'" alt="User Banner">
+                        <div class="info-block">
+                            <h1 class="title">
+                                <p class="ranks">
+                                    <img :src="'/static/images/flags/' + user.country.toUpperCase() + '.png'" class="user-flag">
+                                    <span class="bgf"><% user.name %></span>
+                                </p>
+                            </h1>
                         </div>
-                        <div class="user-flex">
-                            <div class="user-avatar-area">
-                                <img :src="'https://a.' + domain + '/' + userid" alt="avatar" class="rounded-avatar user-avatar"
-                                    onError="this.src='/static/images/avatar_notwork.png';">
-                            </div>
-                            <div class="bar-selection mode-selects">
+                    </div>
+                    <div class="user-flex">
+                        <div class="user-avatar-area">
+                            <img :src="'https://a.' + domain + '/' + userid" alt="avatar" class="rounded-avatar user-avatar"
+                                onError="this.src='/static/images/avatar_notwork.png';">
+                        </div>
+                        <div class="bar-selection mode-selects">
                             <div id="editUser" class="select-left">
-                            <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Account' }"
-                            @click="LoadUserEditor('Account', module)">
-                                <i class="fas fa-user"></i><span class="modetext"> Account </span>
-                            </a>
-                            <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Badges' }"
-                            @click="LoadUserEditor('Badges', module)">
-                                <i class="fas fa-shield"></i><span class="modetext"> Badges </span>
-                            </a>
-                            <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Privileges' }"
-                            @click="LoadUserEditor('Privileges', module)">
-                                <i class="fas fa-lock"></i><span class="modetext"> Privileges </span>
-                            </a>
-                            <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Logs' }"
-                            @click="LoadUserEditor('Logs', module)">
-                                <i class="fas fa-book"></i><span class="modetext"> Logs </span>
-                            </a>
-                        </div>
+                                <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Account' }"
+                                @click="LoadUserEditor('Account', module)">
+                                    <i class="fas fa-user"></i><span class="modetext"> Account </span>
+                                </a>
+                                <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Badges' }"
+                                @click="LoadUserEditor('Badges', module)">
+                                    <i class="fas fa-shield"></i><span class="modetext"> Badges </span>
+                                </a>
+                                <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Privileges' }"
+                                @click="LoadUserEditor('Privileges', module)">
+                                    <i class="fas fa-lock"></i><span class="modetext"> Privileges </span>
+                                </a>
+                                <a class="simple-banner-switch" v-bind:class="{ 'active': module === 'Logs' }"
+                                @click="LoadUserEditor('Logs', module)">
+                                    <i class="fas fa-book"></i><span class="modetext"> Logs </span>
+                                </a>
                             </div>
-                            <div class="bar-selection badge-selects">
-                                <div v-if="user.badges.length != 0" v-for="badge in user.badges" class="select-left badge-block">
-                                    <div class="badge" :style="'background-color: hsl(' + badge.styles.color + ', 20%, 30%); color: hsl(' + badge.styles.color + ', 100%, 80%);'">
-                                        <span v-if="badge.styles.icon">
-                                            <i v-bind:class="'fas fa-' + badge.styles.icon"></i>
-                                        </span>
-                                        <span class="badge-name">
-                                            <% badge.name %>
-                                        </span>
+                        </div>
+                        <div class="bar-selection badge-selects">
+                            <div v-if="user.badges.length != 0" v-for="badge in user.badges" class="select-left badge-block">
+                                <div class="badge" :style="'background-color: hsl(' + badge.styles.color + ', 20%, 30%); color: hsl(' + badge.styles.color + ', 100%, 80%);'">
+                                    <span v-if="badge.styles.icon">
+                                        <i v-bind:class="'fas fa-' + badge.styles.icon"></i>
+                                    </span>
+                                    <span class="badge-name">
+                                        <% badge.name %>
+                                    </span>
+                                </div>
+                            </div>
+                            <div v-else class="select-left">
+                                <div class="badge-block">
+                                    <span>
+                                        This user has no badges.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="editUser" class="main-block">
+                    <div class="alert" v-if="postresponse" :style="'background-color: var(--alert-' + postresponsestatus + ');'">
+                        <div class="alert-content">
+                            <p><% postresponse.message %></p>
+                        </div>
+                    </div>
+                    <div class="content" v-if="module === 'Account'">
+                        <div class="column">
+                            <span class="title is-4 is-centered">Quick Actions</span>
+                            <div id="quickActions" class="level is-centered">
+                                <div class="level-item">
+                                    <div class="dropdown is-hoverable">
+                                        <div class="dropdown-trigger">
+                                            <button class="button is-danger" aria-haspopup="true" aria-controls="wipe-dropdown-menu">
+                                                Wipe
+                                            </button>
+                                        </div>
+                                        <div class="dropdown-menu" id="wipe-dropdown-menu" role="menu">
+                                            <div class="dropdown-content">
+                                                <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'Auto mod' })">
+                                                    Auto mod
+                                                </a>
+                                                <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'FL abuse' })">
+                                                    FL abuse
+                                                </a>
+                                                <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'Requested Wipe' })">
+                                                    Requested Wipe
+                                                </a>
+                                                <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'Overcheating' })">
+                                                    Overcheating
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div v-else class="select-left">
-                                    <div class="badge-block">
-                                        <span>
-                                            This user has no badges.
-                                        </span>
+                                <div class="level-item">
+                                    <div class="dropdown is-hoverable">
+                                        <div class="dropdown-trigger">
+                                            <button class="button is-warning" aria-haspopup="true" aria-controls="silence-dropdown-menu">
+                                                Restrict
+                                            </button>
+                                        </div>
+                                        <div class="dropdown-menu" id="wipe-dropdown-menu" role="menu">
+                                            <div class="dropdown-content">
+                                                <a class="dropdown-item" @click="postAction('/admin/action/restrict', { user: user.id, reason: 'Repeated Offenses' })">
+                                                    Repeated Offenses
+                                                </a>
+                                                <a class="dropdown-item" @click="postAction('/admin/action/restrict', { user: user.id, reason: '3rd Wipe' })">
+                                                    3rd Wipe
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="level-item">
+                                    <button class="button is-success" @click="postAction('/admin/action/unrestrict', { user: user.id })">Unrestrict</button>
+                                </div>
+                                <div class="level-item">
+                                    <div class="dropdown is-hoverable">
+                                        <div class="dropdown-trigger">
+                                            <button class="button is-info" aria-haspopup="true" aria-controls="silence-dropdown-menu">
+                                                Silence
+                                            </button>
+                                        </div>
+                                        <div class="dropdown-menu" id="wipe-dropdown-menu" role="menu">
+                                            <div class="dropdown-content">
+                                                <a class="dropdown-item" @click="postAction('/admin/action/silence', { user: user.id, duration: '2', reason: 'Spam' })">
+                                                    Spam
+                                                </a>
+                                                <a class="dropdown-item" @click="postAction('/admin/action/silence', { user: user.id, duration: '6', reason: 'Consistent usage of inappropriate language' })">
+                                                    Consistent usage of inappropriate language
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="level-item">
+                                    <button class="button is-primary" @click="postAction('/admin/action/unsilence', { user: user.id })">Unsilence</button>
+                                </div>
+                                <div class="level-item">
+                                    <div class="dropdown is-hoverable">
+                                        <div class="dropdown-trigger">
+                                            <button class="button is-primary" aria-haspopup="true" aria-controls="change-password-dropdown-menu">
+                                                Change Password
+                                            </button>
+                                        </div>
+                                        <div class="dropdown-menu" id="change-password-dropdown-menu" role="menu">
+                                            <div class="dropdown-content">
+                                                <div class="field">
+                                                    <label class="label">New Password</label>
+                                                    <div class="control">
+                                                        <input class="input" type="password" id="new-password-input">
+                                                    </div>
+                                                </div>
+                                                <div class="field">
+                                                    <div class="control">
+                                                        <button class="button is-success" @click="postAction('/admin/action/changepassword', { user: user.id, password: document.getElementById('new-password-input').value })">
+                                                            Save
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <form @submit.prevent="postAction('/admin/action/editaccount', {
+                            userId: user.id,
+                            username: user.name,
+                            email: user.email,
+                            country: user.country,
+                            userpage: user.userpage_content
+                        })">
+                            <div class="field">
+                                <label class="label">User ID</label>
+                                <div class="control">
+                                    <input class="input" type="text" :value="user.id" readonly>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Username</label>
+                                <div class="control">
+                                    <input class="input" type="text" name="username" v-model="user.name">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Email</label>
+                                <div class="control">
+                                    <input class="input" type="email" name="email" v-model="user.email">
+                                </div>
+                            </div>
+                            <div class="field" v-if="user.country">
+                                <label class="label">Country</label>
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                        <country-select v-model="user.country"></country-select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">User Page</label>
+                                <div class="control">
+                                    <textarea id="userpage" class="input" name="userpage" v-model="user.userpage_content"></textarea>
+                                </div>
+                            </div>
+                            <div class="field is-grouped">
+                                <div class="control">
+                                    <button class="button is-primary" type="submit">Save</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="content" v-if="module === 'Badges'">
+                    Note: You must leave and re-enter this page to undo any badge changes. Will be fixed eventually.
+                        <div id="badges" class="columns is-multiline">
+                            <div v-for="(badge, index) in badges" :key="badge.id" class="column is-half">
+                                <div id="badge" class="card" :class="{ 'selected': user.badges.find(b => b.id === badge.id) }" :ref="badge.id" @click="toggleBadgeSelection(badge.id)">
+                                    <div id="badge" class="card-image">
+                                        <i :class="'badge-icon ' + badge.styles.icon" :style="'color: hsl('+ badge.styles.color +', 80%, 80%);'"></i>
+                                    </div>
+                                    <div id="badge" class="card-content">
+                                        <h3 class="title" :style="'color: hsl('+ badge.styles.color +', 80%, 80%);'"><% badge.name %></h3>
+                                        <p><% badge.description %></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div id="editUser" class="main-block">
-                        <div class="alert" v-if="postresponse" :style="'background-color: var(--alert-' + postresponsestatus + ');'">
-                            <div class="alert-content">
-                                <p><% postresponse.message %></p>
-                            </div>
-                        </div>
-                        <div class="content" v-if="module === 'Account'">
-                            <div class="column">
-                                <span class="title is-4 is-centered">Quick Actions</span>
-                                <div id="quickActions" class="level is-centered">
-                                    <div class="level-item">
-                                        <div class="dropdown is-hoverable">
-                                            <div class="dropdown-trigger">
-                                                <button class="button is-danger" aria-haspopup="true" aria-controls="wipe-dropdown-menu">
-                                                    Wipe
-                                                </button>
-                                            </div>
-                                            <div class="dropdown-menu" id="wipe-dropdown-menu" role="menu">
-                                                <div class="dropdown-content">
-                                                    <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'Auto mod' })">
-                                                        Auto mod
-                                                    </a>
-                                                    <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'FL abuse' })">
-                                                        FL abuse
-                                                    </a>
-                                                    <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'Requested Wipe' })">
-                                                        Requested Wipe
-                                                    </a>
-                                                    <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'Overcheating' })">
-                                                        Overcheating
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="level-item">
-                                        <div class="dropdown is-hoverable">
-                                            <div class="dropdown-trigger">
-                                                <button class="button is-warning" aria-haspopup="true" aria-controls="silence-dropdown-menu">
-                                                    Restrict
-                                                </button>
-                                            </div>
-                                            <div class="dropdown-menu" id="wipe-dropdown-menu" role="menu">
-                                                <div class="dropdown-content">
-                                                    <a class="dropdown-item" @click="postAction('/admin/action/restrict', { user: user.id, reason: 'Repeated Offenses' })">
-                                                        Repeated Offenses
-                                                    </a>
-                                                    <a class="dropdown-item" @click="postAction('/admin/action/restrict', { user: user.id, reason: '3rd Wipe' })">
-                                                        3rd Wipe
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="level-item">
-                                        <button class="button is-success" @click="postAction('/admin/action/unrestrict', { user: user.id })">Unrestrict</button>
-                                    </div>
-                                    <div class="level-item">
-                                        <div class="dropdown is-hoverable">
-                                            <div class="dropdown-trigger">
-                                                <button class="button is-info" aria-haspopup="true" aria-controls="silence-dropdown-menu">
-                                                    Silence
-                                                </button>
-                                            </div>
-                                            <div class="dropdown-menu" id="wipe-dropdown-menu" role="menu">
-                                                <div class="dropdown-content">
-                                                    <a class="dropdown-item" @click="postAction('/admin/action/silence', { user: user.id, duration: '2', reason: 'Spam' })">
-                                                        Spam
-                                                    </a>
-                                                    <a class="dropdown-item" @click="postAction('/admin/action/silence', { user: user.id, duration: '6', reason: 'Consistent usage of inappropriate language' })">
-                                                        Consistent usage of inappropriate language
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="level-item">
-                                        <button class="button is-primary" @click="postAction('/admin/action/unsilence', { user: user.id })">Unsilence</button>
-                                    </div>
-                                    <div class="level-item">
-                                        <div class="dropdown is-hoverable">
-                                            <div class="dropdown-trigger">
-                                                <button class="button is-primary" aria-haspopup="true" aria-controls="change-password-dropdown-menu">
-                                                    Change Password
-                                                </button>
-                                            </div>
-                                            <div class="dropdown-menu" id="change-password-dropdown-menu" role="menu">
-                                                <div class="dropdown-content">
-                                                    <div class="field">
-                                                        <label class="label">New Password</label>
-                                                        <div class="control">
-                                                            <input class="input" type="password" id="new-password-input">
-                                                        </div>
-                                                    </div>
-                                                    <div class="field">
-                                                        <div class="control">
-                                                            <button class="button is-success" @click="postAction('/admin/action/changepassword', { user: user.id, password: document.getElementById('new-password-input').value })">
-                                                                Save
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <form @submit.prevent="postAction('/admin/action/editaccount', {
-                                userId: user.id,
-                                username: user.name,
-                                email: user.email,
-                                country: user.country,
-                                userpage: user.userpage_content
-                            })">
-                                <div class="field">
-                                    <label class="label">User ID</label>
-                                    <div class="control">
-                                        <input class="input" type="text" :value="user.id" readonly>
-                                    </div>
-                                </div>
-                                <div class="field">
-                                    <label class="label">Username</label>
-                                    <div class="control">
-                                        <input class="input" type="text" name="username" v-model="user.name">
-                                    </div>
-                                </div>
-                                <div class="field">
-                                    <label class="label">Email</label>
-                                    <div class="control">
-                                        <input class="input" type="email" name="email" v-model="user.email">
-                                    </div>
-                                </div>
-                                <div class="field" v-if="user.country">
-                                    <label class="label">Country</label>
-                                    <div class="control">
-                                        <div class="select is-fullwidth">
-                                            <country-select v-model="user.country"></country-select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="field">
-                                    <label class="label">User Page</label>
-                                    <div class="control">
-                                        <textarea id="userpage" class="input" name="userpage" v-model="user.userpage_content"></textarea>
-                                    </div>
-                                </div>
-                                <div class="field is-grouped">
-                                    <div class="control">
-                                        <button class="button is-primary" type="submit">Save</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="content" v-if="module === 'Badges'">
-                        Note: You must leave and re-enter this page to undo any badge changes. Will be fixed eventually.
-                            <div id="badges" class="columns is-multiline">
-                                <div v-for="(badge, index) in badges" :key="badge.id" class="column is-half">
-                                    <div id="badge" class="card" :class="{ 'selected': user.badges.find(b => b.id === badge.id) }" :ref="badge.id" @click="toggleBadgeSelection(badge.id)">
-                                        <div id="badge" class="card-image">
-                                            <i :class="'badge-icon ' + badge.styles.icon" :style="'color: hsl('+ badge.styles.color +', 80%, 80%);'"></i>
-                                        </div>
-                                        <div id="badge" class="card-content">
-                                            <h3 class="title" :style="'color: hsl('+ badge.styles.color +', 80%, 80%);'"><% badge.name %></h3>
-                                            <p><% badge.description %></p>
-                                        </div>
+                    <div class="content" v-if="module === 'Privileges'">
+                        <p>Privileges editor placeholder</p> <!-- placeholder print statement -->
+                    </div>
+                    <div class="content" v-if="module === 'Logs'">
+                        <h5 class="title">Admin Logs</h5>
+                        <div id="logs" class="columns is-multiline">
+                            <div v-for="(log, index) in user.logs.admin_logs" :key="log.id" class="column is-half">
+                                <div id="log" class="card">
+                                    <div id="log" class="card-content">
+                                        <h4 class="title"><% log.action %></h3>
+                                        <h1><% log.msg %></p>
+                                        <p><% log.time %></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="content" v-if="module === 'Privileges'">
-                            <p>Privileges editor placeholder</p> <!-- placeholder print statement -->
-                        </div>
-                        <div class="content" v-if="module === 'Logs'">
-                            <h5 class="title">Admin Logs</h5>
-                            <div id="logs" class="columns is-multiline">
-                                <div v-for="(log, index) in user.logs.admin_logs" :key="log.id" class="column is-half">
-                                    <div id="log" class="card">
-                                        <div id="log" class="card-content">
-                                            <h4 class="title"><% log.action %></h3>
-                                            <h1><% log.msg %></p>
-                                            <p><% log.time %></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <h5 class="title">Client Hashes</h5>
-                            <div id="hashes" class="columns is-multiline">
-                                <div v-for="(hash, index) in user.logs.hashes" :key="index" class="column is-half">
-                                    <div id="hash" class="card">
-                                        <div id="hash" class="card-content">
-                                            <h3 class="title"><% hash.latest_time %></h3>
-                                            <p><% hash.occurrences %></p>
-                                        </div>
+                        <h5 class="title">Client Hashes</h5>
+                        <div id="hashes" class="columns is-multiline">
+                            <div v-for="(hash, index) in user.logs.hashes" :key="index" class="column is-half">
+                                <div id="hash" class="card">
+                                    <div id="hash" class="card-content">
+                                        <h3 class="title"><% hash.latest_time %></h3>
+                                        <p><% hash.occurrences %></p>
                                     </div>
                                 </div>
                             </div>
@@ -448,6 +446,7 @@ new Vue({
                 </div>
             </div>
         </div>
+    </div>
     `
 });
 
