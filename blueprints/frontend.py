@@ -31,6 +31,7 @@ VALID_MODES = frozenset({'std', 'taiko', 'catch', 'mania'})
 VALID_MODS = frozenset({'vn', 'rx', 'ap'})
 
 frontend = Blueprint('frontend', __name__)
+maintenence = False
 
 app = Quart(__name__)
 
@@ -48,9 +49,14 @@ def login_required(func):
         return await func(*args, **kwargs)
     return wrapper
 
+@frontend.route('/docs/<doc>')
+@frontend.route('/docs')
 @frontend.route('/home')
 @frontend.route('/')
-async def home():
+async def home(doc=None):
+    doc=doc
+    if maintenence:
+        return await flash('success', f'Website is currently under maintenence', 'home')
     return await render_template('home.html')
 
 @frontend.route('/home/account/edit')

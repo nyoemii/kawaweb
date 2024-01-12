@@ -29,6 +29,7 @@
             right: 0;
             display: flex;
             align-items: flex-end;
+            justify-content: center;
             pointer-events: all;
             height: 27px;
             z-index: 2;
@@ -50,6 +51,11 @@
                 border-bottom-right-radius: 0;
                 overflow: hidden;
             }
+                .selector .bottom-tab.active {
+                    opacity: 0.9;
+                    background-color: hsl(var(--main), 10%, 16%);
+                    border-bottom: 4px solid;
+                }
                 .selector .bottom-tab:hover {
                     opacity: 1;
                     background-color: hsl(var(--main), 10%, 16%);
@@ -96,6 +102,7 @@
                 border-top-left-radius: 8px;
                 pointer-events: auto;
                 background-size: 100%;
+                background-position: center;
                 transition: max-height 0.4s ease;
                 z-index: 0;
             }
@@ -106,6 +113,7 @@
                 text-align: center;
                 pointer-events: auto;
                 z-index: 1;
+                margin-bottom: 0px !important;
             }
     #docs-window .second-block {
         background: var(--container-bg);
@@ -116,18 +124,58 @@
         border-bottom-left-radius: 20px;
         margin-bottom: 10px;
     }
-        .content {
+        #panel.content {
             background-color: hsl(var(--main), 18%, 18%);
             padding: 4px;
+            padding-top: 12px !important;
             margin: 1%;
             margin-bottom: 2%;
             width: 100%;
             height: 100%;
             overflow: hidden;
             transition: 0.2s ease;
-            border-bottom-right-radius: 8px;
-            border-bottom-left-radius: 8px;
+            border-radius: 8px;
+            position: relative;
         }
+            #panel.content .selector {
+                position: absolute;
+                top: 10;
+                left: 0;
+                right: 0;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                pointer-events: all;
+                height: 27px;
+                z-index: 2;
+                width: 100%;
+            }
+                .selector .top-tab {
+                    display: flex;
+                    padding: 6px;
+                    background: hsl(var(--main), 10%, 15%);
+                    height: 36px;
+                    border-radius: 8px;
+                    opacity: 0.8;
+                    font-weight: 600;
+                    border-top: 3px solid;
+                    transition: 200ms opacity, 200ms border, 200ms filter, 300ms background-color;
+                    margin: 4px 5px 0px 5px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,.25) !important;
+                    border-top-left-radius: 0;
+                    border-top-right-radius: 0;
+                    overflow: hidden;
+                }
+                    .selector .top-tab.active {
+                        opacity: 0.9;
+                        background-color: hsl(var(--main), 10%, 16%);
+                        border-top: 4px solid;
+                    }
+                    .selector .top-tab:hover {
+                        opacity: 1;
+                        background-color: hsl(var(--main), 10%, 16%);
+                        border-top: 4px solid;
+                    }
             .content .doc-block {
                 padding: 22px;
             }
@@ -159,4 +207,14 @@
                     padding: 10px;
                     margin: 10px 0px;
                     border: 1px solid hsl(var(--main), 20%, 28%);
+                }
+                    .doc-content .subsection {
+                        background-color: hsl(var(--main), 20%, 26%);
+                        border-radius: 8px;
+                        padding: 10px;
+                        margin: 10px 0px;
+                        border: 1px solid hsl(var(--main), 20%, 30%);
+                    }
+                .linked {
+                    pointer-events: all;
                 }

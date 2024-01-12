@@ -39,7 +39,7 @@
                 </div>
             </div>-->
 
-            <a id="docs" class="navbar-item" @click="showDocsPanel">
+            <a id="docs" class="navbar-item" @click="showDocsPanel('Rules')">
                 Docs
             </a>
             {% if session.authenticated and session.user_data['is_staff'] %}
