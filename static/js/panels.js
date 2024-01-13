@@ -747,9 +747,10 @@ new Vue({
                     <div id="panel" class="content" v-if="module === 'FAQ'">
                         <div class="doc-block" v-if="page === 'Main'">
                             <div class="doc-section">
-                            <h1>FAQ:</h1>
-                            <div class="subsection">
-                            
+                                <h1>FAQ:</h1>
+                                <div class="subsection">
+
+                                </div>
                             </div>
                         </div>
                     </div>
