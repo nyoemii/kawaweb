@@ -144,6 +144,11 @@ new Vue({
                                     <h4><b>CTB:</b></h4>
                                     Hyperwalk maps are not allowed.
                                 </div>
+                                <div class="subsection">
+                                    <h4><b>AutoPilot</b></h4>
+                                    Any form of Relax is not allowed while using autopilot.
+                                    We can request liveplays at any time and failure to provide them will result in a wipe.
+                                </div>
                             </div>
                             <div class="doc-section">
                                 <h3><i class="shield icon"></i> Moderation policy</h3>
@@ -610,6 +615,7 @@ new Vue({
                                                     Lazer Style Triangle Animations</br>
                                                     Rainbow Visualization</br>
                                                     Discord Rich Presence</br>
+                                                    Show Misses in Relax (Toggle)</br>
                                                     Boss Key Disable (Toggle)</br>
                                                     Auto Hide Replay Overlay (Toggle)</br>
                                                     Low HP Glow on Relax (Toggle)</br>
@@ -623,6 +629,7 @@ new Vue({
                         <div class="doc-block" v-if="page === 'Abypass'">
                             <div class="doc-notice">
                                 <a class="button dl" href="https://abypass.fumo.lol/updater"><i class="fas fa-download"></i>  Download</a>
+                                <a class="button dl" href="https://cute.cat-girls.club/u/logytbz.zip"><i class="fas fa-download"></i>  Download Mirror</a>
                             </div>
                             <div class="doc-section">
                                 <h3><i class="fas fa-exclamation-circle"></i> Abypass Client:</h3>
@@ -668,13 +675,83 @@ new Vue({
                             </div>
                         </div>
                         <div class="doc-block" v-if="page === 'Maple'">
+                            <div class="doc-notice">
+                                <a class="button dl" href="https://maple.software/"><i class="fas fa-download"></i>  Website</a>
+                            </div>
+                            <div class="doc-section">
+                                <h3><i class="fas fa-exclamation-circle"></i> Maple Hack:</h3>
+                                <div class="subsection">
+                                    <h4><b>Maple is a Premium hack for osu! created by Maple Syrup</b></h4>
+                                    <p>It is a very powerful hack that is constantly being updated. </br>
+                                    It's main draw is Aim Assist and Relax that is widely considered to be the best in the community. </br>
+                                    This hack does not have any built in limits, so you must be careful not to break our rules. </p>
+                                    <div class="doc-content">
+                                        <h3><i class="fas fa-exclamation"></i> Features:</h3>
+                                        <div class="subsection">
+                                            <h5>Cheats:</h5>
+                                            <div class="level">
+                                                <p>
+                                                    Aim Assist (3 Versions)</br>
+                                                    Relax Hack</br>
+                                                    Timewarp</br>
+                                                    AR Changer</br>
+                                                </p>
+                                                <p>
+                                                    FL Remover</br>
+                                                    HD Remover</br>
+                                                    CS Changer</br>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="doc-block" v-if="page === 'Skooter'">
                         </div>
                         <div class="doc-block" v-if="page === 'AQN'">
                         </div>
+                        <div class="doc-block" v-if="page === 'osu!rx'">
+                            <div class="doc-notice">
+                                <a class="button dl" href=""></a><i class="fas fa-download"></i>  Download</a>
+                            </div>
+                            <div class="doc-section">
+                                <h3><i class="fas fa-exclamation-circle"></i> osu!rx Hack:</h3>
+                                <div class="subsection">
+                                    <h4><b>Instructions:</b></h4>
+                                    <p>
+                                        osu!rx does not run on the latest version of osu!.</br>
+                                        You must download <a href="https://osekai.net/snapshots/versions/b20220424/b20220424.zip">this version</a> of osu! to use it.</br>
+                                        You must also download <a href="https://cdn.discordapp.com/attachments/598976475579809860/1082594775988981760/osu.exe">this patched exe</a> to use it on our server. This patches the tls to use a higher version required for our server.</br>
+                                        In order to prevent the game from updating you need to make a _STAGING file in your osu! folder.</br>
+                                    </p>
+                                </div>
+                                <div class="subsection">
+                                    <h4><b>Features:</b></h4>
+                                    <div class="level">
+                                        <p>
+                                            Timewarp</br>
+                                            <s>Relax Hack</s></br>
+                                            HitWindow100 Key</br>
+                                        </p>
+                                        <p>
+                                            Playstyles (Single Tap, Alternate, Mouse Only, Tap X)</br>
+                                            Hit Timing Randomization</br>
+                                            Hit Scan</br>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div id="panel" class="content" v-if="module === 'FAQ'">
+                        <div class="doc-block" v-if="page === 'Main'">
+                            <div class="doc-section">
+                            <h1>FAQ:</h1>
+                            <div class="subsection">
+                            
+                            </div>
+                        </div>
                     </div>
                     <div id="panel" class="content" v-if="module === 'Verification'">
                         <div class="doc-block" v-if="page === 'Main'">
