@@ -713,7 +713,7 @@ new Vue({
                         </div>
                         <div class="doc-block" v-if="page === 'osu!rx'">
                             <div class="doc-notice">
-                                <a class="button dl" href=""><i class="fas fa-download"></i>  Download</a>
+                                <a class="button dl" href="https://www.mpgh.net/forum/showthread.php?t=1538659"><i class="fas fa-download"></i>  Download</a>
                             </div>
                             <div class="doc-section">
                                 <h3><i class="fas fa-exclamation-circle"></i> osu!rx Hack:</h3>
