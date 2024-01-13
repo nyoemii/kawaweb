@@ -713,7 +713,7 @@ new Vue({
                         </div>
                         <div class="doc-block" v-if="page === 'osu!rx'">
                             <div class="doc-notice">
-                                <a class="button dl" href=""></a><i class="fas fa-download"></i>  Download</a>
+                                < class="button dl" href=""><i class="fas fa-download"></i>  Download</a>
                             </div>
                             <div class="doc-section">
                                 <h3><i class="fas fa-exclamation-circle"></i> osu!rx Hack:</h3>
@@ -731,7 +731,7 @@ new Vue({
                                     <div class="level">
                                         <p>
                                             Timewarp</br>
-                                            <s>Relax Hack</s></br>
+                                            Relax Hack</br>
                                             HitWindow100 Key</br>
                                         </p>
                                         <p>
