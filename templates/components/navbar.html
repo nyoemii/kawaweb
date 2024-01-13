@@ -43,9 +43,25 @@
                 Docs
             </a>
             {% if session.authenticated and session.user_data['is_staff'] %}
-            <a class="navbar-item" href="/admin">
-                Admin
-            </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    Admin
+                </a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="/admin">
+                        Dash
+                    </a>
+                    <a class="navbar-item" href="/admin/users/1">
+                        Users
+                    </a>
+                    <a class="navbar-item" href="/admin/beatmaps">
+                        Beatmap Requests
+                    </a>
+                    <a class="navbar-item" href="/admin/badges">
+                        Badges
+                    </a>
+                </div>
+            </div>
             {% endif %}
         </div>
 
