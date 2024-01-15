@@ -619,6 +619,41 @@ new Vue({
                             </div>
                         </div>
                         <div id="score-cheats" class="score-info-block">
+                            <div id="cheats" class="info-container" v-if="score.cheat_values">
+                                <h5 class="title">Cheats</h5>
+                                <div id="cheats" class="column">
+                                    <h5 class="title">Assistance:</h5>
+                                    <div id="cheats" class="row">
+                                        <div class="info-value" v-if="score.cheat_values.Assistance.Timewarp.Enabled">
+                                            <h3 class="title">Timewarp:</h3>
+                                            <h1 class="value" v-if="score.cheat_values.Assistance.Timewarp.Rate">{{ score.cheat_values.Assistance.Timewarp.Rate }}% Speed</h1>
+                                        </div>
+                                        <div class="info-value" v-if="score.cheat_values.Assistance.AimCorrection.Enabled">
+                                            <h3 class="title">Aim Correction:</h3>
+                                            <h1 class="value" v-if="score.cheat_values.Assistance.AimCorrection.Value">{{ score.cheat_values.Assistance.AimCorrection.Value }}</h1>
+                                        </div>
+                                        <div class="info-value" v-if="score.cheat_values.Assistance.Relax.Hack">
+                                            <h3 class="title">Relax Hack</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="cheats" class="column">
+                                    <h5 class="title">Appearance:</h5>
+                                    <div id="cheats" class="row">
+                                        <div class="info-value" v-if="score.cheat_values.Appearance.ARChanger.Enabled">
+                                            <h3 class="title">AR Changer:</h3>
+                                            <h1 class="value" v-if="score.cheat_values.Appearance.ARChanger.AR">{{ score.cheat_values.Appearance.ARChanger.AR }} AR</h1>
+                                        </div>
+                                        <div class="info-value" v-if="score.cheat_values.Appearance.CSChanger.Enabled">
+                                            <h3 class="title" v-if="score.cheat_values.Appearance.CSChanger.Enabled">CS Changer</h3>
+                                        </div>
+                                        <div class="info-value" v-if="score.cheat_values.Appearance.Hidden || score.cheat_values.Appearance.Flashlight">
+                                            <h3 class="title" v-if="score.cheat_values.Appearance.Hidden">Hidden Remover</h3>
+                                            <h3 class="title" v-if="score.cheat_values.Appearance.Flashlight">Flashlight Remover</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div id="score-perf" class="score-info-block">
                             <div class="info-container">

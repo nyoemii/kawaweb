@@ -309,20 +309,6 @@
             border-bottom-right-radius: 8px;
             border-bottom-left-radius: 8px;
         }
-        #score-cheats {
-            display: flex;
-            flex-direction: column;
-            background-color: hsl(var(--main), 15%, 25%);
-            padding: 4px;
-            margin: 1%;
-            margin-bottom: 2%;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            transition: 0.2s ease;
-            border-bottom-right-radius: 8px;
-            border-bottom-left-radius: 8px;
-        }
         #score-info {
             background-color: hsl(var(--main), 15%, 15%);
         }
@@ -340,6 +326,32 @@
                     text-align: right;
                     width: 28%;
                 }
+                #score-cheats {
+                    display: flex;
+                    flex-direction: column;
+                    background-color: hsl(var(--main), 15%, 25%);
+                    padding: 4px;
+                    margin: 1%;
+                    margin-bottom: 2%;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                    transition: 0.2s ease;
+                    border-bottom-right-radius: 8px;
+                    border-bottom-left-radius: 8px;
+                }
+                    #cheats.info-container {
+                        display: flex;
+                        flex-direction: column;
+                    }
+                        #cheats.column {
+                            display: flex;
+                            flex-direction: column;
+                        }
+                            #cheats.row {
+                                display: flex;
+                                flex-direction: row;
+                            }
                 #score-perf-ext {
                     width: 47%;
                 }
