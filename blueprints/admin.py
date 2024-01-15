@@ -249,7 +249,21 @@ async def beatmaps():
     requests = await glob.db.fetchall(
         "SELECT * FROM map_requests WHERE active = 1"
     )
-        
+    
+    # Append map_info to each entry in requests
+    for request in requests:
+        map_info = await glob.db.fetch(
+            "SELECT * FROM maps WHERE id = %s",
+            (request['map_id'],),
+        )
+        request['map_info'] = map_info
+    
+    # Convert datetime to string
+    for request in requests:
+        request['datetime'] = request['datetime'].strftime('%Y-%m-%d %H:%M:%S')
+        request['map_info']['last_update'] = request['map_info']['last_update'].strftime('%Y-%m-%d %H:%M:%S')
+    
+    print(requests[1]['map_info'])
     # Return HTML response
     return await render_template(
         'admin/beatmaps.html', requests=requests, 

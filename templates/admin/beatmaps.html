@@ -2,55 +2,51 @@
 {% block title %} Beatmaps {% endblock %}
 {% block panel %} Beatmaps {% endblock %}
 {% block header %}
-<link rel="stylesheet" href="/static/css/pages/admin/users.css">
+<link rel="stylesheet" href="/static/css/pages/admin/beatmaps.css">
 <script src="/static/js/asserts/vue.js"></script>
 <script src="/static/js/asserts/vue-axios.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
 <script>
     var domain = "{{ domain() }}";
-    var reqs = {{ requests|tojson }};
+    var reqs = '{{ requests|tojson }}';
 </script>
 {% endblock%}
 
 {% block content %}
 
-<div class="dashboard" id="users">
+<div class="dashboard" id="beatmaps">
     <div class="container">
-        <!--<div id="user-search" class="main-block">
-            <div class="search-bar">
-                <div id="sw-search" class="field">
-                    <p class="search-input control has-icons-left">
-                        <input class="input" type="search" placeholder="Search by username or id..." v-model="userquery" @input="handleUserInput" ref="searchInput">
-                        <span class="icon is-left">
-                            <i class="fas fa-search"></i>
-                        </span>
-                    </p>
-                </div>
-                
-            </div>
-        </div>-->
         <div class="columns">
-            <div class="column">
-                <div v-for="(map, index) in reqs" :key="map.id" v-if="index % 2 === 0" id="map" class="card" @click="editMap(map.id)">
-                    <div class="card-background"  @click="editMap(map.id)"></div>
-                    <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + map.player_id + ')'"></div>
+            <div class="column"> 
+            {% for map in requests %}
+                {% if loop.index is odd %}
+                <div id="map" class="card" @click="editMap({{ map['map_info'] }})">
+                    <div class="card-background" :style="'background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + {{map['map_info']['set_id']}} + '/covers/card@2x.jpg)'"></div>
+                    <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + {{map['player_id']}} + ')'"></div>
                     <div class="card-content">
-                        <h3><% map.map.name %></h3>
-                        <p>ID: <% map.player_id %></p>
+                        <h3>{{ map['map_info']['artist'] }} - {{ map['map_info']['title'] }}</h3>
+                        <h4>{{ map['map_info']['creator'] }} | {{ map['map_info']['version'] }}</h4>
+                        <p>PlayerID: {{ map['player_id'] }}</p>
                     </div>
                 </div>
+                {% endif %}
+            {% endfor %}
             </div>
-            <div class="column">
-                <!--<div v-for="(user, index) in users" :key="user.id" v-if="index % 2 !== 0" id="user" class="card" @click="editUser(user.id)">
-                    <div class="card-background" :style="'background-image: url(/banners/' + user.id + ')'" @click="editUser(user.id)"></div>
-                    <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + user.id + ')'"></div>
+            <div class="column"> 
+            {% for map in requests %}
+                {% if loop.index is even %}
+                <div id="map" class="card" @click="editMap({{ map['map_info'] }})">
+                    <div class="card-background" :style="'background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + {{map['map_info']['set_id']}} + '/covers/card@2x.jpg)'"></div>
+                    <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + {{map['player_id']}} + ')'"></div>
                     <div class="card-content">
-                        <h3><% user.name %></h3>
-                        <p>ID: <% user.id %></p>
+                        <h3>{{ map['map_info']['artist'] }} - {{ map['map_info']['title'] }}</h3>
+                        <h4>{{ map['map_info']['creator'] }} | {{ map['map_info']['version'] }}</h4>
+                        <p>PlayerID: {{ map['player_id'] }}</p>
                     </div>
-                </div>-->
+                </div>
+                {% endif %}
+            {% endfor %}
             </div>
-        </div>
         </div>
     </div>
 </div>
