@@ -624,15 +624,17 @@ new Vue({
                                 <div id="cheats" class="column">
                                     <h5 class="title">Assistance:</h5>
                                     <div id="cheats" class="row">
-                                        <div class="info-value" v-if="score.cheat_values.Assistance.Timewarp.Enabled">
+                                        <div class="info-value" v-if="score.cheat_values.Timewarp">
                                             <h3 class="title">Timewarp:</h3>
-                                            <h1 class="value" v-if="score.cheat_values.Assistance.Timewarp.Rate">{{ score.cheat_values.Assistance.Timewarp.Rate }}% Speed</h1>
+                                            <h1 class="title" v-if="score.cheat_values.TimewarpType">Type: {{ score.cheat_values.TimewarpType }}</h1>
+                                            <h1 class="value" v-if="score.cheat_values.TimewarpRate">{{ score.cheat_values.TimewarpRate }}% Speed</h1>
+                                            <h1 class="value" v-if="score.cheat_values.TimewarpMultiplier">{{ score.cheat_values.TimewarpMultiplier }}x Speed</h1>
                                         </div>
-                                        <div class="info-value" v-if="score.cheat_values.Assistance.AimCorrection.Enabled">
+                                        <div class="info-value" v-if="score.cheat_values.AimCorrection">
                                             <h3 class="title">Aim Correction:</h3>
-                                            <h1 class="value" v-if="score.cheat_values.Assistance.AimCorrection.Value">{{ score.cheat_values.Assistance.AimCorrection.Value }}</h1>
+                                            <h1 class="value" v-if="score.cheat_values.AimCorrection">{{ score.cheat_values.AimCorrectionValue }}</h1>
                                         </div>
-                                        <div class="info-value" v-if="score.cheat_values.Assistance.Relax.Hack">
+                                        <div class="info-value" v-if="score.cheat_values.RelaxHack">
                                             <h3 class="title">Relax Hack</h3>
                                         </div>
                                     </div>
@@ -640,16 +642,16 @@ new Vue({
                                 <div id="cheats" class="column">
                                     <h5 class="title">Appearance:</h5>
                                     <div id="cheats" class="row">
-                                        <div class="info-value" v-if="score.cheat_values.Appearance.ARChanger.Enabled">
+                                        <div class="info-value" v-if="score.cheat_values.ARChanger">
                                             <h3 class="title">AR Changer:</h3>
-                                            <h1 class="value" v-if="score.cheat_values.Appearance.ARChanger.AR">{{ score.cheat_values.Appearance.ARChanger.AR }} AR</h1>
+                                            <h1 class="value" v-if="score.cheat_values.ARChangerAR">{{ score.cheat_values.ARChangerAR }} AR</h1>
                                         </div>
-                                        <div class="info-value" v-if="score.cheat_values.Appearance.CSChanger.Enabled">
-                                            <h3 class="title" v-if="score.cheat_values.Appearance.CSChanger.Enabled">CS Changer</h3>
+                                        <div class="info-value" v-if="score.cheat_values.CSChanger">
+                                            <h3 class="title" v-if="score.cheat_values.CSChanger">CS Changer</h3>
                                         </div>
-                                        <div class="info-value" v-if="score.cheat_values.Appearance.Hidden || score.cheat_values.Appearance.Flashlight">
-                                            <h3 class="title" v-if="score.cheat_values.Appearance.Hidden">Hidden Remover</h3>
-                                            <h3 class="title" v-if="score.cheat_values.Appearance.Flashlight">Flashlight Remover</h3>
+                                        <div class="info-value" v-if="score.cheat_values.HiddenRemover || score.cheat_values.FlashlightRemover">
+                                            <h3 class="title" v-if="score.cheat_values.HiddenRemover">Hidden Remover</h3>
+                                            <h3 class="title" v-if="score.cheat_values.FlashlightRemover">Flashlight Remover</h3>
                                         </div>
                                     </div>
                                 </div>
