@@ -418,15 +418,29 @@ new Vue({
                     <div class="content" v-if="module === 'Privileges'">
                         <p>Privileges editor placeholder</p> <!-- placeholder print statement -->
                     </div>
-                    <div class="content" v-if="module === 'Logs'">
+                    <div id="logs" class="content" v-if="module === 'Logs'">
                         <h5 class="title">Admin Logs</h5>
                         <div id="logs" class="columns is-multiline">
                             <div v-for="(log, index) in user.logs.admin_logs" :key="log.id" class="column is-half">
                                 <div id="log" class="card">
                                     <div id="log" class="card-content">
-                                        <h4 class="title"><% log.action %></h3>
-                                        <h1><% log.msg %></p>
-                                        <p><% log.time %></p>
+                                        <div class="Sender">
+                                            <div class="SenderAvatar">
+                                                <img :src="'https://a.' + domain + '/' + log.from.id" alt="avatar" class="rounded-avatar">
+                                            </div>
+                                            <div class="SenderInfo">
+                                                <h3 class="from">Action taken by:</h3>
+                                                <h4>
+                                                    <img :src="'/static/images/flags/' + log.from.country.toUpperCase() + '.png'" class="user-flag">
+                                                    <a :href="'/u/' + log.from.id"><% log.from.name %></a>
+                                                </h4>
+                                                <h5>On: <% log.time %></h5>
+                                            </div>
+                                        </div>
+                                        <div class="Action">
+                                            <h3 class="title">Action: <% log.action %></h3>
+                                            <h4>Reason: <% log.msg %></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -436,8 +450,13 @@ new Vue({
                             <div v-for="(hash, index) in user.logs.hashes" :key="index" class="column is-half">
                                 <div id="hash" class="card">
                                     <div id="hash" class="card-content">
-                                        <h3 class="title"><% hash.latest_time %></h3>
-                                        <p><% hash.occurrences %></p>
+                                        <h3 class="title">Client Hashes:</h3>
+                                        <p class="detail">Occurrences: <% hash.occurrences %></p>
+                                        <p class="detail">Last Occurance: <% hash.latest_time %></p>
+                                        <p class="detail">Adapters Hash: <% hash.adapters %></p>
+                                        <p class="detail">Disk Serial: <% hash.disk_serial %></p>
+                                        <p class="detail">OSU Path Hash: <% hash.osupath %></p>
+                                        <p class="detail">Uninstall ID: <% hash.uninstall_id %></p>
                                     </div>
                                 </div>
                             </div>

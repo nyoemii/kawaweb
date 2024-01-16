@@ -347,3 +347,48 @@
     justify-content: center;
     transition: 0.2s ease;
   }
+
+#logs.content .title {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-shadow: -1px 2px 2px rgba(0, 0, 0, 0.33);
+}
+
+#logs.content .columns.is-multiline {
+  margin-top: 8px;
+}
+
+#log.card-content {
+  position: relative;
+}
+
+#log.card-content .Sender {
+  position: relative;
+  display: flex;
+}
+  #log.card-content .Sender .SenderAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-size: cover;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    scale: 3;
+    margin-top: 24px;
+  }
+  #log.card-content .Sender .SenderInfo {
+    margin-left: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+#log.card-content .Action {
+  position: relative;
+}

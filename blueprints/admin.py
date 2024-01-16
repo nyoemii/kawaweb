@@ -154,6 +154,12 @@ async def user(userid):
         "SELECT * FROM logs WHERE `to` = %s ORDER BY `time` DESC",
         (userid,),
     )
+    for admin_log in admin_logs:
+        from_user = await glob.db.fetch(
+            "SELECT id, name, country, priv, safe_name FROM users WHERE id = %s",
+            (admin_log['from'],),
+        )
+        admin_log['from'] = from_user
     print(admin_logs)
     logs['hashes'] = hashes
     logs['admin_logs'] = admin_logs
