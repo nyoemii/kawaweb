@@ -587,15 +587,15 @@ new Vue({
                                             <h5>Cheats:</h5>
                                             <div class="level">
                                                 <p>
-                                                    Aim Correction (Improved Skooter AC, Now taps on Correction)</br>
+                                                    Aim Correction (Improved Skooter AC, Now taps on Correction, Great for No RX)</br>
                                                     Relax Hack (Skooter Relax, Better version soon)</br>
                                                     Timewarp (Both Rate & Multiplier Style)</br>
                                                     Automatic CS Changer</br>
                                                 </p>
                                                 <p>
                                                     AR Changer</br>
-                                                    FL Remover</br>
                                                     HD Remover</br>
+                                                    FL Remover (Prevents Breaking Rules)</br>
                                                 </p>
                                             </div>
                                         </div>

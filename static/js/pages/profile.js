@@ -626,13 +626,15 @@ new Vue({
                                     <div id="cheats" class="row">
                                         <div class="info-value" v-if="score.cheat_values.Timewarp">
                                             <h3 class="title">Timewarp:</h3>
-                                            <h1 class="title" v-if="score.cheat_values.TimewarpType">Type: {{ score.cheat_values.TimewarpType }}</h1>
+                                            <!--<h1 class="title" v-if="score.cheat_values.TimewarpType">Type: {{ score.cheat_values.TimewarpType }}</h1>-->
                                             <h1 class="value" v-if="score.cheat_values.TimewarpRate">{{ score.cheat_values.TimewarpRate }}% Speed</h1>
                                             <h1 class="value" v-if="score.cheat_values.TimewarpMultiplier">{{ score.cheat_values.TimewarpMultiplier }}x Speed</h1>
                                         </div>
                                         <div class="info-value" v-if="score.cheat_values.AimCorrection">
                                             <h3 class="title">Aim Correction:</h3>
-                                            <h1 class="value" v-if="score.cheat_values.AimCorrection">{{ score.cheat_values.AimCorrectionValue }}</h1>
+                                            <h1 class="value" v-if="score.cheat_values.AimCorrection">Range: {{ score.cheat_values.AimCorrectionValue }}</h1>
+                                            <h1 class="value" v-if="score.cheat_values.TimesCorrected"># of Corrections: {{ score.cheat_values.TimesCorrected }}</h1>
+                                            <h1 class="value" v-if="score.cheat_values.TapOnCorrect">Tap on Correct</h1>
                                         </div>
                                         <div class="info-value" v-if="score.cheat_values.RelaxHack">
                                             <h3 class="title">Relax Hack</h3>
