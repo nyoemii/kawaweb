@@ -603,6 +603,7 @@ new Vue({
                                             <h5>Other Features:</h5>
                                             <div class="level">
                                                 <p>
+                                                    In-Game Updater</br>
                                                     Lazer Style UI</br>
                                                     Background Beatmap Importing</br>
                                                     Links to original game folder to save space</br>
