@@ -580,6 +580,7 @@ new Vue({
                                     <p>
                                         Currently Maintained and Developed by The Fantastic Loki.</br>
                                         Contributions have been made by Maple Syrup and Chewy/Pythr.</br>
+                                        Designed to be the Ultimate Community Client, it is the most recommended client to use on our server.</br>
                                     </p>
                                     <div class="doc-content">
                                         <h3><i class="fas fa-exclamation"></i> Features:</h3>
@@ -587,8 +588,8 @@ new Vue({
                                             <h5>Cheats:</h5>
                                             <div class="level">
                                                 <p>
-                                                    Aim Correction (Improved Skooter AC, Now taps on Correction, Great for No RX)</br>
-                                                    Relax Hack (Skooter Relax, Better version soon)</br>
+                                                    Aim Correction (Improved Skooter AC, Optional Tap on Correct for Non-RX Players, Relative Range Support)</br>
+                                                    Relax Hack (SkooterRX)</br>
                                                     Timewarp (Both Rate & Multiplier Style)</br>
                                                     Automatic CS Changer</br>
                                                 </p>
@@ -604,7 +605,7 @@ new Vue({
                                             <div class="level">
                                                 <p>
                                                     In-Game Updater</br>
-                                                    Lazer Style UI</br>
+                                                    Lazer Style UI (SkinVersion 7+)</br>
                                                     Background Beatmap Importing</br>
                                                     Links to original game folder to save space</br>
                                                     Built in Server Switcher</br>
