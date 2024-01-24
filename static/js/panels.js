@@ -67,7 +67,7 @@ new Vue({
     template: `
         <div id="docs-modal" class="modal" v-bind:class="{ 'is-active': show }">
             <div class="modal-background" @click="close"></div>
-            <div id="docs-window" class="modal-content" v-if="show">
+            <div data-panel="Docs" id="docs-window" class="modal-content" v-if="show">
                 <div class="main-block">
                     <div class="docs-banner">
                         <div class="docs-banner img" style="height: fit-content" :style="{

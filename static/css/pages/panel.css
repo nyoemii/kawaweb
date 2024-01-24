@@ -1,4 +1,4 @@
-#docs-window {
+[data-panel="Docs"] {
     width: 92vw;
     max-height: 95vh;
     transition: 0.2s ease; /* for responsive animation */
@@ -12,11 +12,11 @@
 }
 
 @media (min-width: 1000px) {
-    #docs-window {
+    [data-panel="Docs"] {
         width: 1000px;
     }
 }
-    #docs-window .main-block {
+    [data-panel="Docs"] .main-block {
         width: inherit;
         background: hsl(var(--main), 10%, 15%);
         position: relative;
@@ -115,7 +115,7 @@
                 z-index: 1;
                 margin-bottom: 0px !important;
             }
-    #docs-window .second-block {
+    [data-panel="Docs"] .second-block {
         background: var(--container-bg);
         max-height: 55vh;
         display: flex;
