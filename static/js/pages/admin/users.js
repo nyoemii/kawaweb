@@ -71,7 +71,8 @@ new Vue({
             postresponse: null,
             postresponsestatus: null,
             postresponsetimer: 0,
-            module: 'Account' // added module data property
+            module: 'Account', // added module data property
+            subdropdown: null,
         }
     },
     methods: {
@@ -82,12 +83,17 @@ new Vue({
             console.log(`Loading ${module} editor...`); // placeholder print statement
             this.module = module;
         },
+        showdropdown(subdropdown) {
+            console.log(`Showing ${subdropdown} dropdown...`); // placeholder print statement
+            this.subdropdown = subdropdown;
+        },
         fetchSelectedUser(userid) {
             const url = `/admin/user/${userid}`;
             fetch(url)
                 
                 .then(response => response.json())
                 .then(data => {
+                    this.user = null;
                     this.user = data;
                     console.log('User:', this.user);
                 })
@@ -147,6 +153,7 @@ new Vue({
                         if (status === 200) {
                             console.log('Badge removed:', badgeid);
                             this.$refs[badgeid][0].classList.toggle('selected');
+                            this.fetchSelectedUser(this.user.id);
                         } else {
                             console.error('Failed to remove badge:', badgeid);
                         }
@@ -161,6 +168,7 @@ new Vue({
                         if (status === 200) {
                             console.log('Badge added:', badgeid);
                             this.$refs[badgeid][0].classList.toggle('selected');
+                            this.fetchSelectedUser(this.user.id);
                         } else {
                             console.error('Failed to add badge:', badgeid);
                         }
@@ -177,6 +185,7 @@ new Vue({
         editUserBus.$on('showEditUserPanel', (userid) => {
             console.log('Edit User Window Triggered')
             this.userid = userid;
+            this.subdropdown = null;
             this.fetchSelectedUser(userid);
             this.getAllBadges();
             this.show = true;
@@ -277,6 +286,50 @@ new Vue({
                                                 <a class="dropdown-item" @click="postAction('/admin/action/wipe', { user: user.id, reason: 'Overcheating' })">
                                                     Overcheating
                                                 </a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" @click="showdropdown('customwipe', subdropdown)">
+                                                    Custom Reason
+                                                </a>
+                                                <span v-if="subdropdown === 'customwipe'">
+                                                    <div class="field">
+                                                        <label class="label">Custom Wipe Reason</label>
+                                                        <div class="control userspanel">
+                                                            <input class="input" type="reason" id="wipe-reason-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="field">
+                                                        <div class="control userspanel">
+                                                            <button class="button is-success" @click="postAction('/admin/action/wipe', { user: user.id, reason: document.getElementById('wipe-reason-input').value })">
+                                                                Wipe
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </span>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" @click="showdropdown('removescore', subdropdown)">
+                                                    Score Removal
+                                                </a>
+                                                <span v-if="subdropdown === 'removescore'">
+                                                    <div class="field">
+                                                        <label class="label">Score Removal Reason</label>
+                                                        <div class="control userspanel">
+                                                            <input class="input" type="reason" id="wipescore-reason-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="field">
+                                                        <label class="label">Score ID</label>
+                                                        <div class="control userspanel">
+                                                            <input class="input" type="id" id="wipescore-id-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="field">
+                                                        <div class="control userspanel">
+                                                            <button class="button is-success" @click="postAction('/admin/action/removescore', { user: user.id, reason: document.getElementById('wipescore-reason-input').value, scoreid: document.getElementById('wipescore-id-input').value })">
+                                                                Remove Score
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -296,6 +349,25 @@ new Vue({
                                                 <a class="dropdown-item" @click="postAction('/admin/action/restrict', { user: user.id, reason: '3rd Wipe' })">
                                                     3rd Wipe
                                                 </a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" @click="showdropdown('customrestrict', subdropdown)">
+                                                    Custom Reason
+                                                </a>
+                                                <span v-if="subdropdown === 'customrestrict'">
+                                                    <div class="field">
+                                                        <label class="label">Custom Restrict Reason</label>
+                                                        <div class="control userspanel">
+                                                            <input class="input" type="reason" id="restrict-reason-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="field">
+                                                        <div class="control userspanel">
+                                                            <button class="button is-success" @click="postAction('/admin/action/restrict', { user: user.id, reason: document.getElementById('restrict-reason-input').value })">
+                                                                Restrict
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -318,6 +390,31 @@ new Vue({
                                                 <a class="dropdown-item" @click="postAction('/admin/action/silence', { user: user.id, duration: '6', reason: 'Consistent usage of inappropriate language' })">
                                                     Consistent usage of inappropriate language
                                                 </a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" @click="showdropdown('customsilence', subdropdown)">
+                                                    Custom Reason
+                                                </a>
+                                                <span v-if="subdropdown === 'customsilence'">
+                                                    <div class="field">
+                                                        <label class="label">Custom Silence Reason</label>
+                                                        <div class="control userspanel">
+                                                            <input class="input" type="reason" id="silence-reason-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="field">
+                                                        <label class="label">Silence Duration (in hours)</label>
+                                                        <div class="control userspanel">
+                                                            <input class="input" type="number" id="silence-duration-input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="field">
+                                                        <div class="control userspanel">
+                                                            <button class="button is-success" @click="postAction('/admin/action/silence', { user: user.id, duration: document.getElementById('silence-duration-input').value, reason: document.getElementById('silence-reason-input').value })">
+                                                                Silence
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -336,12 +433,12 @@ new Vue({
                                             <div class="dropdown-content">
                                                 <div class="field">
                                                     <label class="label">New Password</label>
-                                                    <div class="control">
+                                                    <div class="control userspanel">
                                                         <input class="input" type="password" id="new-password-input">
                                                     </div>
                                                 </div>
                                                 <div class="field">
-                                                    <div class="control">
+                                                    <div class="control userspanel">
                                                         <button class="button is-success" @click="postAction('/admin/action/changepassword', { user: user.id, password: document.getElementById('new-password-input').value })">
                                                             Save
                                                         </button>
@@ -362,25 +459,25 @@ new Vue({
                         })">
                             <div class="field">
                                 <label class="label">User ID</label>
-                                <div class="control">
+                                <div class="control userspanel">
                                     <input class="input" type="text" :value="user.id" readonly>
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label">Username</label>
-                                <div class="control">
+                                <div class="control userspanel">
                                     <input class="input" type="text" name="username" v-model="user.name">
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label">Email</label>
-                                <div class="control">
+                                <div class="control userspanel">
                                     <input class="input" type="email" name="email" v-model="user.email">
                                 </div>
                             </div>
                             <div class="field" v-if="user.country">
                                 <label class="label">Country</label>
-                                <div class="control">
+                                <div class="control userspanel">
                                     <div class="select is-fullwidth">
                                         <country-select v-model="user.country"></country-select>
                                     </div>
@@ -388,12 +485,12 @@ new Vue({
                             </div>
                             <div class="field">
                                 <label class="label">User Page</label>
-                                <div class="control">
+                                <div class="control userspanel">
                                     <textarea id="userpage" class="input" name="userpage" v-model="user.userpage_content"></textarea>
                                 </div>
                             </div>
                             <div class="field is-grouped">
-                                <div class="control">
+                                <div class="control userspanel">
                                     <button class="button is-primary" type="submit">Save</button>
                                 </div>
                             </div>

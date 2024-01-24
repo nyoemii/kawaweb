@@ -3,6 +3,7 @@
     background: hsl(var(--main), 10%, 15%);
     display: flex; 
     justify-content: center;
+    transition: 0.2s ease;
   }
 
 #user.card {
@@ -12,6 +13,7 @@
     border-bottom-style: ridge;
     border-bottom-width: 4px;
     border-bottom-color: hsl(var(--main),15%,35%);
+    transition: 0.2s ease;
 
 }
 
@@ -27,6 +29,7 @@
     background-size: cover;
     background-position: 50%;
     background-repeat: no-repeat;
+    transition: 0.2s ease;
 }
 
 .card-avatar {
@@ -39,67 +42,182 @@
     background-size: cover;
     background-position: 50%;
     background-repeat: no-repeat;
+    transition: 0.2s ease;
 
 }
 
 .card-content {
     z-index: 3;
+    transition: 0.2s ease;
 }
 
 #editUser.box {
     background-color: transparent;
-}
-
-#editUser.user-banner {
-    /*background-color: hsl(var(--main), 30%, 50%);*/
-    position: relative;
-    /*height: 194px;*/
-    border-radius: 8px;
-    border-top-right-radius: 8px;
-    border-top-left-radius: 8px;
-    overflow-y: hidden;
+    height: 100vh;
+    padding: 1%;  
+    transition: 0.2s ease;
     display: flex;
     flex-direction: column;
 }
 
-#editUserBanner.user-banner-background {
-    /*position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: hsl(var(--main), 30%, 50%);
-    background-position: 75%;
-    background-size: cover;
-    border-radius: 0;
-    border-top-right-radius: 8px;
-    border-top-left-radius: 8px;*/
-    min-height: 262px;
+#editUser.user-banner {
+  /*background-color: hsl(var(--main), 30%, 50%);*/
+  position: relative;
+  max-height: 37vh;
+  height: 380px;
+  border-radius: 8px;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+  /*overflow-y: hidden;*/
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  transition: 0.2s ease;
+}
+
+  #editUserBanner.user-banner-background {
+    max-height: 262px;
+    min-height: 90px;
     width: 100%;
     background-size: cover;
     background-position: center;
     display: flex;
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: 262px; /* max-height */
     align-items: flex-end;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
     background-color: hsl(var(--main), 30%, 50%);
     position: relative;
     overflow: hidden;
-}
-
-.badge {
-    display: inline-block;
-    border-radius: 6px;
-    padding: 4.5px 7px;
-    font-size: 12px;
-    margin-left: 10px;
-    background-color: hsl(var(--main), 30%, 30%);
-    transition: 0.2s color;
+    flex-grow: 1;
     transition: 0.2s ease;
   }
-    .badge:hover {
-      scale: 1.10;
-      box-shadow: 0 0px 20px color;
+
+  .user-flex {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: flex-start;
+    transition: 0.2s ease;
+  }
+
+    .user-avatar-area {
+      padding: 0 0 0 45px;
+      display: flex;
+      position: absolute;
+      flex-direction: row;
+      align-items: flex-start;
+    }
+      .user-avatar {
+        width: 185px;
+        height: 185px;
+        margin-top: -5.5rem;
+        border-radius: 16px;
+        object-fit: cover;
+        transition: 0.2s ease;
+      }
+
+    .bar-selection {
+      width: 100%;
+      height: 60px;
+      padding: 10px 10px 10px 250px;
+      display: flex;
+      align-items: center;
+      transition: 0.2s ease;
+    }
+    .mode-selects {
+      background: hsl(var(--main), 25%, 22%);
+    }
+      .select-left {
+        display: flex;
+        flex-direction: row;
+      }
+        .simple-banner-switch {
+          color: #fff !important;
+          text-shadow: -1px 2px 2px rgba(0, 0, 0, 0.33);
+          cursor: pointer;
+          transition: 0.3s ease;
+          font-size: 16px;
+          margin: 0 24px 0 0;
+          font-weight: 425;
+          opacity: 0.7;
+        }
+        .simple-banner-switch.active {
+          font-weight: 500;
+          opacity: 1;
+          pointer-events: none;
+        }
+        .simple-banner-switch.disabled {
+          opacity: 0.4;
+          pointer-events: none;
+          text-decoration: none;
+        }
+
+      .badge-selects {
+        background: hsl(var(--main), 16%, 20%);
+      }
+        .badge {
+            display: inline-block;
+            border-radius: 6px;
+            padding: 4.5px 7px;
+            font-size: 12px;
+            margin-left: 10px;
+            background-color: hsl(var(--main), 30%, 30%);
+            transition: 0.2s color;
+            transition: 0.2s ease;
+          }
+            .badge:hover {
+              scale: 1.10;
+              box-shadow: 0 0px 20px color;
+            }
+
+
+    .user-bg {
+      min-height: 262px;
+      width: 100%;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      border-top-right-radius: 20px;
+      border-top-left-radius: 20px;
+      background: hsl(var(--main), 30%, 50%);
+      position: relative;
+      overflow: hidden;
+      transition: 0.2s ease;
+    }
+
+    .user-stats-rank {
+      width: 20px;
+      transition: 0.2s ease;
+    }
+
+    .info-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px 250px;
+      width: 100%;
+      transition: 0.2s ease;
+    }
+
+    .select-right {
+      margin-left: auto;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .user-flag {
+      height: 24px;
+      margin-right: 6px;
+    }
+
+    #userpage.textarea {
+      height: fit-content;
+      text-wrap: wrap;
     }
 
 #editUser.main-block {
@@ -108,9 +226,13 @@
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
     margin-top: 8px;
+    max-height: calc(57vh - 1%);
+    height: fit-content;
     padding: 4px;
     width: auto;
-    /*display: flex;*/
+    display: flex;
+    margin-bottom: auto;
+    transition: 0.2s ease;
 }
 
 #editUser.main-block .content {
@@ -120,8 +242,13 @@
     border-bottom-right-radius: 20px;
     margin: 8px;
     padding: 20px;
-    max-height: 57vh;
+    width: 100%;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;  
+    scrollbar-color: hsl(var(--main), 40%, 40%) hsl(var(--main), 40%, 20%);
+    scrollbar-width: thin;
+    transition: 0.2s ease;
 }
 
 .main-selector {
@@ -134,119 +261,8 @@
     font-size: 14px;
     justify-content: center;
     position: relative;
+    transition: 0.2s ease;
 }
-
-.user-flex {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .user-bg {
-    min-height: 262px;
-    width: 100%;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: flex-end;
-    border-top-right-radius: 20px;
-    border-top-left-radius: 20px;
-    background: hsl(var(--main), 30%, 50%);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .user-avatar {
-    width: 185px;
-    height: 185px;
-    margin-top: -5.5rem;
-    border-radius: 16px;
-    object-fit: cover;
-    transition: 0.2s ease;
-  }
-  
-  .user-stats-rank {
-    width: 20px;
-  }
-  
-  .info-block {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px 250px;
-    width: 100%;
-    transition: 0.2s ease;
-  }
-  
-  .bar-selection {
-    width: 100%;
-    height: 60px;
-    padding: 10px 10px 10px 250px;
-    display: flex;
-    align-items: center;
-    transition: 0.2s ease;
-  }
-  
-  .user-avatar-area {
-    padding: 0 0 0 45px;
-    display: flex;
-    position: absolute;
-    flex-direction: row;
-    align-items: flex-start;
-  }
-  
-  .simple-banner-switch {
-    color: #fff !important;
-    text-shadow: -1px 2px 2px rgba(0, 0, 0, 0.33);
-    cursor: pointer;
-    transition: 0.3s ease;
-    font-size: 16px;
-    margin: 0 24px 0 0;
-    font-weight: 425;
-    opacity: 0.7;
-  }
-  
-  .simple-banner-switch.active {
-    font-weight: 500;
-    opacity: 1;
-    pointer-events: none;
-  }
-  
-  .simple-banner-switch.disabled {
-    opacity: 0.4;
-    pointer-events: none;
-    text-decoration: none;
-  }
-  
-  .mode-selects {
-    background: hsl(var(--main), 25%, 22%);
-  }
-  
-  .badge-selects {
-    background: hsl(var(--main), 16%, 20%);
-  }
-  
-  .select-left {
-    display: flex;
-    flex-direction: row;
-  }
-  
-  .select-right {
-    margin-left: auto;
-    display: flex;
-    flex-direction: row;
-  }
-  
-  .user-flag {
-    height: 24px;
-    margin-right: 6px;
-  }
-
-  #userpage.textarea {
-    height: fit-content;
-    text-wrap: wrap;
-  }
 
 #badges.columns.is-multiline {
     margin-top: 8px;
@@ -361,6 +377,7 @@
 
 #log.card-content {
   position: relative;
+  transition: 0.2s ease;
 }
 
 #log.card-content .Sender {
@@ -391,4 +408,19 @@
 
 #log.card-content .Action {
   position: relative;
+}
+
+.control.userspanel .input {
+  /*background-color: hsl(var(--main), 10%, 25%);*/
+  border-radius: 20px;
+  transition: 0.2s ease;
+}
+
+.dropdown-item {
+  transition: 0.2s ease;
+}
+.dropdown-item:hover {
+  color: hsl(var(--main), 100%, 50%) !important;
+  text-shadow: 0 0px 10px hsla(var(--main), 100%, 50%, 0.8);
+  transition: 0.2s ease;
 }
