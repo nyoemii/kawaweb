@@ -20,13 +20,13 @@
             <div class="column"> 
             {% for map in requests %}
                 {% if loop.index is odd %}
-                <div id="map" class="card" @click="editMap({{ map['map_info'] }})">
+                <div id="map" class="card" @click="editMap({{ map }})">
                     <div class="card-background" :style="'background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + {{map['map_info']['set_id']}} + '/covers/card@2x.jpg)'"></div>
                     <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + {{map['player_id']}} + ')'"></div>
                     <div class="card-content">
                         <h3>{{ map['map_info']['artist'] }} - {{ map['map_info']['title'] }}</h3>
                         <h4>{{ map['map_info']['creator'] }} | {{ map['map_info']['version'] }}</h4>
-                        <p>PlayerID: {{ map['player_id'] }}</p>
+                        <p>Requester: {{ map['player']['name'] }}</p>
                     </div>
                 </div>
                 {% endif %}
@@ -35,13 +35,13 @@
             <div class="column"> 
             {% for map in requests %}
                 {% if loop.index is even %}
-                <div id="map" class="card" @click="editMap({{ map['map_info'] }})">
+                <div id="map" class="card" @click="editMap({{ map }})">
                     <div class="card-background" :style="'background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + {{map['map_info']['set_id']}} + '/covers/card@2x.jpg)'"></div>
                     <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + {{map['player_id']}} + ')'"></div>
                     <div class="card-content">
                         <h3>{{ map['map_info']['artist'] }} - {{ map['map_info']['title'] }}</h3>
                         <h4>{{ map['map_info']['creator'] }} | {{ map['map_info']['version'] }}</h4>
-                        <p>PlayerID: {{ map['player_id'] }}</p>
+                        <p>Requester: {{ map['player']['name'] }}</p>
                     </div>
                 </div>
                 {% endif %}

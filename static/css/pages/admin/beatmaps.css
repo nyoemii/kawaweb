@@ -38,3 +38,280 @@
 .card-content {
     z-index: 3;
 }
+
+[data-panel="changeBeatmapStatus"] {
+    width: 92vw;
+    max-height: 95vh;
+    transition: 0.2s ease; /* for responsive animation */
+    border-radius: 20px;
+    overflow: hidden;
+    position: absolute;
+    top: auto;
+    bottom: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+@media (min-width: 1000px) {
+    [data-panel="changeBeatmapStatus"] {
+        width: 1000px;
+    }
+}
+    [data-panel="changeBeatmapStatus"] .main-block {
+        width: inherit;
+        background: hsl(var(--main), 10%, 15%);
+        position: relative;
+    }
+        
+        .main-block .selector {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            pointer-events: all;
+            height: 27px;
+            z-index: 2;
+            width: 100%;
+        }
+            .selector .bottom-tab {
+                display: flex;
+                padding: 6px;
+                background: hsl(var(--main), 10%, 15%);
+                height: 36px;
+                border-radius: 8px;
+                opacity: 0.8;
+                font-weight: 600;
+                border-bottom: 3px solid;
+                transition: 200ms opacity, 200ms border, 200ms filter, 300ms background-color;
+                margin: 4px 5px 0px 5px;
+                box-shadow: 0 1px 3px rgba(0,0,0,.25) !important;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                overflow: hidden;
+            }
+                .selector .bottom-tab.active {
+                    opacity: 0.9;
+                    background-color: hsl(var(--main), 10%, 16%);
+                    border-bottom: 4px solid;
+                }
+                .selector .bottom-tab:hover {
+                    opacity: 1;
+                    background-color: hsl(var(--main), 10%, 16%);
+                    border-bottom: 4px solid;
+                }
+            .selector .left {
+                display: flex;
+                flex-direction: row;
+                pointer-events: all;
+            }
+            .selector .right {
+                margin-left: auto;
+                pointer-events: all;
+                display: flex;
+                flex-direction: row;
+            }
+        .beatmap-banner {
+            /*background-color: hsl(var(--main), 30%, 50%);*/
+            max-height: fit-content;
+            min-height: 194px;
+            border-top-right-radius: 20px;
+            border-top-left-radius: 20px;
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            background-size: 100%;
+            transition: max-height 0.4s ease;
+            z-index: 0;
+        }
+            .beatmap-banner .img {
+                max-height: 280px;
+                height: 100%; 
+                min-height: 194px;
+                position: absolute; /* position relative to .beatmap-banner */
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                border-radius: 0;
+                border-top-right-radius: 8px;
+                border-top-left-radius: 8px;
+                pointer-events: auto;
+                background-size: 100%;
+                background-position: center;
+                transition: max-height 0.4s ease;
+                z-index: 0;
+            }
+            .beatmap-banner.title {
+                font-size: 2.5em;
+                font-weight: 500;
+                color: white;
+                text-align: center;
+                pointer-events: auto;
+                z-index: 1;
+                margin-bottom: 0px !important;
+            }
+    .beatmap-requester {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+    .status {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: fit-content;
+        width: fit-content;
+        padding: 4px 10px;
+        margin: 10px;
+        align-content: center;
+        justify-content: center;
+        border-radius: 20px;
+        background-color: hsla(var(--main), 10%, 15%, 0.25)
+    }
+        .status h1,
+        .status h2,
+        .status h3,
+        .status h4,
+        .status h5,
+        .status h6 {
+            margin: 2px;
+            padding: 1px;
+        }
+        .status.ranked {
+            background-color: rgba(0, 204, 255, 0.25);
+        }
+        .status.loved {
+            background-color: rgba(225, 0, 255, 0.25);
+        }
+        .status.qualified {
+            background-color: rgba(251, 255, 0, 0.25);
+        }
+        .status.approved {
+            background-color: rgba(0, 255, 34, 0.25);
+        }
+    [data-panel="changeBeatmapStatus"] .second-block {
+        background: var(--container-bg);
+        max-height: 55vh;
+        display: flex;
+        overflow-y: auto;
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+        margin-bottom: 10px;
+    }
+        [data-panel="changeBeatmapStatus"] .content {
+            background-color: hsl(var(--main), 18%, 18%);
+            padding: 4px;
+            padding-top: 12px !important;
+            margin: 1%;
+            margin-bottom: 2%;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transition: 0.2s ease;
+            border-radius: 8px;
+            position: relative;
+        }
+            [data-panel="changeBeatmapStatus"] .content .selector {
+                position: absolute;
+                top: 10;
+                left: 0;
+                right: 0;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                pointer-events: all;
+                height: 27px;
+                z-index: 2;
+                width: 100%;
+            }
+                [data-panel="changeBeatmapStatus"] .selector .top-tab {
+                    display: flex;
+                    padding: 6px;
+                    background: hsl(var(--main), 10%, 15%);
+                    height: 36px;
+                    border-radius: 8px;
+                    opacity: 0.8;
+                    font-weight: 600;
+                    border-top: 3px solid;
+                    transition: 200ms opacity, 200ms border, 200ms filter, 300ms background-color;
+                    margin: 4px 5px 0px 5px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,.25) !important;
+                    border-top-left-radius: 0;
+                    border-top-right-radius: 0;
+                    overflow: hidden;
+                }
+                    [data-panel="changeBeatmapStatus"] .selector .top-tab.active {
+                        opacity: 0.9;
+                        background-color: hsl(var(--main), 10%, 16%);
+                        border-top: 4px solid;
+                    }
+                    [data-panel="changeBeatmapStatus"] .selector .top-tab:hover {
+                        opacity: 1;
+                        background-color: hsl(var(--main), 10%, 16%);
+                        border-top: 4px solid;
+                    }
+            [data-panel="changeBeatmapStatus"] .content .beatmap-block {
+                padding: 22px;
+            }
+                [data-panel="changeBeatmapStatus"] .beatmap-block .beatmap-notice {
+                    background-color: hsl(var(--main), 18%, 30%);
+                    border-radius: 8px;
+                    padding: 10px;
+                    margin: 10px 0px;
+                    border: 1px solid hsl(var(--main), 25%, 35%);
+                    text-align: center;
+                }
+                [data-panel="changeBeatmapStatus"] .beatmap-block .beatmap-section {
+                    background-color: hsl(var(--main), 20%, 20%);
+                    border-radius: 8px;
+                    padding: 10px;
+                    margin: 10px 0px;
+                    border: 1px solid hsl(var(--main), 20%, 25%);
+                }
+                    [data-panel="changeBeatmapStatus"] .beatmap-section .subsection {
+                        background-color: hsl(var(--main), 20%, 22%);
+                        border-radius: 8px;
+                        padding: 10px;
+                        margin: 10px 0px;
+                        border: 1px solid hsl(var(--main), 20%, 25%);
+                    }
+                [data-panel="changeBeatmapStatus"] .beatmap-content {
+                    background-color: hsl(var(--main), 20%, 25%);
+                    border-radius: 8px;
+                    padding: 10px;
+                    margin: 10px 0px;
+                    border: 1px solid hsl(var(--main), 20%, 28%);
+                }
+                    [data-panel="changeBeatmapStatus"] .beatmap-content .subsection {
+                        background-color: hsl(var(--main), 20%, 26%);
+                        border-radius: 8px;
+                        padding: 10px;
+                        margin: 10px 0px;
+                        border: 1px solid hsl(var(--main), 20%, 30%);
+                    }
+.linked {
+    pointer-events: all;
+}
+
+.main-block .banner {
+    /*background-color: hsl(var(--main), 30%, 50%);*/
+    max-height: fit-content;
+    min-height: 194px;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+    background-size: 100%;
+    transition: max-height 0.4s ease;
+    z-index: 0;
+}
