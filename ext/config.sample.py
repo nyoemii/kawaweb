@@ -66,3 +66,6 @@ discord_server = 'https://discord.com/invite/kawata-451130713627164683'
 youtube = 'https://youtube.com/'
 twitter = 'https://twitter.com/'
 instagram = 'https://instagram.com/'
+
+ranked_webhook_url = os.environ["RANKED_WEBHOOK_URL"]
+admin_webhook_url  = os.environ["ADMIN_WEBHOOK_URL"]
