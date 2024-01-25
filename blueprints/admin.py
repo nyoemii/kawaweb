@@ -500,7 +500,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
             await glob.db.execute(
                 f"""
                 UPDATE users
-                SET silence_end = {datetime.datetime.now() + datetime.timedelta(hours=action.duration)}
+                SET silence_end = {datetime.datetime.now() + datetime.timedelta(hours=int(action.duration))}
                 WHERE id = {action.user.id};
                 """
             )

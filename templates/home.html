@@ -46,6 +46,21 @@
           and features to be used according to our rules of course. We allow 
           features such as DT Remover, Aim Assist, HD Remover, etc.
         </h2>
+        <h2 class="subtitle" id="timesincestuffbroke">
+      
+        </h2>
+
+        <script>
+          var timestamp = {{ unix_timestamp }};
+          var interval = setInterval(function() {
+              var now = new Date();
+              var diff = Math.floor((now.getTime() / 1000) - timestamp);
+              var hours = Math.floor(diff / 3600);
+              var minutes = Math.floor((diff % 3600) / 60);
+              var seconds = diff % 60;
+              document.getElementById('timesincestuffbroke').textContent = "It's been " + hours + " hours, " + minutes + " minutes, and " + seconds + " seconds since something last broke.";
+          }, 1000);
+          </script>
         {% if not session.authenticated %}
         <div class="buttons">
           <a class="button is-primary" href="/register">
