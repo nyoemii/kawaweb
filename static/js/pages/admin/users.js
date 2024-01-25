@@ -455,7 +455,7 @@ new Vue({
                             username: user.name,
                             email: user.email,
                             country: user.country,
-                            userpage: user.userpage_content
+                            userpage_content: user.userpage_content
                         })">
                             <div class="field">
                                 <label class="label">User ID</label>
@@ -484,9 +484,9 @@ new Vue({
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label">User Page</label>
+                                <label class="label">User Page Content</label>
                                 <div class="control userspanel">
-                                    <textarea id="userpage" class="input" name="userpage" v-model="user.userpage_content"></textarea>
+                                    <textarea id="userpage_content" class="input" name="userpage_content" v-model="user.userpage_content"></textarea>
                                 </div>
                             </div>
                             <div class="field is-grouped">
@@ -523,20 +523,20 @@ new Vue({
                                     <div id="log" class="card-content">
                                         <div class="Sender">
                                             <div class="SenderAvatar">
-                                                <img :src="'https://a.' + domain + '/' + log.from.id" alt="avatar" class="rounded-avatar">
+                                                <img :src="'https://a.' + domain + '/' + log.mod.id" alt="avatar" class="rounded-avatar">
                                             </div>
                                             <div class="SenderInfo">
                                                 <h3 class="from">Action taken by:</h3>
                                                 <h4>
-                                                    <img :src="'/static/images/flags/' + log.from.country.toUpperCase() + '.png'" class="user-flag">
-                                                    <a :href="'/u/' + log.from.id"><% log.from.name %></a>
+                                                    <img :src="'/static/images/flags/' + log.mod.country.toUpperCase() + '.png'" class="user-flag">
+                                                    <a :href="'/u/' + log.mod.id"><% log.mod.name %></a>
                                                 </h4>
                                                 <h5>On: <% log.time %></h5>
                                             </div>
                                         </div>
                                         <div class="Action">
                                             <h3 class="title">Action: <% log.action %></h3>
-                                            <h4>Reason: <% log.msg %></p>
+                                            <h4>Reason: <% log.reason %></p>
                                         </div>
                                     </div>
                                 </div>

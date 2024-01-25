@@ -67,5 +67,5 @@ youtube = 'https://youtube.com/'
 twitter = 'https://twitter.com/'
 instagram = 'https://instagram.com/'
 
-ranked_webhook_url = os.environ["RANKED_WEBHOOK_URL"]
-admin_webhook_url  = os.environ["ADMIN_WEBHOOK_URL"]
+RANKED_WEBHOOK_URL = os.environ["RANKED_WEBHOOK_URL"]
+ADMIN_WEBHOOK_URL  = os.environ["ADMIN_WEBHOOK_URL"]

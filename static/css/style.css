@@ -29,6 +29,8 @@ body {
 html {
   position: relative;
   min-height: 100%;
+  scrollbar-color: hsl(var(--main), 40%, 40%) hsl(var(--main), 40%, 20%);
+  scrollbar-width: thin;
 }
 
 .footer {
