@@ -42,6 +42,11 @@
             <a id="docs" class="navbar-item" @click="showDocsPanel('Rules')">
                 Docs
             </a>
+            {% if session.authenticated and session.user_data['is_dev'] %}
+                <a class="navbar-item" href="/admin/stuffbroke">
+                    Stuff Broke
+                </a>
+            {% endif %}
             {% if session.authenticated and session.user_data['is_staff'] %}
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">

@@ -500,7 +500,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
             await glob.db.execute(
                 f"""
                 UPDATE users
-                SET silence_end = {datetime.datetime.now() + datetime.timedelta(hours=int(action.duration))}
+                SET silence_end = {int(datetime.datetime.now().timestamp()) + int(action.duration) * 3600}
                 WHERE id = {action.user.id};
                 """
             )
@@ -1505,7 +1505,7 @@ async def log(action: Action):
 
         embed.add_embed_field(
             name="Information:",
-            value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction User: {action.user.name} ({action.user.id})\nAction Type: {action.action}",
+            value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction User: {action.user.name} ({action.user.id})\nAction Type: {action.action}\n Action Reason: {action.reason}",
             inline=False
             )
 
@@ -1540,7 +1540,7 @@ async def log(action: Action):
 
         embed.add_embed_field(
             name="Information:",
-            value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction map: {action.map.title} ({action.map.id})\nAction Type: {action.action}",
+            value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction map: {action.map.title} ({action.map.id})\nAction Type: {action.action}\n Action Reason: {action.reason}",
             inline=False
             )
 
@@ -1860,3 +1860,20 @@ async def beatmaps():
         'admin/beatmaps.html', requests=requests, 
         datetime=datetime, timeago=timeago
     )
+
+@admin.route('/stuffbroke')
+async def stuffbroke():
+    if not 'authenticated' in session:
+        return await flash('error', 'Please login first.', 'login')
+
+    if Privileges.Dangerous not in GetPriv(session["user_data"]["priv"]):
+            return await flash('error', f'You have insufficient privileges.', 'home')
+    
+    await glob.db.execute(
+    f"""
+    INSERT INTO server_data (type, value)
+    VALUES ('breakevent', '{int(datetime.datetime.now().timestamp())}')
+    ON DUPLICATE KEY UPDATE value = '{int(datetime.datetime.now().timestamp())}';
+    """
+    )
+    return await flash('success', 'Successfully broke stuff.', 'home')

@@ -40,7 +40,6 @@ async def api_redirect(file_path):
     redirect_url = f"https://api.{glob.config.domain}/{file_path}"
     return redirect(redirect_url, code=301)
 
-
 def login_required(func):
     @wraps(func)
     async def wrapper(*args, **kwargs):
@@ -57,11 +56,14 @@ async def home(doc=None):
     doc=doc
     if maintenence:
         return await flash('success', f'Website is currently under maintenence', 'home')
-    return await render_template('home.html')
+    
+    unix_timestamp = await glob.db.fetch('SELECT * FROM server_data WHERE type = "breakevent"')
+    unix_timestamp = unix_timestamp['value']
+    return await render_template('home.html', unix_timestamp=unix_timestamp)
 
 @frontend.route('/home/account/edit')
 async def home_account_edit():
-    return redirect('/settings/profile')
+    return redirect('/settings/profile', )
 
 @frontend.route('/settings')
 @frontend.route('/settings/profile')
@@ -544,6 +546,7 @@ async def login_post():
         'priv': user_info['priv'],
         'silence_end': user_info['silence_end'],
         'is_staff': user_info['priv'] & Privileges.Staff != 0,
+        'is_dev': user_info['priv'] & Privileges.Dangerous != 0,
         'is_donator': user_info['priv'] & Privileges.Donator != 0,
         'hue': user_info['hue']
     }
