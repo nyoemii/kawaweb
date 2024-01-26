@@ -69,6 +69,10 @@ class Action:
             self.text = "Modified"
             self.type = 0
 
+        elif action == "editaccount":
+            self.text = "Edited Account"
+            self.type = 0
+
         elif action == "rank":
             self.text = "Ranked"
             self.type = 1
@@ -109,7 +113,7 @@ class Action:
         await self.mod.fetchUser()
 
 
-        if self.action in ["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges"]:
+        if self.action in ["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges", "editaccount"]:
             self.user = User(self.targetid)
             await self.user.fetchUser()
         elif self.action in ["rank", "approve", "qualify", "love", "unrank", "completerequest"]:
@@ -1298,7 +1302,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 }
             ), 400
 
-    if a == "editaccount":
+    if a == "editaccount": # TODO: Add logging for this, Add all changed fields to the log.
         form = await request.form
         if not form:
             return jsonify(
@@ -1376,7 +1380,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 safename = get_safe_name(username)
                 try:
                     # because why would we make it a unique key!? :D 
-                    if await glob.db.fetch(f"SELECT * FROM users WHERE safe_name = {safename}") is not None or await glob.db.fetch(f"SELECT * FROM users WHERE name = {username}") is not None:
+                    if await glob.db.fetch(f"SELECT * FROM users WHERE safe_name = '{safename}'") is not None or await glob.db.fetch(f"SELECT * FROM users WHERE name = '{username}'") is not None:
                         return jsonify(
                             {
                                 "status": "error",
@@ -1387,7 +1391,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     await glob.db.execute(
                         f"""
                         UPDATE users
-                        SET name = {username}, safe_name = {safename}
+                        SET name = '{username}', safe_name = '{safename}'
                         WHERE id = {action.user.id};
                         """
                     )

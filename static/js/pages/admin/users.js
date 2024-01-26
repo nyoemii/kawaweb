@@ -451,7 +451,7 @@ new Vue({
                             </div>
                         </div>
                         <form @submit.prevent="postAction('/admin/action/editaccount', {
-                            userId: user.id,
+                            user: user.id,
                             username: user.name,
                             email: user.email,
                             country: user.country,
