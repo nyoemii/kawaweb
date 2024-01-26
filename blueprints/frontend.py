@@ -698,6 +698,37 @@ async def logout():
     # render login
     return await flash('success', 'Successfully logged out!', 'login')
 
+@frontend.route('/changelog')
+@frontend.route('/changelog/<type>/<category>')
+async def changelog(type='frontend', category='all'):
+    changelogs = await glob.db.fetchall("SELECT * FROM changelog ORDER BY 'time' DESC")
+    for log in changelogs:
+        poster = await glob.db.fetch("SELECT name, id, country, priv FROM users WHERE id = %s", [log['poster']])
+        poster_badges = await glob.db.fetchall(
+            "SELECT badge_id FROM user_badges WHERE userid = %s",
+            (log['poster'],),
+        )
+        badges = []
+        for user_badge in poster_badges:
+            badge_id = user_badge["badge_id"]
+            badge = await glob.db.fetch(
+                "SELECT * FROM badges WHERE id = %s",
+                (badge_id,),
+            )
+            badge_styles = await glob.db.fetchall(
+                "SELECT * FROM badge_styles WHERE badge_id = %s",
+                (badge_id,),
+            )
+            badge = dict(badge)
+            badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
+            badges.append(badge)
+            # Sort the badges based on priority
+            badges.sort(key=lambda x: x['priority'], reverse=True)
+        poster['badges'] = badges
+        log['poster'] = poster
+
+    return await render_template('changelog.html', changelogs=changelogs, type=type, category=category)
+
 # social media redirections
 
 @frontend.route('/github')

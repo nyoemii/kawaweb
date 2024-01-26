@@ -1,0 +1,36 @@
+.changelog-banner {
+    background-color: hsl(var(--main), 30%, 50%);
+    height: 194px;
+    border-radius: 0;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+}
+
+.changelog-block {
+    background-color: hsl(var(--main), 10%, 15%);
+    margin-top: 0;
+    width: auto;
+    border-radius: 8pc;
+    margin: 8px;
+}
+
+.changelog {
+    --change-category: --main;
+    padding: 1px 4px;
+    border-radius: 12px !important;
+    background-color: hsl(var(--change-category), 15%, 25%);
+    color: hsl(var(--change-category), 15%, 80%);
+    border-width: 2px;
+    border-style: solid;
+    border-color: hsl(var(--change-category), 65%, 35%);
+    transition: 0.8s ease;
+}
+.changelog.Fix {
+    --change-category: 0;
+}
+.changelog.Feature {
+    --change-category: 190;
+}
+.changelog.Improvement {
+    --change-category: 170;
+}

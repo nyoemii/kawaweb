@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %} Changelog {% endblock %}
+
+{% block header %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+<script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
+<script src="/static/js/asserts/vue.js"></script>
+<script src="/static/js/asserts/vue-axios.js"></script>
+
+    <script>
+        var domain = "{{ domain() }}";
+        var changelogs = JSON.parse('{{ changelogs|tojson }}');
+        var type = "{{ type }}";
+        var category = "{{ category }}";
+    </script>
+<link rel="stylesheet" href="/static/css/pages/generic.css">
+<link rel="stylesheet" href="/static/css/pages/changelog.css">
+{% endblock %}
+
+{% block content %}
+<div id="app" :class="(load ? 'load' : '')">
+    <div class="changelog-banner main-banner">
+        <div class="main-selector"> <!-- Selectors for Change Type (Frontend, Backend, Client) -->
+            <div class="simple-banner-switch" :class="(type == 'frontend' ? 'active' : '')" @click="LoadChangelogs(changelogs, 'frontend', category)">Frontend</div>
+            <div class="simple-banner-switch" :class="(type == 'backend' ? 'active' : '')" @click="LoadChangelogs(changelogs, 'backend', category)">Backend</div>
+            <div class="simple-banner-switch" :class="(type == 'client' ? 'active' : '')" @click="LoadChangelogs(changelogs, 'client', category)">Client</div>
+        </div>
+        <div class="banner-text">Changelog</div>
+        <div class="selector">
+            <div class="simple-banner-switch" :class="(category == 'all' ? 'active' : '')" @click="LoadChangelogs(changelogs, type, 'all')">All</div>
+        </div>
+    </div>
+    <div class="main-block">
+        <div class="changelog-block">
+            <div class="changelog" v-for="(log, index) in logs" :key="log.id" :class="log.category">
+                <h2 class="changelog-header">
+                    <div class="changelog-title"><% log.category %></div>
+                </h2>
+                <div class="changelog-date" v-html="log.time + ' (' + timeago.format(log.time) + ')'"></div>
+                <div class="changelog-content" v-html="log.content"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/pages/changelog.js"></script>
+{% endblock %}
