@@ -1730,8 +1730,8 @@ async def log(action: Action):
         webhook = DiscordWebhook(glob.config.RANKED_WEBHOOK_URL)
 
         embed = DiscordEmbed(
-            title=f"{action.map.title} [{action.map.diff}] was {action.text} by {action.mod.name} ({action.mod.id})",
-            description=f"{action.map.diff} was {action.text}",
+            title=f"{action.map.title} [{action.map.version}] was {action.text} by {action.mod.name} ({action.mod.id})",
+            description=f"{action.map.version} was {action.text}",
             color=5126045,
             timestamp=datetime.datetime.now()
             )
@@ -1743,7 +1743,7 @@ async def log(action: Action):
 
         embed.add_embed_field(
             name="Information:",
-            value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction map: {action.map.title} [{action.map.diff}] ({action.map.id})\nAction Type: {action.action}\n Action Reason: {action.reason}",
+            value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction map: {action.map.title} [{action.map.version}] ({action.map.id})\nAction Type: {action.action}\n Action Reason: {action.reason}",
             inline=False
             )
 
