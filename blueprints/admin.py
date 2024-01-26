@@ -68,23 +68,31 @@ class Action:
         elif action == "changeprivileges":
             self.text = "Modified"
             self.type = 0
-                
+
         elif action == "rank":
             self.text = "Ranked"
             self.type = 1
 
-        elif action == "unrank":
-            self.text = "Unranked"
+        elif action == "approve":
+            self.text = "Approved"
+            self.type = 1
+
+        elif action == "qualify":
+            self.text = "Qualified"
             self.type = 1
 
         elif action == "love":
             self.text = "Loved"
             self.type = 1
 
-        elif action == "unlove":
-            self.text = "Unloved"
+        elif action == "unrank":
+            self.text = "Unranked"
             self.type = 1
-            
+
+        elif action == "completerequest":
+            self.text = "Completed Request"
+            self.type = 1
+
         else:
             raise ValueError(f"Invalid action {action}.")
         
@@ -104,7 +112,7 @@ class Action:
         if self.action in ["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges"]:
             self.user = User(self.targetid)
             await self.user.fetchUser()
-        elif self.action in ["rank", "unrank", "love", "unlove"]:
+        elif self.action in ["rank", "approve", "qualify", "love", "unrank", "completerequest"]:
             self.map = Map(self.targetid)
             await self.map.fetchMap()
 
@@ -230,7 +238,6 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
         
         try:
             action = await Action.create(a, form.get("reason"), form.get("user"))
-        
         except ValueError as e:
             return jsonify(
                 {
@@ -301,7 +308,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     "message": str(e)
                 }
             ), 400
-    
+
     if a == "restrict":
         form = await request.form
         if not form:
@@ -372,7 +379,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     "message": str(e)
                 }
             ), 400
-         
+
     if a == "unrestrict":
         form = await request.form
         if not form:
@@ -803,7 +810,6 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
         
         try:
             action = await Action.create(a, form.get("reason"), form.get("map"))
-        
         except ValueError as e:
             return jsonify(
                 {
@@ -844,13 +850,29 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 WHERE id = {action.map.id};
                 """
             )
+            try:
+                await glob.db.execute(
+                    f"""
+                    UPDATE map_requests
+                    SET active = 0
+                    WHERE map_id = {action.map.id};
+                    """
+                )
+                await glob.db.execute(
+                    f"""
+                    INSERT INTO newly_ranked (map_id, mod_id, time)
+                    VALUES ({action.map.id}, {action.mod.id}, {int(datetime.datetime.now().timestamp())});
+                    """
+                )
+            except:
+                pass
 
             await log(action)
 
             return jsonify(
                 {
                     "status": "success",
-                    "message": f"Successfully ranked {action.map.name} ({action.map.id})."
+                    "message": f"Successfully ranked {action.map.artist} - {action.map.title} [{action.map.diff}] ({action.map.id})."
                 }
             ), 200
             
@@ -862,7 +884,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 }
             ), 400
 
-    if a == "unrank":
+    if a == "approve":
         form = await request.form
         if not form:
             return jsonify(
@@ -882,7 +904,6 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
         
         try:
             action = await Action.create(a, form.get("reason"), form.get("map"))
-        
         except ValueError as e:
             return jsonify(
                 {
@@ -896,15 +917,15 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 return jsonify(
                     {
                         "status": "error",
-                        "message": "You do not have permission to unrank maps."
+                        "message": "You do not have permission to approve maps."
                     }
                 ), 403
 
-            if action.map.status == 0:
+            if action.map.status == 3:
                 return jsonify(
                     {
                         "status": "error",
-                        "message": "map is not already ranked."
+                        "message": "map is already approved."
                     }
                 ), 400
             
@@ -919,17 +940,117 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
             await glob.db.execute(
                 f"""
                 UPDATE maps
-                SET status = 0
+                SET status = 3
                 WHERE id = {action.map.id};
                 """
             )
+            
+            try:
+                await glob.db.execute(
+                    f"""
+                    UPDATE map_requests
+                    SET active = 0
+                    WHERE map_id = {action.map.id};
+                    """
+                )
+            except:
+                pass
 
             await log(action)
 
             return jsonify(
                 {
                     "status": "success",
-                    "message": f"Successfully unranked {action.map.name} ({action.map.id})."
+                    "message": f"Successfully approved {action.map.artist} - {action.map.title} [{action.map.diff}] ({action.map.id})."
+                }
+            ), 200
+            
+        except Exception as e:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": str(e)
+                }
+            ), 400
+
+    if a == "qualify":
+        form = await request.form
+        if not form:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "No form data provided."
+                }
+            ), 400
+        
+        if form.get("map") is None:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "No map specified."
+                }
+            ), 400
+        
+        try:
+            action = await Action.create(a, form.get("reason"), form.get("map"))
+        except ValueError as e:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": str(e)
+                }
+            ), 400
+        
+        try:
+            if Privileges.ManageBeatmaps not in GetPriv(action.mod.priv):
+                return jsonify(
+                    {
+                        "status": "error",
+                        "message": "You do not have permission to qualify maps."
+                    }
+                ), 403
+
+            if action.map.status == 4:
+                return jsonify(
+                    {
+                        "status": "error",
+                        "message": "map is already qualified."
+                    }
+                ), 400
+            
+            if action.map.frozen:
+                return jsonify(
+                    {
+                        "status": "error",
+                        "message": "map is frozen."
+                    }
+                ), 400
+            
+            await glob.db.execute(
+                f"""
+                UPDATE maps
+                SET status = 4
+                WHERE id = {action.map.id};
+                """
+            )
+            
+            try:
+                await glob.db.execute(
+                    f"""
+                    UPDATE map_requests
+                    SET active = 0
+                    WHERE map_id = {action.map.id};
+                    """
+                )
+            except:
+                pass
+
+            await log(action)
+
+            return jsonify(
+                {
+                    "status": "success",
+                    "message": f"Successfully approved {action.map.artist} - {action.map.title} [{action.map.diff}] ({action.map.id})."
                 }
             ), 200
             
@@ -961,7 +1082,6 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
         
         try:
             action = await Action.create(a, form.get("reason"), form.get("map"))
-        
         except ValueError as e:
             return jsonify(
                 {
@@ -1002,13 +1122,24 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 WHERE id = {action.map.id};
                 """
             )
+            
+            try:
+                await glob.db.execute(
+                    f"""
+                    UPDATE map_requests
+                    SET active = 0
+                    WHERE map_id = {action.map.id};
+                    """
+                )
+            except:
+                pass
 
             await log(action)
 
             return jsonify(
                 {
                     "status": "success",
-                    "message": f"Successfully loved {action.map.name} ({action.map.id})."
+                    "message": f"Successfully loved {action.map.artist} - {action.map.title} [{action.map.diff}] ({action.map.id})."
                 }
             ), 200
             
@@ -1020,7 +1151,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 }
             ), 400
 
-    if a == "unlove":
+    if a == "unrank":
         form = await request.form
         if not form:
             return jsonify(
@@ -1040,7 +1171,6 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
         
         try:
             action = await Action.create(a, form.get("reason"), form.get("map"))
-        
         except ValueError as e:
             return jsonify(
                 {
@@ -1054,15 +1184,15 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 return jsonify(
                     {
                         "status": "error",
-                        "message": "You do not have permission to unlove maps."
+                        "message": "You do not have permission to unrank maps."
                     }
                 ), 403
 
-            if action.map.status != 5:
+            if action.map.status == 0:
                 return jsonify(
                     {
                         "status": "error",
-                        "message": "map is not already loved."
+                        "message": "map is not ranked."
                     }
                 ), 400
             
@@ -1081,13 +1211,82 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 WHERE id = {action.map.id};
                 """
             )
+            
+            try:
+                await glob.db.execute(
+                    f"""
+                    UPDATE map_requests
+                    SET active = 0
+                    WHERE map_id = {action.map.id};
+                    """
+                )
+            except:
+                pass
 
             await log(action)
 
             return jsonify(
                 {
                     "status": "success",
-                    "message": f"Successfully unloved {action.map.name} ({action.map.id})."
+                    "message": f"Successfully unranked {action.map.artist} - {action.map.title} [{action.map.diff}] ({action.map.id})."
+                }
+            ), 200
+            
+        except Exception as e:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": str(e)
+                }
+            ), 400
+
+    if a == "completerequest":
+        form = await request.form
+        if not form:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "No form data provided."
+                }
+            ), 400
+        
+        if form.get("map") is None:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "No map specified."
+                }
+            ), 400
+        
+        try:
+            action = await Action.create(a, form.get("reason"), form.get("map"))
+        except ValueError as e:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": str(e)
+                }
+            ), 400
+        
+        try:
+            if Privileges.ManageBeatmaps not in GetPriv(action.mod.priv):
+                return jsonify(
+                    {
+                        "status": "error",
+                        "message": "You do not have permission to complete map requests."
+                    }
+                ), 403
+            await glob.db.execute(
+                f"""
+                UPDATE map_requests
+                SET active = 0
+                WHERE map_id = {action.map.id};
+                """
+            )
+            return jsonify(
+                {
+                    "status": "success",
+                    "message": f"Successfully marked {action.map.artist} - {action.map.title} [{action.map.diff}] ({action.map.id}) as complete."
                 }
             ), 200
             
@@ -1289,7 +1488,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     "message": str(e)
                 }
             ), 400
-        
+
     if a == "addbadge":
         form = await request.form
 
@@ -1345,7 +1544,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     "message": str(e)
                 }
             ), 400
-        
+
     if a == "removebadge":
         form = await request.form
 
@@ -1401,7 +1600,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     "message": str(e)
                 }
             ), 400
-    
+
     if a == "removescore":
         form = await request.form
 
@@ -1468,7 +1667,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     "message": str(e)
                 }
             ), 400
-        
+
 async def log(action: Action):
     """
     structure of the log table:
@@ -1493,7 +1692,7 @@ async def log(action: Action):
 
         embed = DiscordEmbed(
             title=f"{action.user.name} was {action.text} by {action.mod.name}",
-            description=f"a {action.action} was performed.",
+            description=f"a {action.text} was performed.",
             color=5126045,
             timestamp=datetime.datetime.now()
             )
@@ -1527,20 +1726,20 @@ async def log(action: Action):
         webhook = DiscordWebhook(glob.config.RANKED_WEBHOOK_URL)
 
         embed = DiscordEmbed(
-            title=f"{action.map.title} was {action.text} by {action.mod.id}",
-            description=f"a {action.action} was performed.",
+            title=f"{action.map.title} [{action.map.diff}] was {action.text} by {action.mod.name} ({action.mod.id})",
+            description=f"{action.map.diff} was {action.text}",
             color=5126045,
             timestamp=datetime.datetime.now()
             )
         
         embed.set_author(
-            name=f"New Action By {action.mod.id}",
+            name=f"New Action By {action.mod.name} ({action.mod.id})",
             icon_url=f"https://a.kawata.pw/{action.mod.id}"
             )
 
         embed.add_embed_field(
             name="Information:",
-            value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction map: {action.map.title} ({action.map.id})\nAction Type: {action.action}\n Action Reason: {action.reason}",
+            value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction map: {action.map.title} [{action.map.diff}] ({action.map.id})\nAction Type: {action.action}\n Action Reason: {action.reason}",
             inline=False
             )
 
@@ -1548,7 +1747,7 @@ async def log(action: Action):
 
         embed.set_footer(
             text=f"ID: {action.id}",
-            icon_url=f"https://a.kawata.pw/{action.user.id}")
+            icon_url=f"https://a.kawata.pw/{action.mod.id}")
 
         webhook.add_embed(embed)
         webhook.execute()

@@ -497,7 +497,7 @@ new Vue({
                         </form>
                     </div>
                     <div class="content" v-if="module === 'Badges'">
-                    Note: You must leave and re-enter this page to undo any badge changes. Will be fixed eventually.
+                        Note: You must leave and re-enter this page to undo any badge changes. Will be fixed eventually.
                         <div id="badges" class="columns is-multiline">
                             <div v-for="(badge, index) in badges" :key="badge.id" class="column is-half">
                                 <div id="badge" class="card" :class="{ 'selected': user.badges.find(b => b.id === badge.id) }" :ref="badge.id" @click="toggleBadgeSelection(badge.id)">
