@@ -68,3 +68,50 @@
 .footer {
   margin: 0;
 }
+
+.ranked-block {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+  .ranked-block .map {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-style: solid;
+    border-width: 1px;
+    border-color: hsl(var(--main), 40%, 40%);
+    background-color: hsl(var(--main), 20%, 20%);
+    background-image: linear-gradient(to bottom, hsl(var(--main), 20%, 20%), hsl(var(--main), 20%, 10%));
+    margin: 0 0 10px 0;
+  }
+    .map .map-info {
+      position: relative;
+      width: 100%;
+    }
+    .ranked-block .map .map-info .beatmap-info .map-title {
+      font-size: 1em;
+      font-weight: 500;
+    }
+    .ranked-block .map .map-info .beatmap-info .map-artist {
+      font-size: 0.85em;
+      font-weight: 400;
+    }
+    .ranked-block .map .map-info .map-diffs {
+      width: 16px;
+      height: 16px;
+    }
+    .ranked-block .map .mod-info {
+      display: flex;
+      flex-direction: row;
+      flex-shrink: 0;
+      justify-content: right;
+      position: relative;
+      width: fit-content;
+      height: 48px;
+    }
+      .mod-info img {
+        width: 48px;
+        height: 48px;
+      }

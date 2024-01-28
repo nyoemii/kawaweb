@@ -136,21 +136,47 @@
   </div>
 </section>
 
-<section>
+<section class="section">
   <div class="container has-text-centered py-4">
     <h2 class="title mb-6">Newly Ranked</h2>
+    <div class="ranked-block">
+      {% for map in rankedmaps %}
+      <div class="map">
+        <div class="map-info" style="background-image: url(https://assets.ppy.sh/beatmaps/{{ map.set_id }}/covers/card@2x.jpg); position: relative;">
+          <div class="map-info-overlay" style="background: linear-gradient(to bottom, hsla(var(--main), 20%, 20%, 0.4), hsla(var(--main), 20%, 10%, 0.7)); height: 100%; width: 100%; position: absolute; z-index: 0;"></div>
+          <div class="beatmap-info" style="z-index: 1; position: relative;">
+            <div class="map-title">{{ map.title }}</div>
+            <div class="map-artist">{{ map.artist }}</div>
+          </div>
+          <div class="map-diffs" style="z-index: 1; position: relative;">
+            {% for diff in map.diffs %}
+              <div class="diff-info" title="Version: {{ diff.version }}&#10;Status: {% if diff.status == 2 %}Ranked{% elif diff.status == 3 %}Approved{% elif diff.status == 4 %}Qualified{% elif diff.status == 5 %}Loved{% else %}Pending{% endif %}&#10;CS: {{ diff.cs }}&#10;OD: {{ diff.od }}&#10;HP: {{ diff.hp }}&#10;AR: {{ diff.ar }}&#10;BPM: {{ diff.bpm }}&#10;Stars: {{ diff.diff }}">
+                <img src="/static/images/icons/mode-osu.png" class="diff-icon">
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="mod-info">
+          <div>
+            Ranked by:</br>
+            <a href="/u/{{ map.mod.id }}">{{ map.mod.name }}</a>
+          </div>
+          <img src="https://a.{{domain()}}/{{ map.mod.id }}" class="mod-icon">
+        </div>
+      </div>
+      {% endfor %}
   </div>
 </section>
 
-<section>
+<section class="section">
   <div class="container has-text-centered py-4">
     <h2 class="title mb-6"><a href="/changelog">Changelog</a></h2>
     <div class="changelog-block">
       {% for changelog in changelogs %}
       <div class="changelog {{ changelog.category }}">
         <a class="changelog-author" href="/u/{{ changelog.poster.id }}">
-          <img class="changelog-avatar" src="https://a.{{domain()}}/{{ changelog.poster.id }}">
-          <div class="changelog-name">{{ changelog.poster.name }}</div>
+          <img class="changelog-author-avatar" src="https://a.{{domain()}}/{{ changelog.poster.id }}">
+          <div class="changelog-author-name">{{ changelog.poster.name }}</div>
         </a>
         <div class="change-block">
           <div class="changelog-header">
