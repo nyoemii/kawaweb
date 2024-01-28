@@ -32,12 +32,18 @@
     </div>
     <div class="main-block">
         <div class="changelog-block">
-            <div class="changelog" v-for="(log, index) in logs" :key="log.id" :class="log.category">
-                <h2 class="changelog-header">
-                    <div class="changelog-title"><% log.category %></div>
-                </h2>
-                <div class="changelog-date" v-html="log.time + ' (' + timeago.format(log.time) + ')'"></div>
-                <div class="changelog-content" v-html="log.content"></div>
+            <div class="changelog" v-for="(log, index) in logs.slice().reverse()" :key="log.time" :class="log.category">
+                <a class="changelog-author" :href="'/u/' + log.poster.id">
+                    <img class="changelog-author-avatar" :src="'https://a.' + domain + '/' + log.poster.id"></img>
+                    <p class="changelog-author-name"><% log.poster.name %></p>
+                </a>
+                <div class="change-block">
+                    <div class="changelog-header">
+                        <h2 class="changelog-title"><% log.category %></h2>
+                    </div>
+                    <p class="changelog-date" v-html="log.time + ' (' + timeago.format(log.time) + ')'"></p>
+                    <div class="changelog-content" v-html="log.content"></div>
+                </div>
             </div>
         </div>
     </div>

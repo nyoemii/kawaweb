@@ -42,6 +42,9 @@ new Vue({
                 return (changelog.type === typeInt) && (category === 'all' || changelog.category === category);
             });
 
+            // Sort filtered changelogs by time column in descending order
+            filteredChangelogs.sort((a, b) => b.time - a.time);
+
             this.$set(this, 'logs', filteredChangelogs);
             this.$set(this, 'type', type);
             this.$set(this, 'category', category);

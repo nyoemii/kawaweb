@@ -56,10 +56,36 @@ async def home(doc=None):
     doc=doc
     if maintenence:
         return await flash('success', f'Website is currently under maintenence', 'home')
-    
     unix_timestamp = await glob.db.fetch('SELECT * FROM server_data WHERE type = "breakevent"')
     unix_timestamp = unix_timestamp['value']
-    return await render_template('home.html', unix_timestamp=unix_timestamp)
+    
+    changelogs = await glob.db.fetchall('SELECT * FROM changelog ORDER BY time DESC LIMIT 5')
+    for log in changelogs:
+        poster = await glob.db.fetch("SELECT name, id, country, priv FROM users WHERE id = %s", [log['poster']])
+        poster_badges = await glob.db.fetchall(
+            "SELECT badge_id FROM user_badges WHERE userid = %s",
+            (log['poster'],),
+        )
+        badges = []
+        for user_badge in poster_badges:
+            badge_id = user_badge["badge_id"]
+            badge = await glob.db.fetch(
+                "SELECT * FROM badges WHERE id = %s",
+                (badge_id,),
+            )
+            badge_styles = await glob.db.fetchall(
+                "SELECT * FROM badge_styles WHERE badge_id = %s",
+                (badge_id,),
+            )
+            badge = dict(badge)
+            badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
+            badges.append(badge)
+            # Sort the badges based on priority
+            badges.sort(key=lambda x: x['priority'], reverse=True)
+        poster['badges'] = badges
+        log['poster'] = poster
+    print(changelog)
+    return await render_template('home.html', unix_timestamp=unix_timestamp, changelogs=changelogs)
 
 @frontend.route('/home/account/edit')
 async def home_account_edit():

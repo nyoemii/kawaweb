@@ -3,6 +3,8 @@
 
 {% block header %}
 <link rel="stylesheet" href="/static/css/pages/home.css">
+<link rel="stylesheet" href="/static/css/pages/changelog.css">
+
 {% endblock %}
 
 {% block content %}
@@ -130,6 +132,44 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container has-text-centered py-4">
+    <h2 class="title mb-6">Newly Ranked</h2>
+  </div>
+</section>
+
+<section>
+  <div class="container has-text-centered py-4">
+    <h2 class="title mb-6"><a href="/changelog">Changelog</a></h2>
+    <div class="changelog-block">
+      {% for changelog in changelogs %}
+      <div class="changelog {{ changelog.category }}">
+        <a class="changelog-author" href="/u/{{ changelog.poster.id }}">
+          <img class="changelog-avatar" src="https://a.{{domain()}}/{{ changelog.poster.id }}">
+          <div class="changelog-name">{{ changelog.poster.name }}</div>
+        </a>
+        <div class="change-block">
+          <div class="changelog-header">
+            {% if changelog.type == 0 %}
+            <div class="changelog-title">Frontend - {{ changelog.category }}</div>
+            {% elif changelog.type == 1 %}
+            <div class="changelog-title">Backend - {{ changelog.category }}</div>
+            {% elif changelog.type == 2 %}
+            <div class="changelog-title">Client - {{ changelog.category }}</div>
+            {% endif %}
+            <div class="changelog-date">{{ changelog.time }}</div>
+          </div>
+          <div class="changelog-body">
+            {{ changelog.content }}
+          </div>
+        </div>
+        
+      </div>
+      {% endfor %}
     </div>
   </div>
 </section>
