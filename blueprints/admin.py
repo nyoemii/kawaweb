@@ -62,11 +62,11 @@ class Action:
 
         elif action == "changepassword":
             self.type = 0
-            # we don't post this to discord, for obvious reasons, so no text.
+            self.text = "Changed password"
             self.type = 0
 
         elif action == "changeprivileges":
-            self.text = "Modified"
+            self.text = "Modified Privileges"
             self.type = 0
 
         elif action == "editaccount":
@@ -1696,7 +1696,18 @@ async def log(action: Action):
             VALUES ('{action.id}', '{action.action}', '{action.reason}', {action.mod.id}, {action.user.id}, '{datetime.datetime.now()}', {action.type});
             """
         )
+        # don't post password changes to discord, that's just dumb
+        if action.action != "changepassword":
+            webhook = DiscordWebhook(glob.config.ADMIN_WEBHOOK_URL)
 
+            embed = DiscordEmbed(
+                title=f"{action.user.name} was {action.text} by {action.mod.name}",
+                description=f"a {action.action} was performed.",
+                color=5126045,
+                timestamp=datetime.datetime.now()
+                )
+
+<<<<<<< Updated upstream
         webhook = DiscordWebhook(glob.config.ADMIN_WEBHOOK_URL)
 
         embed = DiscordEmbed(
@@ -1710,19 +1721,25 @@ async def log(action: Action):
             name=f"New Action By {action.mod.name}",
             icon_url=f"https://a.kawata.pw/{action.mod.id}"
             )
+=======
+            embed.set_author(
+                name=f"New Action By {action.mod.name}",
+                icon_url=f"https://a.kawata.pw/{action.mod.id}"
+                )
+>>>>>>> Stashed changes
 
-        embed.add_embed_field(
-            name="Information:",
-            value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction User: {action.user.name} ({action.user.id})\nAction Type: {action.action}\n Action Reason: {action.reason}",
-            inline=False
-            )
+            embed.add_embed_field(
+                name="Information:",
+                value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction User: {action.user.name} ({action.user.id})\nAction Type: {action.action}\n Action Reason: {action.reason}",
+                inline=False
+                )
 
-        embed.set_footer(
-            text=f"ID: {action.id}",
-            icon_url=f"https://a.kawata.pw/{action.user.id}")
+            embed.set_footer(
+                text=f"ID: {action.id}",
+                icon_url=f"https://a.kawata.pw/{action.user.id}")
 
-        webhook.add_embed(embed)
-        webhook.execute()
+            webhook.add_embed(embed)
+            webhook.execute()
     
     elif action.type == 1:
         await glob.db.execute(
