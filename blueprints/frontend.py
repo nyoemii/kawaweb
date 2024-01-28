@@ -85,7 +85,10 @@ async def settings_profile_post():
 
     old_name  = session['user_data']['name']
     old_email = session['user_data']['email']
-    old_hue   = session['user_data']['hue']
+    if 'hue' not in session['user_data'] or session['user_data']['hue'] is None:
+        old_hue = 190
+    else:
+        old_hue = session['user_data']['hue']
 
     # no data has changed; deny post
     if (
