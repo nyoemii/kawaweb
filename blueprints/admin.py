@@ -854,6 +854,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 WHERE id = {action.map.id};
                 """
             )
+            await log(action)
             try:
                 await glob.db.execute(
                     f"""
@@ -862,16 +863,20 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     WHERE map_id = {action.map.id};
                     """
                 )
+            except Exception as e:
+                print(f"Error on Updating Map Request: {e}")
+                pass
+            try:
                 await glob.db.execute(
                     f"""
                     INSERT INTO newly_ranked (map_id, mod_id, time)
-                    VALUES ({action.map.id}, {action.mod.id}, {int(datetime.datetime.now().timestamp())});
+                    VALUES ({action.map.id}, {action.mod.id}, '{datetime.datetime.now()}');
                     """
                 )
-            except:
+            except Exception as e:
+                print(f"Error on Adding map into newly_ranked table: {e}")
                 pass
 
-            await log(action)
 
             return jsonify(
                 {

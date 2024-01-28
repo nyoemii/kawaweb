@@ -195,6 +195,28 @@
         .status.approved {
             background-color: rgba(0, 255, 34, 0.25);
         }
+    .download {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        height: fit-content;
+        width: fit-content;
+        padding: 4px 10px;
+        margin: 10px;
+        align-content: center;
+        justify-content: center;
+        border-radius: 20px;
+        background-color: hsla(var(--main), 10%, 15%, 0.25)
+    }
+        .download h1,
+        .download h2,
+        .download h3,
+        .download h4,
+        .download h5,
+        .download h6 {
+            margin: 2px;
+            padding: 1px;
+        }
     [data-panel="changeBeatmapStatus"] .second-block {
         background: var(--container-bg);
         max-height: 55vh;

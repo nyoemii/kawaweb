@@ -106,6 +106,11 @@ new Vue({
                     <div :class="'status ' + statusInfo.class">
                         <h3><% statusInfo.text %></h3>
                     </div>
+                    <div class="download">
+                        <a :href="'/d/' + beatmap['map_info']['set_id']">
+                            <button class="button"><i class="fas fa-download"></i>Download</button>
+                        </a>
+                    </div>
                 </div>
                 <div class="second-block">
                     <div class="alert" v-if="postresponse" :style="'background-color: var(--alert-' + postresponsestatus + ');'">
