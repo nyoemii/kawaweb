@@ -1220,22 +1220,39 @@ Options_RainbowMenu=Rainbow Visualisation
 Options_Path=Path Settings
 Options_Path_Desc=You can syncronize your osu!Aeris client with osu!Stable by pointing the path to your osu! (stable). osu!Aeris will not touch anything else than your skins and your maps
 Options_Path_Current=Current Path
+
 Options_Cheats=Cheats
+
 Options_Cheats_Relax=Relax Cheats
 Options_Cheats_Relax_Type=Type
 Options_Cheats_Relax_None=None
 Options_Cheats_Relax_Skooter=Skooter Relax
+
 Options_Cheats_Aim=Aim Cheats
 Options_Cheats_Aim_Type=Type
 Options_Cheats_Aim_None=None
+
 Options_Cheats_Aim_Correction=Correction
 Options_Cheats_Aim_Correction_Value=Range
 Options_Cheats_Aim_Correction_TOC=Tap on Correction
+Options_Cheats_Aim_Correction_TOC_Desc=Aim Correction will tap when it corrects aim, Works well for those not using relax.
+Options_Cheats_Aim_Correction_Relative=Relative Range
+Options_Cheats_Aim_Correction_Relative_Desc=Aim Correction Range will be relative to the Circle Size
+
+Options_Cheats_Aim_OsuBuddyAimAssist=Osu!Buddy Aim Assist
+Options_Cheats_Aim_OsuBuddyAimAssist_Speed=Speed/Strength
+Options_Cheats_Aim_OsuBuddyAimAssist_StartingDistance=Starting Distance
+Options_Cheats_Aim_OsuBuddyAimAssist_StoppingDistance=Stopping Distance
+Options_Cheats_Aim_OsuBuddyAimAssist_AssistOnSliders=Assist on Sliders
+Options_Cheats_Aim_OsuBuddyAimAssist_AssistOnSliders_Desc=Will help you follow sliders better.
+
 Options_Cheats_Timewarp=Timewarp
 Options_Cheats_Timewarp_Enabled=Enabled
 Options_Cheats_Timewarp_Type=Type
 Options_Cheats_Timewarp_None=None
 Options_Cheats_Timewarp_Rate=Rate
+Options_Cheats_Timewarp_Rate_Extended=Extended Timewarp Rate (Restart Required)
+Options_Cheats_Timewarp_Rate_Extended_Desc=Allows you to use Timewarp up to 5x original map speed ;)
 Options_Cheats_Timewarp_Multiplier=Multiplier
 Options_Cheats_Enlighten=Enlighten
 Options_Cheats_Enlighten_ARChanger=Approach Rate Changer
