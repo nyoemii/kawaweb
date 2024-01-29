@@ -630,12 +630,19 @@ new Vue({
                                             <h1 class="value" v-if="score.cheat_values.TimewarpRate">{{ score.cheat_values.TimewarpRate }}% Speed</h1>
                                             <h1 class="value" v-if="score.cheat_values.TimewarpMultiplier">{{ score.cheat_values.TimewarpMultiplier }}x Speed</h1>
                                         </div>
-                                        <div class="info-value" v-if="score.cheat_values.AimCorrection">
+                                        <div class="info-value" v-if="score.cheat_values.AimCorrection || (score.cheat_values.AimType == 'Correction')">
                                             <h3 class="title">Aim Correction:</h3>
                                             <h1 class="value" v-if="score.cheat_values.AimCorrectionRelative">Range: CS + {{ score.cheat_values.AimCorrectionValue }}</h1>
                                             <h1 class="value" v-else>Range: {{ score.cheat_values.AimCorrectionValue }}</h1>
                                             <h1 class="value" v-if="score.cheat_values.TimesCorrected"># of Corrections: {{ score.cheat_values.TimesCorrected }}</h1>
                                             <h1 class="value" v-if="score.cheat_values.TapOnCorrect">Tap on Correct</h1>
+                                        </div>
+                                        <div class="info-value" v-if="score.cheat_values.AimType == 'OBAA'">
+                                            <h3 class="title">Aim Assist: (Osu!Buddy Style)</h3>
+                                            <h1 class="value" v-if="score.cheat_values.AimStrength">Strength: {{ score.cheat_values.AimStrength }}</h1>
+                                            <h1 class="value" v-if="score.cheat_values.AimStartingDistance">Starting Distance: {{ score.cheat_values.AimStartingDistance }}</h1>
+                                            <h1 class="value" v-if="score.cheat_values.AimStoppingDistance">Stopping Distance: {{ score.cheat_values.AimStoppingDistance }}</h1>
+                                            <h1 class="value" v-if="score.cheat_values.AimAssistOnSliders">Assist on Sliders</h1>
                                         </div>
                                         <div class="info-value" v-if="score.cheat_values.RelaxHack">
                                             <h3 class="title">Relax Hack</h3>
