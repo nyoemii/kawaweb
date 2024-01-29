@@ -99,8 +99,22 @@
       font-weight: 400;
     }
     .ranked-block .map .map-info .map-diffs {
-      width: 16px;
-      height: 16px;
+      margin-left: auto;
+      margin-right: auto;
+      width: fit-content;
+      display: flex;
+      flex-direction: row;
+      height: 24px;
+    }
+    .map-diffs .diff-info {
+      height: 24px;
+      width: 24px;
+      display: flex;
+      flex-direction: row;
+    }
+    .diff-info[data-title]:hover::before{
+      top: 30px;
+      z-index: 100;
     }
     .ranked-block .map .mod-info {
       display: flex;

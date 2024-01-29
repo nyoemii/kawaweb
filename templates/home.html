@@ -150,7 +150,7 @@
           </div>
           <div class="map-diffs" style="z-index: 1; position: relative;">
             {% for diff in map.diffs %}
-              <div class="diff-info" title="Version: {{ diff.version }}&#10;Status: {% if diff.status == 2 %}Ranked{% elif diff.status == 3 %}Approved{% elif diff.status == 4 %}Qualified{% elif diff.status == 5 %}Loved{% else %}Pending{% endif %}&#10;CS: {{ diff.cs }}&#10;OD: {{ diff.od }}&#10;HP: {{ diff.hp }}&#10;AR: {{ diff.ar }}&#10;BPM: {{ diff.bpm }}&#10;Stars: {{ diff.diff }}">
+              <div class="diff-info" data-title="Version: {{ diff.version }}&#10;Status: {% if diff.status == 2 %}Ranked{% elif diff.status == 3 %}Approved{% elif diff.status == 4 %}Qualified{% elif diff.status == 5 %}Loved{% else %}Pending{% endif %}&#10;CS: {{ diff.cs }}&#10;OD: {{ diff.od }}&#10;HP: {{ diff.hp }}&#10;AR: {{ diff.ar }}&#10;BPM: {{ diff.bpm }}&#10;Stars: {{ diff.diff }}">
                 <img src="/static/images/icons/mode-osu.png" class="diff-icon">
               </div>
             {% endfor %}
