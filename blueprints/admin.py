@@ -1459,7 +1459,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     await glob.db.execute(
                         f"""
                         UPDATE users
-                        SET country = {country}
+                        SET country = '{country}'
                         WHERE id = {action.user.id};
                         """
                     )
