@@ -221,6 +221,7 @@
         background: var(--container-bg);
         max-height: 55vh;
         display: flex;
+        flex-direction: column;
         overflow-y: auto;
         border-bottom-right-radius: 20px;
         border-bottom-left-radius: 20px;
