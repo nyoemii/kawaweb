@@ -62,11 +62,11 @@ class Action:
 
         elif action == "changepassword":
             self.type = 0
-            # we don't post this to discord, for obvious reasons, so no text.
+            self.text = "Changed password"
             self.type = 0
 
         elif action == "changeprivileges":
-            self.text = "Modified"
+            self.text = "Modified Privileges"
             self.type = 0
 
         elif action == "editaccount":
