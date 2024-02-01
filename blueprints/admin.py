@@ -73,6 +73,10 @@ class Action:
             self.text = "Edited Account"
             self.type = 0
 
+        elif action == "removescore":
+            self.text = "Removed Score"
+            self.type = 0
+
         elif action == "rank":
             self.text = "Ranked"
             self.type = 1
@@ -113,7 +117,7 @@ class Action:
         await self.mod.fetchUser()
 
 
-        if self.action in ["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges", "editaccount"]:
+        if self.action in ["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges", "editaccount", "removescore"]:
             self.user = User(self.targetid)
             await self.user.fetchUser()
         elif self.action in ["rank", "approve", "qualify", "love", "unrank", "completerequest"]:

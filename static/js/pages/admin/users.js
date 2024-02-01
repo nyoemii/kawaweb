@@ -324,7 +324,7 @@ new Vue({
                                                     </div>
                                                     <div class="field">
                                                         <div class="control userspanel">
-                                                            <button class="button is-success" @click="postAction('/admin/action/removescore', { user: user.id, reason: document.getElementById('wipescore-reason-input').value, scoreid: document.getElementById('wipescore-id-input').value })">
+                                                            <button class="button is-success" @click="postAction('/admin/action/removescore', { user: user.id, reason: document.getElementById('wipescore-reason-input').value, score: document.getElementById('wipescore-id-input').value })">
                                                                 Remove Score
                                                             </button>
                                                         </div>
