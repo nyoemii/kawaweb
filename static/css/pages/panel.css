@@ -218,3 +218,383 @@
                 .linked {
                     pointer-events: all;
                 }
+
+
+
+[data-panel="Beatmap"] {
+    width: 96vw;
+    max-height: 95vh;
+    transition: 0.2s ease; /* for responsive animation */
+    border-radius: 20px;
+    overflow: hidden;
+    position: absolute;
+    top: auto;
+    bottom: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+@media (min-width: 1000px) {
+    [data-panel="Beatmap"] {
+        width: 1000px;
+    }
+}
+    [data-panel="Beatmap"] .main-block {
+        width: inherit;
+        background: hsl(var(--main), 10%, 15%);
+        position: relative;
+    }
+        [data-panel="Beatmap"] .banner-text {
+            font-size: 2.5em;
+            font-weight: 500;
+            line-height: 1.0em;
+            color: white;
+            text-align: center;
+            pointer-events: auto;
+            z-index: 1;
+            margin-bottom: 12px !important;
+        }
+        [data-panel="Beatmap"] .selector {
+            height: fit-content !important;
+            overflow-wrap: normal;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        #panel.map-stats {
+            position: absolute;
+            left: 24px;
+            bottom: 48px;
+            display: flex;
+            flex-direction: column;
+            pointer-events: auto;
+            border-radius: 12px;
+            overflow: hidden;
+            width: 200px;
+        }
+            #panel.map-stats .stat-block {
+                display: flex;
+                flex-direction: column;
+                background-color: hsla(var(--main), 25%, 12%, 0.8);
+                padding: 8px;
+                align-content: center;
+                align-items: center;
+                margin-top: 2px;
+                margin-bottom: 2px;
+            }
+                #panel.map-stats .stat-block.top {
+                    margin-top: 0px !important;
+                }
+                #panel.map-stats .stat-block.bottom {
+                    margin-bottom: 0px !important;
+                }
+                .stat-block.map-play {
+                    justify-content: center;
+                }
+
+    #panel.second-block {
+        background: var(--container-bg);
+        max-height: 55vh;
+        display: flex;
+        overflow-y: auto;
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+        #panel.second-block .content {
+            display: flex;
+            flex-direction: column;
+            background-color: hsl(var(--main), 18%, 18%);
+            padding: 4px;
+            margin: 1%;
+            margin-bottom: 2%;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transition: 0.2s ease;
+            border-bottom-right-radius: 8px;
+            border-bottom-left-radius: 8px;
+            position: relative;
+        }
+
+            [data-panel="Beatmap"] .beatmap-info {
+                display: flex;
+                flex-direction: row;
+                background-color: hsl(var(--main), 25%, 25%);
+                padding: 0px 20px;
+                margin-top: 10px;
+                border-radius: 12px;
+                border: 1px solid hsl(var(--main), 25%, 30%);
+                margin-bottom: 10px;
+                pointer-events: auto;
+                position: relative;
+                width: 100%;
+            }
+                [data-panel="Beatmap"] .beatmap-info .info-block {
+                    display: flex;
+                    flex-direction: column;
+                    pointer-events: auto;
+                    padding: 10px !important;
+                    width: 50%;
+                    position: relative;
+                }
+                    .info-block .buttons {
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        justify-content: space-between;
+                        pointer-events: auto;
+                        padding: 10px !important;
+                        width: 100%;
+                        position: relative;
+                    }
+            .mode-sort + .table-responsive
+            {
+              border-top-left-radius: 8px;
+              border-top-right-radius: 8px;
+            }
+            .table-responsive
+            {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                -ms-overflow-style: -ms-autohiding-scrollbar;
+            }
+                .table-responsive .lb-first-place-header {
+                    background-color: hsl(var(--main), 20%, 20%) !important;
+                    border-bottom: 2px double hsl(var(--main), 10%, 10%);
+                    margin-bottom: 0px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 24px 24px;
+                    color: hsl(var(--main), 10%, 60%);
+                    transition: 200ms background-color;
+                    border-top-left-radius: 20px;
+                    border-top-right-radius: 20px;
+                }
+                    .lb-first-place-header .user-block {
+                        display: flex !important;
+                    }
+                        .lb-first-place-header .play-rank {
+                            display: -ms-flexbox !important;
+                            display: flex !important;
+                            -ms-flex-align: center !important;
+                            align-items: center !important;
+                            -ms-flex-pack: center !important;
+                            justify-content: center !important;
+                            -ms-flex-direction: column !important;
+                            flex-direction: column !important;
+                        }
+                            .play-rank .map-rank
+                            {
+                                font-size: 24px;
+                                font-weight: 600;
+                                width: 60px;
+                                height: 60px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                padding: 3px 5px;
+                                border-radius: 20px;
+                            }
+                        .lb-first-place-header .user-avatar {
+                            width: 72px;
+                            height: 72px;
+                            background-size: 100%;
+                            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.35);
+                            border-radius: 8px;
+                            margin-right: 10px;
+                            margin-left: 14px;
+                            background-color: hsl(var(--main), 10%, 30%);
+                            transition: 200ms background-color;
+                        }
+                        .lb-first-place-header .user {
+                            line-height: 1.3;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                        }
+                            .user .username {
+                                font-size: 16px;
+                                font-weight: 700;
+                                color: hsl(var(--main), 10%, 80%);
+                                transition: 100ms color;
+                            }
+                    .lb-first-place-header .playstats-block {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                    }
+                        .playstats-block .beatmap-score-top__stats
+                        {
+                            display: flex;
+                            flex-shrink: 1;
+                            margin-right: 24px;
+                            justify-content: space-around;
+                        }
+                            .beatmap-score-top__stats .stat-block {
+                                margin: 0px 6px;
+                                padding: 0px 4px;
+                            }
+                                .stat-block.stat-bolder
+                                {
+                                    font-weight: 600;
+                                }
+                                .stat-block:first-child
+                                {
+                                    margin-left: 0;
+                                    padding-left: 0;
+                                }
+                                .stat-block:last-child
+                                {
+                                    margin-right: 0;
+                                    padding-right: 0;
+                                }
+                                .stat-title
+                                {
+                                    margin-bottom: 4px;
+                                    font-weight: 700;
+                                    border-bottom: solid 2px #aaa;
+                                    font-size: 10px;
+                                    color: hsl(var(--main), 10%, 80%);
+                                    text-transform: uppercase;
+                                }
+            .table-responsive.bm-lb-bg {
+                background-color: hsl(var(--main), 10%, 15%);
+                padding-right: 24px;
+                padding-left: 24px;
+                padding-top: 12px;
+                flex-direction: column;
+                border-bottom-left-radius: 8px;
+                border-bottom-right-radius: 8px;
+                padding-bottom: 24px;
+            }
+                @media (max-width: 1200px) {
+                    .bm-lb-bg .bm-lb-table
+                    {
+                        width: 897px;
+                    }
+                }
+                .bm-lb-bg .bm-lb-table
+                {
+                    font-size: 12px;
+                    transition: 200ms opacity;
+                }
+                    .bm-lb-table .leaderboard-thead
+                    {
+                        font-size: 10px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        padding-bottom: 5px;
+                    }
+                        .leaderboard-table__heading
+                        {
+                            color: hsl(var(--main), 10%, 70%);
+                            font-size: 11px;
+                            text-transform: uppercase;
+                            padding: 12px 0;
+                        }
+                            .table-header-rank
+                            {
+                                text-align: left;
+                                width: 40px;
+                            }
+                            .table-header-grade
+                            {
+                                width: 30px;
+                            }
+                            .table-header-player
+                            {
+                                width: 185px;
+                            }
+                            .table-header-pp
+                            {
+                                width: 50px;
+                            }
+                            .table-header-score
+                            {
+                                width: 120px;
+                            }
+                            .table-header-acc
+                            {
+                                width: 100px;
+                            }
+                            .table-header-combo
+                            {
+                                width: 100px;
+                            }
+                            .table-header-hitstat
+                            {
+                                width: 40px;
+                            }
+                            .table-header-miss
+                            {
+                                width: 65px;
+                            }
+                            .table-header-mods
+                            {
+                                width: 95px;
+                            }
+                            .table-header-date
+                            {
+                                width: 160px;
+                            }
+                    tr.leaderboard-row {
+                        transition: 200ms background-color;
+                        height: 1.8em;
+                        color: hsl(var(--main), 10%, 55%);
+                        border-bottom: 2px solid hsl(var(--main), 20%, 15%);
+                    }
+                        tr.leaderboard-row td
+                        {
+                            padding: 4px 0px;
+                            padding-left: 0px;
+                        }
+                        .leaderboard-row.row1p {
+                            background-color: hsl(var(--main), 10%, 22%);
+                            color: #fff;
+                        }
+                        .leaderboard-row.row2p {
+                            background-color: hsl(var(--main), 10%, 30%);
+                            color: white;
+                        }
+                            .leaderboard-table__column
+                            {
+                                text-align: left;
+                            }
+                            .leaderboard-table__column:first-child
+                            {
+                                border-top-left-radius: 4px;
+                                border-bottom-left-radius: 4px;
+                                padding-left: 2px;
+                                text-align: center;
+                            }
+                                .leaderboard-column__rank
+                                {
+                                    font-weight: 700;
+                                    text-align: right;
+                                }
+                                .leaderboard-column__grade
+                                {
+                                  text-align: center;
+                                  font-weight: 700;
+                                }
+                                td.leaderboard-table__column.table-header-flag
+                                {
+                                  padding-top: 1px;
+                                  padding-left: 4px;
+                                }
+                                .leaderboard-table__column.pp__column
+                                {
+                                  font-weight: 600;
+                                }
+                                .leaderboard-column__score
+                                {
+                                  font-weight: 700;
+                                }
+                                .leaderboard-column__miss.zero
+                                {
+                                  opacity: 0.6;
+                                }

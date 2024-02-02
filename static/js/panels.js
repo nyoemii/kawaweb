@@ -823,3 +823,315 @@ new Vue({
     </div>
     `
 });
+var beatmapBus = new Vue();
+new Vue({
+    el: '#beatmap',
+    data: {
+        id: null,
+        set_id: null,
+    },
+    async created() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlPath = window.location.pathname;
+        const pathParts = urlPath.split('/');
+        
+        // Check if the URL path matches the expected format
+        if (pathParts[1] === 'b') {
+            const id = pathParts[2];
+            this.id = id;
+            this.set_id = await this.fetchMapInfo();
+            await setTimeout(() => {
+                this.showBeatmapPanel(this.id, this.set_id);
+            }, 100); // 1 second delay
+        }
+        if (pathParts[1] === 's') {
+            const set_id = pathParts[2];
+
+            console.log("Showing beatmap set: " + set_id + "");
+
+            await setTimeout(() => {
+                this.showBeatmapPanel(null, set_id);
+            }, 100); // 1 second delay
+        }
+    },
+    methods: {
+        showBeatmapPanel: function(id, set_id) {
+            this.id = id || null;
+            this.set_id = set_id || null;
+            beatmapBus.$emit('show-beatmap-panel', this.id, this.set_id);
+        },
+        fetchMapInfo: async function() {
+            try {
+                const response = await fetch(`https://api.` + domain + `/v2/maps/${this.id}`);
+                const data = await response.json();
+                console.log(data);
+                console.log("Set ID: " + data.data.set_id + "");
+                return data.data.set_id;
+            } catch (error) {
+                // Handle any errors
+                console.error(error);
+            }
+        },
+    }
+});
+new Vue({
+    el: '#beatmap-panel',
+    data: {
+        show: false,
+        id: null,
+        set_id: null,
+        title: "",
+        artist: "",
+        beatmaps: [],
+        selected: {},
+        leaderboards: [],
+    },
+    created: async function() {
+        beatmapBus.$on('show-beatmap-panel', (id, set_id) => { 
+            this.id = id || null; 
+            this.set_id = set_id || null;
+            this.init();
+        });
+        beatmapBus.$on('select-beatmap', (id) => { this.selectMap(id); });
+    },
+    methods: {
+        init: async function() {
+            await this.fetchMapInfo();
+            this.show = true;
+            console.log("Showing beatmap: " + id + "(set: " + set_id + ")");
+        },
+        close: function() {
+            this.show = false;
+        },
+        fetchMapInfo: async function() {
+            try {
+                const response = await fetch(`https://api.` + domain + `/v2/maps?set_id=${this.set_id}`);
+                const data = await response.json();
+                const maps = data.data;
+                maps.sort((a, b) => a.diff - b.diff);
+                this.title = maps[0].title;
+                this.artist = maps[0].artist;
+                this.beatmaps = maps;
+                console.log(data);
+                this.selectMap();
+            } catch (error) {
+                // Handle any errors
+                console.error(error);
+            }
+        },
+        fetchMapLb: async function() {
+            try {
+                const response = await fetch(`https://api.` + domain + `/v1/get_map_scores?id=${this.selected.id}&scope=best`);
+                const data = await response.json();
+                this.leaderboards = data.scores;
+                console.log(data);
+            } catch (error) {
+                // Handle any errors
+                console.error(error);
+            }
+        },
+        selectMap: function(id) {
+            if (id) {
+                console.log("Selected map: " + id + "");
+                this.id = id;
+            }
+            this.leaderboards = [];
+            if (this.id === null) {
+                this.selected = this.beatmaps[0];
+            } else {
+                this.selected = this.beatmaps.find(map => map.id === this.id);
+            }
+            this.fetchMapLb();
+        },
+        playMapAudio: function(setId) {
+            const audioElement = document.getElementById('audio-' + setId);
+            if (this.currentAudio && this.currentAudio !== audioElement) {
+                this.currentAudio.pause();
+            }
+            if (audioElement.paused) {
+                audioElement.play();
+            } else {
+                audioElement.pause();
+            }
+            this.currentAudio = audioElement;
+        },
+    },
+    watch: {
+        
+    },
+    template: `
+    <div id="beatmap-panel" class="modal" v-bind:class="{ 'is-active': show }" style="z-index: 25;">
+        <div class="modal-background" @click="close"></div>
+        <div data-panel="Beatmap" id="beatmap-window" class="modal-content" v-if="show">
+            <div class="main-block">
+                <div class="main-banner">
+                    <div class="main-selector">
+                    
+                    </div>
+                    <div class="banner-text">
+                        <span>{{ title }}</span></br>
+                        <span style="text-size: 1em;">{{ artist }}</span>
+                    </div>
+                    <div class="selector">
+                        <a v-for="(map, index) in beatmaps" class="map-difficulty" style="width: fit-content;" @click="beatmapBus.$emit('select-beatmap', map.id)">
+                            <img :src="'/static/images/icons/mode-' + map.mode + '.png'"></img>
+                            {{ map.version }}
+                        </a>
+                    </div>
+                    <div id="panel" class="map-stats">
+                        <a class="stat-block map-play top" @click="playMapAudio(set_id)">
+                            <i class="fas fa-play" :id="'play-' + set_id">
+                                <audio :src="'https://b.ppy.sh/preview/' + set_id + '.mp3'" :id="'audio-' + set_id"></audio>
+                            </i>
+                        </a>
+                        <div class="stat-block map-diff">
+                            <div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;">
+                                <span class="level-left" style="margin-right: auto;">Circle Size</span><span class="level-right">{{ selected.cs }}</span>
+                            </div>
+                            <div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;">
+                                <span class="level-left" style="margin-right: auto;">Approach Rate</span><span class="level-right">{{ selected.ar }}</span>
+                            </div>
+                            <div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;">
+                                <span class="level-left" style="margin-right: auto;">Overall Difficulty</span><span class="level-right">{{ selected.od }}</span>
+                            </div>
+                            <div style="width: 100%; display: flex; flex-direction: row; justify-content: space-between;">
+                                <span class="level-left" style="margin-right: auto;">HP Drain</span><span class="level-right">{{ selected.hp }}</span>
+                            </div>
+                        </div>
+                        <div class="stat-block map-info bottom">
+                            
+                        </div>
+                    </div>
+                    <div class="banner-background" v-bind:style="{ backgroundImage: 'url(https://assets.ppy.sh/beatmaps/' + set_id + '/covers/cover.jpg)' }"></div>
+                    <div class="banner-overlay"></div>
+                </div>
+            </div>
+            <div id="panel" class="second-block">
+                <div id="panel" class="content">
+                    <div class="beatmap-info">
+                        <div class="info-block">
+                            <h2>{{ selected.title }}</h2>
+                            <h4>{{ selected.artist }}</h4>
+                            <div class="divider"></div>
+                            <div class="buttons">
+                                <button class="button is-primary" @click="window.location.href = 'https://api.osu.direct/d/' + set_id">Download</button>
+                                <button class="button is-primary" @click="window.location.href = 'osu://dl/' + set_id">osu!Direct</button>
+                                <button class="button is-primary" @click="window.location.href = 'https://osu.ppy.sh/b/' + selected.id">View on ppy.sh</button>
+                            </div>
+                        </div>
+                        <div class="info-block">
+                            <div class="mapper">
+                                <!--<div class="mapper-avatar" :style="'background-image: url(https://a.ppy.sh/' + ');'">-->
+                                <span>Mapped by: <a :href="'https://osu.ppy.sh/u/' + selected.creator">{{ selected.creator }}</a></span>
+                            </div>
+                            <div class="rating">
+
+                            </div>
+                            <div class="success-rate">
+                            
+                            </div>
+                        </div>
+                    </div>
+                    <div class="beatmap-lb">
+                        <div class="lb-selector">
+                        </div>
+                        <div class="table-responsive" v-if="leaderboards.length > 0 && leaderboards[0]">
+                            <div class="lb-first-place-header">
+                                <div class="user-block">
+                                    <div class="play-rank">
+                                        <span class="score-rank">#1</span>
+                                        <span :class="'map-rank rank-' + leaderboards[0].grade">{{ leaderboards[0].grade }}</span>
+                                    </div>
+                                    <a class="user-avatar" :href="'/u/' + leaderboards[0].userid" :style="'background-image: url(https://a.' + domain + '/' + leaderboards[0].userid + ');'"></a>
+                                    <div class="user">
+                                        <a class="username">[{{ leaderboards[0].clan_tag }}] <a :href="'/u/' + leaderboards[0].userid">{{ leaderboards[0].player_name }}</a></a>
+                                        <div class="score-date">
+                                        
+                                        </div>
+                                        <div class="user-flag" :style="'background-image: url(/static/images/flags/' + leaderboards[0].player_country.toUpperCase() + '.png);'"></div>
+                                    </div>
+                                </div>
+                                <div class="playstats-block">
+                                    <div class="beatmap-score-top__stats">
+                                        <div class="stat-block stat-bolder">
+                                            <div class="stat-title">PP</div>{{ leaderboards[0].pp }}
+                                        </div>
+                                        <div class="stat-block">
+                                            <div class="stat-title">Accuracy</div>{{ leaderboards[0].acc }}%
+                                        </div>
+                                        <div class="stat-block">
+                                            <div class="stat-title">Combo</div>{{ leaderboards[0].max_combo }}x
+                                        </div>
+                                        <div class="stat-block stat-bolder">
+                                            <div class="stat-title">Mods</div>{{ leaderboards[0].mods }}
+                                        </div>
+                                    </div>
+                                    <div class="beatmap-score-top__stats">
+                                        <div class="stat-block">
+                                            <div class="stat-title">Score</div>{{ leaderboards[0].score }}
+                                        </div>
+                                        <div class="stat-block">
+                                            <div class="stat-title">300</div>{{ leaderboards[0].n300 + leaderboards[0].ngeki }}
+                                        </div>
+                                        <div class="stat-block">
+                                            <div class="stat-title">100</div>{{ leaderboards[0].n100 + leaderboards[0].nkatu }}
+                                        </div>
+                                        <div class="stat-block">
+                                            <div class="stat-title">50</div>{{ leaderboards[0].n50 }}
+                                        </div>
+                                        <div class="stat-block stat-bolder">
+                                            <div class="stat-title">Miss</div>{{ leaderboards[0].nmiss }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bm-lb-bg table-responsive" v-if="leaderboards.length > 0">
+                            <table class="bm-lb-table table-responsive">
+                                <thead class="leaderboard-thread">
+                                    <tr>
+                                        <th class="leaderboard-table__heading table-header-rank"> Rank</th> 
+                                        <th class="leaderboard-table__heading table-header-grade"></th> 
+                                        <th class="leaderboard-table__heading"></th> 
+                                        <th class="leaderboard-table__heading table-header-player">Player</th> 
+                                        <th class="leaderboard-table__heading table-header-pp">PP</th> 
+                                        <th class="leaderboard-table__heading table-header-score">Score</th> 
+                                        <th class="leaderboard-table__heading table-header-acc">Accuracy</th> 
+                                        <th class="leaderboard-table__heading table-header-combo">Combo</th>
+                                        <th class="leaderboard-table__heading table-header-hitstat">300</th>
+                                        <th class="leaderboard-table__heading table-header-hitstat">100</th> 
+                                        <th class="leaderboard-table__heading table-header-hitstat">50</th> 
+                                        <th class="leaderboard-table__heading table-header-miss">Miss</th> 
+                                        <th class="leaderboard-table__heading table-header-mods">Mods</th> 
+                                        <th class="leaderboard-table__heading table-header-date">Date</th> 
+                                        <th class="leaderboard-table__heading"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(score, index) in leaderboards" class="leaderboard-row" :class="index % 2 === 0 ? 'row2p' : 'row1p'">
+                                        <td class="leaderboard-table__column leaderboard-column__rank"><a>#{{ index + 1 }}</a></td>
+                                        <td class="leaderboard-table__column leaderboard-column__grade">{{ score.grade }}</td>
+                                        <td class="leaderboard-table__column table-header-flag"></td>
+                                        <td class="leaderboard-table__column">{{ score.player_name }}</td>
+                                        <td class="leaderboard-table__column pp__column">{{ score.pp }}</td>
+                                        <td class="leaderboard-table__column leaderboard-column__score">{{ score.score }}</td>
+                                        <td class="leaderboard-table__column">{{ score.acc }}%</td>
+                                        <td class="leaderboard-table__column">{{ score.max_combo }}x</td>
+                                        <td class="leaderboard-table__column">{{ score.n300 + score.ngeki }}</td>
+                                        <td class="leaderboard-table__column">{{ score.n100 + score.nkatu }}</td>
+                                        <td class="leaderboard-table__column">{{ score.n50 }}</td>
+                                        <td class="leaderboard-table__column leaderboard-column__miss zero">{{ score.nmiss }}</td>
+                                        <td class="leaderboard-table__column">{{ score.mods }}</td>
+                                        <td class="leaderboard-table__column">{{ score.play_time }}</td>
+                                        <td class="leaderboard-table__column"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    `,
+});

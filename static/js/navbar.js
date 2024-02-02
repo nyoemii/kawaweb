@@ -106,7 +106,7 @@ new Vue({
         });
     },
     template: `
-        <div id="search-window" class="modal" v-bind:class="{ 'is-active': show }">
+        <div id="search-window" class="modal" v-bind:class="{ 'is-active': show }" style="z-index: 21;">
             <div class="modal-background" @click="close"></div>
             <div id="search" class="modal-content" v-if="show">
                 <div id="search-box" class="box search-fg">

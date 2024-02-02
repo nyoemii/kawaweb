@@ -500,7 +500,7 @@ new Vue({
             }
     },
     template: `
-        <div id="score-modal" class="modal" v-bind:class="{ 'is-active': show }">
+        <div id="score-modal" class="modal" v-bind:class="{ 'is-active': show }" style="z-index: 20;">
             <div class="modal-background" @click="close"></div>
             <div id="score-window" class="modal-content" v-if="show">
                 <style>

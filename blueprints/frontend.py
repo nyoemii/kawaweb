@@ -48,12 +48,16 @@ def login_required(func):
         return await func(*args, **kwargs)
     return wrapper
 
+@frontend.route('/b/<id>')
+@frontend.route('/s/<sid>')
 @frontend.route('/docs/<doc>')
 @frontend.route('/docs')
 @frontend.route('/home')
 @frontend.route('/')
-async def home(doc=None):
+async def home(doc=None, sid=None, id=None):
     doc=doc
+    sid=sid
+    id=id
     if maintenence:
         return await flash('success', f'Website is currently under maintenence', 'home')
     unix_timestamp = await glob.db.fetch('SELECT * FROM server_data WHERE type = "breakevent"')
