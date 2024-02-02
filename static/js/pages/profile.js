@@ -1,5 +1,5 @@
 
-var bus = new Vue();
+var scoreBus = new Vue();
 new Vue({
     el: "#app",
     delimiters: ["<%", "%>"],
@@ -113,10 +113,10 @@ new Vue({
                 });
         },
         showScoreWindow: function(mapId) {
-            bus.$emit('show-score-window', mapId); // Pass the score ID as an argument
+            scoreBus.$emit('show-score-window', mapId); // Pass the score ID as an argument
         },
         showSearchWindow: function() {
-            bus.$emit('show-search-window');
+            scoreBus.$emit('show-search-window');
         },
         LoadMostBeatmaps() {
             this.$set(this.data.maps.most, 'load', true);
@@ -276,7 +276,7 @@ new Vue({
         replayIsLoading: false,
     },
     created: function() {
-        bus.$on('show-score-window', (scoreId) => { 
+        scoreBus.$on('show-score-window', (scoreId) => { 
             // Reset Score Window Data
             this.score = null;
             this.video = null;
@@ -500,7 +500,7 @@ new Vue({
             }
     },
     template: `
-        <div id="score-modal" class="modal" v-bind:class="{ 'is-active': show }" style="z-index: 20;">
+        <div id="score-modal" class="modal" v-bind:class="{ 'is-active': show }" style="z-index: 26;">
             <div class="modal-background" @click="close"></div>
             <div id="score-window" class="modal-content" v-if="show">
                 <style>

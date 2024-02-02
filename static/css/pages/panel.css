@@ -220,7 +220,9 @@
                 }
 
 
-
+::selection {
+    background: hsla(var(--base-dark), 50%, 65%, 0.5);
+}
 [data-panel="Beatmap"] {
     width: 96vw;
     max-height: 95vh;
@@ -348,6 +350,13 @@
                         width: 100%;
                         position: relative;
                     }
+            .beatmap-lb {
+                display: flex;
+                flex-direction: column;
+                width: 98%;
+                align-self: center;
+                border-radius: 8px;
+            }
             .mode-sort + .table-responsive
             {
               border-top-left-radius: 8px;
@@ -461,7 +470,7 @@
                                     color: hsl(var(--main), 10%, 80%);
                                     text-transform: uppercase;
                                 }
-            .table-responsive.bm-lb-bg {
+            .table-responsive#panel.bm-lb-bg {
                 background-color: hsl(var(--main), 10%, 15%);
                 padding-right: 24px;
                 padding-left: 24px;
@@ -472,97 +481,127 @@
                 padding-bottom: 24px;
             }
                 @media (max-width: 1200px) {
-                    .bm-lb-bg .bm-lb-table
+                    #panel.bm-lb-bg .bm-lb-table
                     {
                         width: 897px;
                     }
                 }
-                .bm-lb-bg .bm-lb-table
+                #panel.bm-lb-bg .bm-lb-table
                 {
                     font-size: 12px;
                     transition: 200ms opacity;
+                    display: table;
+                    table-layout: fixed;
+                    width: 100%;
                 }
-                    .bm-lb-table .leaderboard-thead
+                    #panel.bm-lb-table .leaderboard-thead
                     {
                         font-size: 10px;
                         font-weight: 700;
                         text-transform: uppercase;
                         padding-bottom: 5px;
+                        display: table-header-group;
                     }
-                        .leaderboard-table__heading
+                        #panel.leaderboard-table__heading
                         {
                             color: hsl(var(--main), 10%, 70%);
                             font-size: 11px;
                             text-transform: uppercase;
                             padding: 12px 0;
+                            display: table-cell;
+                            flex-shrink: 0;
                         }
-                            .table-header-rank
+                            #panel.table-header-rank
                             {
-                                text-align: left;
+                                text-align: right;
                                 width: 40px;
                             }
-                            .table-header-grade
+                            #panel.table-header-grade
                             {
                                 width: 30px;
                             }
-                            .table-header-player
+                            #panel.table-header-flag
+                            {
+                                padding-top: 1px;
+                                padding-left: 4px !important;
+                                padding-right: 4px !important;
+                                width: 23.3667px;
+                            }
+                            #panel.table-header-player
                             {
                                 width: 185px;
                             }
-                            .table-header-pp
+                            #panel.table-header-pp
                             {
                                 width: 50px;
                             }
-                            .table-header-score
+                            #panel.table-header-score
                             {
                                 width: 120px;
+                                text-align: center;
                             }
-                            .table-header-acc
+                            #panel.table-header-acc
                             {
                                 width: 100px;
                             }
-                            .table-header-combo
+                            #panel.table-header-combo
                             {
                                 width: 100px;
                             }
-                            .table-header-hitstat
+                            #panel.table-header-hitstat
                             {
                                 width: 40px;
                             }
-                            .table-header-miss
+                            #panel.table-header-miss
                             {
                                 width: 65px;
                             }
-                            .table-header-mods
+                            #panel.table-header-mods
                             {
                                 width: 95px;
                             }
-                            .table-header-date
+                            #panel.table-header-date
                             {
                                 width: 160px;
                             }
-                    tr.leaderboard-row {
+                            #panel.table-header-report
+                            {
+                                width: 40px;
+                            }
+                    tr#panel
+                    {
+                        display: table-row;
+                    }
+                    tr#panel.leaderboard-row {
                         transition: 200ms background-color;
                         height: 1.8em;
                         color: hsl(var(--main), 10%, 55%);
                         border-bottom: 2px solid hsl(var(--main), 20%, 15%);
+                        display: table-row;
                     }
-                        tr.leaderboard-row td
+                        tr#panel.leaderboard-row td#panel
                         {
                             padding: 4px 0px;
                             padding-left: 0px;
+                            display: table-cell;
                         }
-                        .leaderboard-row.row1p {
+                        #panel.leaderboard-row.row1p {
                             background-color: hsl(var(--main), 10%, 22%);
                             color: #fff;
+                            width: 100%;
                         }
-                        .leaderboard-row.row2p {
+                        #panel.leaderboard-row.row2p {
                             background-color: hsl(var(--main), 10%, 30%);
                             color: white;
+                            width: 100%;
                         }
-                            .leaderboard-table__column
+                        * {
+                            box-sizing: border-box;
+                        }
+                            #panel.leaderboard-table__column
                             {
                                 text-align: left;
+                                width: 40px;
                             }
                             .leaderboard-table__column:first-child
                             {
@@ -571,30 +610,66 @@
                                 padding-left: 2px;
                                 text-align: center;
                             }
-                                .leaderboard-column__rank
+                                #panel.leaderboard-column__rank
                                 {
                                     font-weight: 700;
                                     text-align: right;
+                                    width: 40px !important;
                                 }
-                                .leaderboard-column__grade
+                                #panel.leaderboard-column__grade
                                 {
-                                  text-align: center;
-                                  font-weight: 700;
+                                    text-align: center;
+                                    font-weight: 700;
+                                    width: 30px !important;
                                 }
-                                td.leaderboard-table__column.table-header-flag
+                                td#panel.leaderboard-column__flag
                                 {
-                                  padding-top: 1px;
-                                  padding-left: 4px;
+                                    padding-top: 1px;
+                                    padding-left: 4px !important;
+                                    padding-right: 4px !important;
+                                    width: 23.3667px;
+                                    background-size: contain;
                                 }
-                                .leaderboard-table__column.pp__column
+                                #panel.leaderboard-column__player
                                 {
-                                  font-weight: 600;
+                                    width: 185px !important;
                                 }
-                                .leaderboard-column__score
+                                #panel.leaderboard-column__pp
                                 {
-                                  font-weight: 700;
+                                    font-weight: 600;
+                                    width: 50px !important;
                                 }
-                                .leaderboard-column__miss.zero
+                                #panel.leaderboard-column__score
                                 {
-                                  opacity: 0.6;
+                                    font-weight: 700;
+                                    width: 120px !important;
+                                    text-align: center;
+                                }
+                                #panel.leaderboard-column__acc
+                                {
+                                    width: 100px !important;
+                                }
+                                #panel.leaderboard-column__combo
+                                {
+                                    width: 100px !important;
+                                }
+                                #panel.leaderboard-column__hitstat
+                                {
+                                    width: 40px !important;
+                                }
+                                #panel.leaderboard-column__miss
+                                {
+                                    width: 65px !important;
+                                }
+                                #panel.leaderboard-column__miss.zero
+                                {
+                                    opacity: 0.6 !important;
+                                }
+                                #panel.leaderboard-column__mods
+                                {
+                                    width: 95px !important;
+                                }
+                                #panel.leaderboard-column__date
+                                {
+                                    width: 160px !important;
                                 }

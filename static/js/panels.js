@@ -1086,44 +1086,44 @@ new Vue({
                                 </div>
                             </div>
                         </div>
-                        <div class="bm-lb-bg table-responsive" v-if="leaderboards.length > 0">
-                            <table class="bm-lb-table table-responsive">
-                                <thead class="leaderboard-thread">
-                                    <tr>
-                                        <th class="leaderboard-table__heading table-header-rank"> Rank</th> 
-                                        <th class="leaderboard-table__heading table-header-grade"></th> 
-                                        <th class="leaderboard-table__heading"></th> 
-                                        <th class="leaderboard-table__heading table-header-player">Player</th> 
-                                        <th class="leaderboard-table__heading table-header-pp">PP</th> 
-                                        <th class="leaderboard-table__heading table-header-score">Score</th> 
-                                        <th class="leaderboard-table__heading table-header-acc">Accuracy</th> 
-                                        <th class="leaderboard-table__heading table-header-combo">Combo</th>
-                                        <th class="leaderboard-table__heading table-header-hitstat">300</th>
-                                        <th class="leaderboard-table__heading table-header-hitstat">100</th> 
-                                        <th class="leaderboard-table__heading table-header-hitstat">50</th> 
-                                        <th class="leaderboard-table__heading table-header-miss">Miss</th> 
-                                        <th class="leaderboard-table__heading table-header-mods">Mods</th> 
-                                        <th class="leaderboard-table__heading table-header-date">Date</th> 
-                                        <th class="leaderboard-table__heading"></th>
+                        <div id="panel" class="bm-lb-bg table-responsive" v-if="leaderboards.length > 0">
+                            <table id="panel" class="bm-lb-table table-responsive">
+                                <thead id="panel" class="leaderboard-thread">
+                                    <tr id="panel">
+                                        <th id="panel" class="leaderboard-table__heading table-header-rank"> Rank</th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-grade"></th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-flag"></th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-player">Player</th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-pp">PP</th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-score">Score</th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-acc">Accuracy</th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-combo">Combo</th>
+                                        <th id="panel" class="leaderboard-table__heading table-header-hitstat">300</th>
+                                        <th id="panel" class="leaderboard-table__heading table-header-hitstat">100</th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-hitstat">50</th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-miss">Miss</th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-mods">Mods</th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-date">Date</th> 
+                                        <th id="panel" class="leaderboard-table__heading table-header-report"></th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr v-for="(score, index) in leaderboards" class="leaderboard-row" :class="index % 2 === 0 ? 'row2p' : 'row1p'">
-                                        <td class="leaderboard-table__column leaderboard-column__rank"><a>#{{ index + 1 }}</a></td>
-                                        <td class="leaderboard-table__column leaderboard-column__grade">{{ score.grade }}</td>
-                                        <td class="leaderboard-table__column table-header-flag"></td>
-                                        <td class="leaderboard-table__column">{{ score.player_name }}</td>
-                                        <td class="leaderboard-table__column pp__column">{{ score.pp }}</td>
-                                        <td class="leaderboard-table__column leaderboard-column__score">{{ score.score }}</td>
-                                        <td class="leaderboard-table__column">{{ score.acc }}%</td>
-                                        <td class="leaderboard-table__column">{{ score.max_combo }}x</td>
-                                        <td class="leaderboard-table__column">{{ score.n300 + score.ngeki }}</td>
-                                        <td class="leaderboard-table__column">{{ score.n100 + score.nkatu }}</td>
-                                        <td class="leaderboard-table__column">{{ score.n50 }}</td>
-                                        <td class="leaderboard-table__column leaderboard-column__miss zero">{{ score.nmiss }}</td>
-                                        <td class="leaderboard-table__column">{{ score.mods }}</td>
-                                        <td class="leaderboard-table__column">{{ score.play_time }}</td>
-                                        <td class="leaderboard-table__column"></td>
+                                <tbody id="panel" style="display: table-row-group;">
+                                    <tr id="panel" v-for="(score, index) in leaderboards" class="leaderboard-row" :class="index % 2 === 0 ? 'row2p' : 'row1p'">
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__rank"><a @click="scoreBus.$emit('show-score-window', score.id)">#{{ index + 1 }}</a></td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__grade">{{ score.grade }}</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__flag"><img :src="'/static/images/flags/' + score.player_country.toUpperCase() + '.png'" class="leaderboard-player-flag"></td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__player"><a :href="'/u/' + score.userid">{{ score.player_name }}</a></td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__pp">{{ score.pp }}</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__score">{{ score.score }}</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__accuracy">{{ score.acc }}%</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__combo">{{ score.max_combo }}x</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__hitstat">{{ score.n300 + score.ngeki }}</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__hitstat">{{ score.n100 + score.nkatu }}</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__hitstat">{{ score.n50 }}</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__miss zero">{{ score.nmiss }}</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__mods">{{ score.mods }}</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__date">{{ score.play_time }}</td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__report">Report</td>
                                     </tr>
                                 </tbody>
                             </table>
