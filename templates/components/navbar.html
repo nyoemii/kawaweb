@@ -103,11 +103,13 @@
                             <div class="user-card-info">
                                 <span class="user-card-name">{{ session.user_data['name'] }}</span>
                                 <div class="user-card-badges">
-                                    {% for badge in session.user_data['badges'][:8] %}
-                                        <div class="user-card-badge">
-                                            <i class="{{ badge.styles.icon }}" style="color: hsl({{ badge.styles.color }}, 100%, 50%)" id="usercardbadge" data-title="{{ badge.name }}"></i>
-                                        </div>
-                                    {% endfor %}
+                                    {% if session.user_data.get('badges') %}
+                                        {% for badge in session.user_data['badges'][:8] %}
+                                            <div class="user-card-badge">
+                                                <i class="{{ badge.styles.icon }}" style="color: hsl({{ badge.styles.color }}, 100%, 50%)" id="usercardbadge" data-title="{{ badge.name }}"></i>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                                 <span class="user-card-data_angle">
                                     <i class="fas fa-angle-right"></i>
