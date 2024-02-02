@@ -838,20 +838,22 @@ new Vue({
         // Check if the URL path matches the expected format
         if (pathParts[1] === 'b') {
             const id = pathParts[2];
+            console.log("URL BM ID: " + id + "");
             this.id = id;
             this.set_id = await this.fetchMapInfo();
+            console.log("Triggering Beatmap Panel with ID: " + this.id + " and Set ID: " + this.set_id + "");
             await setTimeout(() => {
                 this.showBeatmapPanel(this.id, this.set_id);
-            }, 100); // 1 second delay
+            }, 10);
         }
         if (pathParts[1] === 's') {
             const set_id = pathParts[2];
 
-            console.log("Showing beatmap set: " + set_id + "");
+            console.log("Triggering Beatmap Panel with SetID: " + set_id + "");
 
             await setTimeout(() => {
                 this.showBeatmapPanel(null, set_id);
-            }, 100); // 1 second delay
+            }, 10); 
         }
     },
     methods: {
@@ -865,7 +867,6 @@ new Vue({
                 const response = await fetch(`https://api.` + domain + `/v2/maps/${this.id}`);
                 const data = await response.json();
                 console.log(data);
-                console.log("Set ID: " + data.data.set_id + "");
                 return data.data.set_id;
             } catch (error) {
                 // Handle any errors
@@ -898,7 +899,7 @@ new Vue({
         init: async function() {
             await this.fetchMapInfo();
             this.show = true;
-            console.log("Showing beatmap: " + id + "(set: " + set_id + ")");
+            console.log("Showing Beatmap Panel | ID: " + this.id + "(set: " + this.set_id + ")");
         },
         close: function() {
             this.show = false;
@@ -913,13 +914,19 @@ new Vue({
                 this.artist = maps[0].artist;
                 this.beatmaps = maps;
                 console.log(data);
-                this.selectMap();
+                await this.selectMap();
             } catch (error) {
                 // Handle any errors
                 console.error(error);
             }
         },
         fetchMapLb: async function() {
+            if (!this.selected) {
+                this.selected = {id: null,};
+                if (this.id !== null){this.selected.id = this.id;}
+                else {this.selected.id = this.beatmaps[0].id;}
+                
+            }
             try {
                 const response = await fetch(`https://api.` + domain + `/v1/get_map_scores?id=${this.selected.id}&scope=best`);
                 const data = await response.json();
@@ -965,15 +972,8 @@ new Vue({
         <div data-panel="Beatmap" id="beatmap-window" class="modal-content" v-if="show">
             <div class="main-block">
                 <div class="main-banner">
-                    <div class="main-selector">
-                    
-                    </div>
-                    <div class="banner-text">
-                        <span>{{ title }}</span></br>
-                        <span style="text-size: 1em;">{{ artist }}</span>
-                    </div>
                     <div class="selector">
-                        <a v-for="(map, index) in beatmaps" class="map-difficulty" style="width: fit-content;" @click="beatmapBus.$emit('select-beatmap', map.id)">
+                        <a v-for="(map, index) in beatmaps" data-id="beatmapPanel" class="map-diff" style="width: fit-content;" @click="beatmapBus.$emit('select-beatmap', map.id)">
                             <img :src="'/static/images/icons/mode-' + map.mode + '.png'"></img>
                             {{ map.version }}
                         </a>

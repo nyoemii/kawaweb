@@ -259,9 +259,35 @@
         [data-panel="Beatmap"] .selector {
             height: fit-content !important;
             overflow-wrap: normal;
-            flex-wrap: wrap;
+            flex-wrap: wrap-reverse;
             margin-top: 8px;
         }
+            [data-id="beatmapPanel"].map-diff {
+                display: flex;
+                padding: 6px;
+                background: #222;
+                height: 36px;
+                border-radius: 8px;
+                opacity: 0.8;
+                font-weight: 600;
+                border-bottom: 3px solid;
+                transition: 200ms opacity, 200ms border, 200ms filter, 300ms background-color;
+                margin: 4px 5px 0px 5px;
+                box-shadow: 0 1px 3px rgba(0,0,0,.25) !important;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                overflow: hidden;
+            }
+                [data-id="beatmapPanel"].map-diff img {
+                    width: 24px;
+                    height: 24px;
+                    margin-right: 8px;
+                }
+                [data-id="beatmapPanel"].map-diff:hover {
+                    opacity: 1;
+                    background-color: hsl(var(--main), 10%, 16%);
+                    border-bottom: 4px solid;
+                }
         #panel.map-stats {
             position: absolute;
             left: 24px;
