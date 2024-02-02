@@ -843,13 +843,13 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     }
                 ), 400
             
-            if action.map.frozen:
-                return jsonify(
-                    {
-                        "status": "error",
-                        "message": "map is frozen."
-                    }
-                ), 400
+            #if action.map.frozen:
+                #return jsonify(
+                    #{
+                    #    "status": "error",
+                    #    "message": "map is frozen."
+                    #}
+                #), 400
             
             await glob.db.execute(
                 f"""
@@ -942,18 +942,18 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     }
                 ), 400
             
-            if action.map.frozen:
-                return jsonify(
-                    {
-                        "status": "error",
-                        "message": "map is frozen."
-                    }
-                ), 400
+            #if action.map.frozen:
+                #return jsonify(
+                    #{
+                    #    "status": "error",
+                    #    "message": "map is frozen."
+                    #}
+                #), 400
             
             await glob.db.execute(
                 f"""
                 UPDATE maps
-                SET status = 3
+                SET status = 3, frozen = 1 
                 WHERE id = {action.map.id};
                 """
             )
@@ -1031,18 +1031,18 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     }
                 ), 400
             
-            if action.map.frozen:
-                return jsonify(
-                    {
-                        "status": "error",
-                        "message": "map is frozen."
-                    }
-                ), 400
+            #if action.map.frozen:
+                #return jsonify(
+                    #{
+                    #    "status": "error",
+                    #    "message": "map is frozen."
+                    #}
+                #), 400
             
             await glob.db.execute(
                 f"""
                 UPDATE maps
-                SET status = 4
+                SET status = 4, frozen = 1 
                 WHERE id = {action.map.id};
                 """
             )
@@ -1120,18 +1120,18 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     }
                 ), 400
             
-            if action.map.frozen:
-                return jsonify(
-                    {
-                        "status": "error",
-                        "message": "map is frozen."
-                    }
-                ), 400
+            #if action.map.frozen:
+                #return jsonify(
+                    #{
+                    #    "status": "error",
+                    #    "message": "map is frozen."
+                    #}
+                #), 400
             
             await glob.db.execute(
                 f"""
                 UPDATE maps
-                SET status = 5
+                SET status = 5, frozen = 1 
                 WHERE id = {action.map.id};
                 """
             )
@@ -1209,13 +1209,13 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     }
                 ), 400
             
-            if action.map.frozen:
-                return jsonify(
-                    {
-                        "status": "error",
-                        "message": "map is frozen."
-                    }
-                ), 400
+            #if action.map.frozen:
+                #return jsonify(
+                    #{
+                    #    "status": "error",
+                    #    "message": "map is frozen."
+                    #}
+                #), 400
             
             await glob.db.execute(
                 f"""
@@ -1229,7 +1229,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 await glob.db.execute(
                     f"""
                     UPDATE map_requests
-                    SET active = 0
+                    SET active = 0, frozen = 1 
                     WHERE map_id = {action.map.id};
                     """
                 )
