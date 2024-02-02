@@ -854,7 +854,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
             await glob.db.execute(
                 f"""
                 UPDATE maps
-                SET status = 2
+                SET status = 2, frozen = 1 
                 WHERE id = {action.map.id};
                 """
             )
