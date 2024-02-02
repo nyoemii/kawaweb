@@ -2011,60 +2011,52 @@ async def beatmaps():
             return await flash('error', f'You have insufficient privileges.', 'home')
     
     requests = await glob.db.fetchall(
-        "SELECT * FROM map_requests WHERE active = 1"
+        "SELECT * FROM map_requests WHERE active = 1 LIMIT 50"
     )
     
     # Append map_info to each entry in requests
     for request in requests:
-        player = await glob.db.fetch(
-            "SELECT name, id, country FROM users WHERE id = %s",
+        player_and_badges = await glob.db.fetchall(
+            """
+            SELECT users.name, users.id, users.country, badges.*, badge_styles.*
+            FROM users
+            LEFT JOIN user_badges ON users.id = user_badges.userid
+            LEFT JOIN badges ON user_badges.badge_id = badges.id
+            LEFT JOIN badge_styles ON badges.id = badge_styles.badge_id
+            WHERE users.id = %s
+            ORDER BY badges.priority DESC
+            """,
             (request['player_id'],),
         )
-        player_badges = await glob.db.fetchall(
-            "SELECT badge_id FROM user_badges WHERE userid = %s",
-            (request['player_id'],),
-        )
-        badges = []
-        for user_badge in player_badges:
-            badge_id = user_badge["badge_id"]
 
-            badge = await glob.db.fetch(
-                "SELECT * FROM badges WHERE id = %s",
-                (badge_id,),
-            )
+        player = player_and_badges[0]
+        player['badges'] = [
+            {
+                **badge,
+                "styles": {key: badge[key] for key in badge if key.startswith('style')}
+            }
+            for badge in player_and_badges
+        ]
 
-            badge_styles = await glob.db.fetchall(
-                "SELECT * FROM badge_styles WHERE badge_id = %s",
-                (badge_id,),
-            )
-
-            badge = dict(badge)
-            badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
-
-            badges.append(badge)
-
-            # Sort the badges based on priority
-            badges.sort(key=lambda x: x['priority'], reverse=True)
-
-        player['badges'] = badges
         request['player'] = player
-        map_info = await glob.db.fetch(
-            "SELECT * FROM maps WHERE id = %s",
-            (request['map_id'],),
+        map_info_and_diffs = await glob.db.fetchall(
+            """
+            SELECT *
+            FROM maps
+            WHERE id = %s OR set_id = (
+                SELECT set_id FROM maps WHERE id = %s
+            )
+            """,
+            (request['map_id'], request['map_id']),
         )
-        request['map_info'] = map_info
-        
-        # Grab the set_id for the request
-        set_id = map_info['set_id']
-        
-        # Grab all the maps matching the set_id
-        map_diffs = await glob.db.fetchall(
-            "SELECT * FROM maps WHERE set_id = %s",
-            (set_id,),
+
+        request['map_info'] = next(
+            map for map in map_info_and_diffs if map['id'] == request['map_id']
         )
-        
-        # Append the map_diffs to the request
-        request['map_diffs'] = map_diffs
+        request['map_diffs'] = [
+            map for map in map_info_and_diffs if map['id'] != request['map_id']
+        ]
+
         # Convert datetime objects to strings
         request['datetime'] = request['datetime'].strftime('%Y-%m-%d %H:%M:%S')
         request['map_info']['last_update'] = request['map_info']['last_update'].strftime('%Y-%m-%d %H:%M:%S')
