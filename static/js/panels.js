@@ -1044,7 +1044,7 @@ new Vue({
                                     </div>
                                     <a class="user-avatar" :href="'/u/' + leaderboards[0].userid" :style="'background-image: url(https://a.' + domain + '/' + leaderboards[0].userid + ');'"></a>
                                     <div class="user">
-                                        <a class="username">[{{ leaderboards[0].clan_tag }}] <a :href="'/u/' + leaderboards[0].userid">{{ leaderboards[0].player_name }}</a></a>
+                                        <a class="username"><a v-if="leaderboards[0].clan_id != null">[{{ leaderboards[0].clan_tag }}]</a> <a :href="'/u/' + leaderboards[0].userid">{{ leaderboards[0].player_name }}</a></a>
                                         <div class="score-date">
                                         
                                         </div>
@@ -1112,7 +1112,7 @@ new Vue({
                                         <td id="panel" class="leaderboard-table__column leaderboard-column__rank"><a @click="scoreBus.$emit('show-score-window', score.id)">#{{ index + 1 }}</a></td>
                                         <td id="panel" class="leaderboard-table__column leaderboard-column__grade">{{ score.grade }}</td>
                                         <td id="panel" class="leaderboard-table__column leaderboard-column__flag"><img :src="'/static/images/flags/' + score.player_country.toUpperCase() + '.png'" class="leaderboard-player-flag"></td>
-                                        <td id="panel" class="leaderboard-table__column leaderboard-column__player"><a :href="'/u/' + score.userid">{{ score.player_name }}</a></td>
+                                        <td id="panel" class="leaderboard-table__column leaderboard-column__player"><a v-if="score.clan_id != null">[{{ score.clan_tag }}]</a> <a :href="'/u/' + score.userid">{{ score.player_name }}</a></td>
                                         <td id="panel" class="leaderboard-table__column leaderboard-column__pp">{{ score.pp }}</td>
                                         <td id="panel" class="leaderboard-table__column leaderboard-column__score">{{ score.score }}</td>
                                         <td id="panel" class="leaderboard-table__column leaderboard-column__accuracy">{{ score.acc }}%</td>
