@@ -1998,8 +1998,9 @@ async def badge(badgeid):
     # Return JSON response
     return jsonify(badge)
 
+@admin.route('/beatmaps/<int:page>')
 @admin.route('/beatmaps')
-async def beatmaps():
+async def beatmaps(page=None):
     """Render the beatmaps page of guweb's admin panel."""
     if not 'authenticated' in session:
         return await flash('error', 'Please login first.', 'login')
@@ -2010,8 +2011,15 @@ async def beatmaps():
     if Privileges.ManageBeatmaps not in GetPriv(session["user_data"]["priv"]):
             return await flash('error', f'You have insufficient privileges.', 'home')
     
+    if (page == None or page < 1):
+        page = 1
+    
+    items_per_page = 50
+    offset = (page - 1) * items_per_page
+
     requests = await glob.db.fetchall(
-        "SELECT * FROM map_requests WHERE active = 1 LIMIT 50"
+        "SELECT * FROM map_requests WHERE active = 1 LIMIT %s OFFSET %s",
+        (items_per_page, offset)
     )
     
     # Append map_info to each entry in requests
@@ -2069,7 +2077,7 @@ async def beatmaps():
     # Return HTML response
     return await render_template(
         'admin/beatmaps.html', requests=requests, 
-        datetime=datetime, timeago=timeago
+        datetime=datetime, timeago=timeago, page=page
     )
 
 @admin.route('/stuffbroke')

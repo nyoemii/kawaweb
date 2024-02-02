@@ -16,6 +16,11 @@
 
 <div class="dashboard" id="beatmaps">
     <div class="container">
+        <div class="pagination">
+            <a class="{% if not page > 1 %}disabled{% endif %}" href="{{ url_for('admin.beatmaps', page=page-1) }}">Previous</a>
+            <span>Page {{ page }}</span>
+            <a class="{% if not requests|length == 50 %}disabled{% endif %}" href="{{ url_for('admin.beatmaps', page=page+1) }}">Next</a>
+        </div>
         <div class="columns">
             <div class="column"> 
             {% for map in requests %}
