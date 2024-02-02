@@ -85,24 +85,45 @@
 
         <div class="navbar-end">
             <div id="search-icon" @click="showSearchWindow" @mouseover="startAnimation" @mouseleave="stopAnimation" class="navbar-item search-button" style="
-            
+                position: relative;
             ">
                 <div class="navbar-item search-circle" :class="{ 'animate': isAnimating }"></div>
                 <i class="fas fa-search"></i>
             </div>
             {% if session.authenticated %}
+            
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">
                     {{ session.user_data['name'] }}
                 </a>
-                <div class="navbar-dropdown">
-                    <a class="navbar-item" href="/u/{{ session.user_data['id'] }}">
-                        Profile
-                    </a>
+                <div id="userDropdown" class="navbar-dropdown navbar-user-dropdown">
+                    <div class="user-card-block">
+                        <a class="user-card" href="/u/{{ session.user_data['id'] }}" style="background-image: url(/banners/{{ session.user_data['id'] }});">
+                            <div class="user-card-avatar" style="background-image: url(https://a.{{domain()}}/{{ session.user_data['id'] }});"></div>
+                            <div class="user-card-info">
+                                <span class="user-card-name">{{ session.user_data['name'] }}</span>
+                                <div class="user-card-badges">
+                                    {% for badge in session.user_data['badges'][:8] %}
+                                        <div class="user-card-badge">
+                                            <i class="{{ badge.styles.icon }}" style="color: hsl({{ badge.styles.color }}, 100%, 50%)" id="usercardbadge" data-title="{{ badge.name }}"></i>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <span class="user-card-data_angle">
+                                    <i class="fas fa-angle-right"></i>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
                     <a class="navbar-item" href="/settings">
                         Settings
                     </a>
                 </div>
+                <!--<div class="navbar-dropdown">
+                    <a class="navbar-item" href="/u/{{ session.user_data['id'] }}">
+                        Profile
+                    </a>
+                </div>-->
             </div>
             <div class="navbar-item">
                 <a class="button is-light" href="/logout">
