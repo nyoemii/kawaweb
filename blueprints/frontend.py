@@ -533,7 +533,32 @@ async def login_post():
         'WHERE users.safe_name = %s',
         [utils.get_safe_name(username)]
     )
-
+    badges = []
+    # Select badge_id from user_badges where userid = user_id
+    user_badges = await glob.db.fetchall(
+        "SELECT badge_id FROM user_badges WHERE userid = %s",
+        [user_info['id']]
+    )
+    for user_badge in user_badges:
+        badge_id = user_badge["badge_id"]
+        
+        badge = await glob.db.fetch(
+            "SELECT * FROM badges WHERE id = %s",
+            [badge_id]
+        )
+        
+        badge_styles = await glob.db.fetchall(
+            "SELECT * FROM badge_styles WHERE badge_id = %s",
+            [badge_id]
+        )
+        
+        badge = dict(badge)
+        badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
+        
+        badges.append(badge)
+        
+        # Sort the badges based on priority
+        badges.sort(key=lambda x: x['priority'], reverse=True)
     # user doesn't exist; deny post
     # NOTE: Bot isn't a user.
     if not user_info or user_info['id'] == 1:
@@ -582,13 +607,14 @@ async def login_post():
     session['user_data'] = {
         'id': user_info['id'],
         'name': user_info['name'],
+        'badges': (badges or None),
         'email': user_info['email'],
         'priv': user_info['priv'],
         'silence_end': user_info['silence_end'],
         'is_staff': user_info['priv'] & Privileges.Staff != 0,
         'is_dev': user_info['priv'] & Privileges.Dangerous != 0,
         'is_donator': user_info['priv'] & Privileges.Donator != 0,
-        'hue': user_info['hue']
+        'hue': user_info['hue'] or None
     }
 
     if glob.config.debug:
