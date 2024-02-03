@@ -2,7 +2,7 @@
 {% block title %} Profile {% endblock %}
 
 {% macro scores(title, id) %}
-<div class="log-block" v-bind:class="{ 'load' : data.scores.{{ id }}.load }">
+<div class="log-block" id="hina-stats-block" v-bind:class="{ 'load' : data.scores.{{ id }}.load }">
     <div class="header">
         <div class="title">
             <i class="fas fa-trophy"></i> {{ title }}
@@ -67,7 +67,7 @@
             </div>
         </div>
     </div>
-    <div v-if="data.scores.{{ id }}.more.full == false" class="extra-block">
+    <div v-if="data.scores.{{ id }}.more.full == false" class="extra-block"id="hina-stats-block">
         <a class="show-button" @click="AddLimit('{{ id }}score')">Show more</a>
     </div>
 </div>
@@ -115,7 +115,7 @@
             </div>
         </div>
     </div>
-    <div v-if="data.maps.{{ id }}.more.full == false" class="extra-block">
+    <div v-if="data.maps.{{ id }}.more.full == false" class="extra-block" id="hina-stats-block">
         <a class="show-button" @click="AddLimit('mostplay')">Show more</a>
     </div>
 </div>
@@ -223,13 +223,13 @@
     </div>
     <div class="second-block">
         <div class="columns is-marginless two-sides">
-            <div class="column is-one-third" v-cloak>
+            <div class="column is-one-third" id =""v-cloak> <!--Bookmark-->
                 <div class="header" v-if='(data.stats.out[modegulag].rank) != 0'>
                     <div class="title">
                         <i class="fas fa-user-friends"></i> Rank
                     </div>
                 </div>
-                <div class="stats-block rank-block" v-if='(data.stats.out[modegulag].rank) != 0'>
+                <div class="stats-block rank-block" id="hina-stats-block"v-if='(data.stats.out[modegulag].rank) != 0'>
                     <table class="is-striped">
                         <tbody>
                             <tr>
@@ -256,7 +256,7 @@
                         <i class="fas fa-chart-pie"></i> Statistics
                     </div>
                 </div>
-                <div class="stats-block">
+            <div class="stats-block" id="hina-stats-block">
                     <table class="is-striped">
                         <tbody>
                             <tr>

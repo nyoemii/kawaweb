@@ -1,0 +1,5 @@
+#hina-stats-block {
+  border: 2px; /* Defines the border around the entire element */
+  border-radius: 0 0 4px 4px; /* Applies rounded corners to the bottom-right and bottom-left */
+  overflow: hidden; /* Ensures the inner elements do not overflow the rounded corners */
+}
