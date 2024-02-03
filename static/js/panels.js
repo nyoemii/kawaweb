@@ -839,7 +839,7 @@ new Vue({
         if (pathParts[1] === 'b') {
             const id = pathParts[2];
             console.log("URL BM ID: " + id + "");
-            this.id = id;
+            this.id = parseInt(id);
             this.set_id = await this.fetchMapInfo();
             console.log("Triggering Beatmap Panel with ID: " + this.id + " and Set ID: " + this.set_id + "");
             await setTimeout(() => {
@@ -852,7 +852,7 @@ new Vue({
             console.log("Triggering Beatmap Panel with SetID: " + set_id + "");
 
             await setTimeout(() => {
-                this.showBeatmapPanel(null, set_id);
+                this.showBeatmapPanel(null, parseInt(set_id));
             }, 10); 
         }
     },
@@ -946,8 +946,17 @@ new Vue({
             if (this.id === null) {
                 this.selected = this.beatmaps[0];
             } else {
+                console.log("Selected ID: " + this.id + "");
+                console.log("Beatmaps: ");
+                console.log(this.beatmaps);
+                if (this.beatmaps.length > 0) {
+                    console.log("ID Types: ")
+                    console.log(typeof this.id, typeof this.beatmaps[0].id);  // Check the types of the ids
+                }
                 this.selected = this.beatmaps.find(map => map.id === this.id);
             }
+            console.log("Selected: ");
+            console.log(this.selected);
             this.fetchMapLb();
         },
         playMapAudio: function(setId) {
