@@ -4,6 +4,7 @@ __all__ = ()
 
 import datetime
 import hashlib
+import requests
 from operator import is_
 from typing import Literal
 import bcrypt
@@ -225,6 +226,12 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
 
     if not request.content_type == "application/x-www-form-urlencoded":
         return jsonify({"status": "error","message": "Invalid content type. use application/x-www-form-urlencoded."}), 400
+
+    
+    statusUpdateUrl = f"https://api.{glob.config.domain}/v1/update_map_status"
+    headers = {
+    "Authorization": f"Bearer {glob.config.api_key}"
+    }
 
     if a == "wipe":
         form = await request.form
@@ -850,14 +857,30 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     #    "message": "map is frozen."
                     #}
                 #), 400
-            
-            await glob.db.execute(
-                f"""
-                UPDATE maps
-                SET status = 2, frozen = 1 
-                WHERE id = {action.map.id};
-                """
-            )
+            try:
+                params = {
+                    "id": {action.map.id},
+                    "s": 2
+                }
+
+                response = requests.post(statusUpdateUrl, headers=headers, params=params)
+                json_response = response.json()
+
+                if json_response.get("status") == "success":
+                    print("Map status updated successfully.")
+                else:
+                    print("Failed to update map status.")
+                    print(json_response.get("status"))
+            except Exception as e:
+                print(f"Error on updating map status: {e}")
+                pass
+            #await glob.db.execute(
+            #    f"""
+            #    UPDATE maps
+            #    SET status = 2, frozen = 1 
+            #    WHERE id = {action.map.id};
+            #    """
+            #)
             await log(action)
             try:
                 await glob.db.execute(
@@ -949,14 +972,30 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     #    "message": "map is frozen."
                     #}
                 #), 400
-            
-            await glob.db.execute(
-                f"""
-                UPDATE maps
-                SET status = 3, frozen = 1 
-                WHERE id = {action.map.id};
-                """
-            )
+            try:
+                params = {
+                    "id": {action.map.id},
+                    "s": 3
+                }
+
+                response = requests.post(statusUpdateUrl, headers=headers, params=params)
+                json_response = response.json()
+
+                if json_response.get("status") == "success":
+                    print("Map status updated successfully.")
+                else:
+                    print("Failed to update map status.")
+                    print(json_response.get("status"))
+            except Exception as e:
+                print(f"Error on updating map status: {e}")
+                pass
+            #await glob.db.execute(
+            #    f"""
+            #    UPDATE maps
+            #    SET status = 3, frozen = 1 
+            #    WHERE id = {action.map.id};
+            #    """
+            #)
             
             try:
                 await glob.db.execute(
@@ -1038,14 +1077,30 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     #    "message": "map is frozen."
                     #}
                 #), 400
-            
-            await glob.db.execute(
-                f"""
-                UPDATE maps
-                SET status = 4, frozen = 1 
-                WHERE id = {action.map.id};
-                """
-            )
+            try:
+                params = {
+                    "id": {action.map.id},
+                    "s": 4
+                }
+
+                response = requests.post(statusUpdateUrl, headers=headers, params=params)
+                json_response = response.json()
+
+                if json_response.get("status") == "success":
+                    print("Map status updated successfully.")
+                else:
+                    print("Failed to update map status.")
+                    print(json_response.get("status"))
+            except Exception as e:
+                print(f"Error on updating map status: {e}")
+                pass
+            #await glob.db.execute(
+            #    f"""
+            #    UPDATE maps
+            #    SET status = 4, frozen = 1 
+            #    WHERE id = {action.map.id};
+            #    """
+            #)
             
             try:
                 await glob.db.execute(
@@ -1127,14 +1182,30 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     #    "message": "map is frozen."
                     #}
                 #), 400
-            
-            await glob.db.execute(
-                f"""
-                UPDATE maps
-                SET status = 5, frozen = 1 
-                WHERE id = {action.map.id};
-                """
-            )
+            try:
+                params = {
+                    "id": {action.map.id},
+                    "s": 5
+                }
+
+                response = requests.post(statusUpdateUrl, headers=headers, params=params)
+                json_response = response.json()
+
+                if json_response.get("status") == "success":
+                    print("Map status updated successfully.")
+                else:
+                    print("Failed to update map status.")
+                    print(json_response.get("status"))
+            except Exception as e:
+                print(f"Error on updating map status: {e}")
+                pass
+            #await glob.db.execute(
+            #    f"""
+            #    UPDATE maps
+            #    SET status = 5, frozen = 1 
+            #    WHERE id = {action.map.id};
+            #    """
+            #)
             
             try:
                 await glob.db.execute(
@@ -1216,14 +1287,30 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     #    "message": "map is frozen."
                     #}
                 #), 400
-            
-            await glob.db.execute(
-                f"""
-                UPDATE maps
-                SET status = 0
-                WHERE id = {action.map.id};
-                """
-            )
+            try:
+                params = {
+                    "id": {action.map.id},
+                    "s": 0
+                }
+
+                response = requests.post(statusUpdateUrl, headers=headers, params=params)
+                json_response = response.json()
+
+                if json_response.get("status") == "success":
+                    print("Map status updated successfully.")
+                else:
+                    print("Failed to update map status.")
+                    print(json_response.get("status"))
+            except Exception as e:
+                print(f"Error on updating map status: {e}")
+                pass
+            #await glob.db.execute(
+            #    f"""
+            #    UPDATE maps
+            #    SET status = 0
+            #    WHERE id = {action.map.id};
+            #    """
+            #)
             
             try:
                 await glob.db.execute(
@@ -2096,3 +2183,13 @@ async def stuffbroke():
     """
     )
     return await flash('success', 'Successfully broke stuff.', 'home')
+
+@admin.route('/test')
+async def test():
+    if not 'authenticated' in session:
+        return await flash('error', 'Please login first.', 'login')
+
+    if Privileges.Dangerous not in GetPriv(session["user_data"]["priv"]):
+        return await flash('error', f'You have insufficient privileges.', 'home')
+
+    return await flash('success', 'Successfully tested. Results: ', 'home')
