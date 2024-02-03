@@ -84,7 +84,7 @@
         </div>
 
         <div class="navbar-end">
-            <div id="search-icon" @click="showSearchWindow" @mouseover="startAnimation" @mouseleave="stopAnimation" class="navbar-item search-button" style="
+            <div id="search-icon" @click="searchBus.$emit('show-search-window');" @mouseover="startAnimation" @mouseleave="stopAnimation" class="navbar-item search-button" style="
                 position: relative;
             ">
                 <div class="navbar-item search-circle" :class="{ 'animate': isAnimating }"></div>

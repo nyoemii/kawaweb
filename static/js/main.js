@@ -16,17 +16,3 @@ function togglenavbar() {
     document.getElementById('navbar').classList.toggle("is-active");
     document.getElementById('navbar-burger').classList.toggle("is-active");
 }
-var panelBus = new Vue();
-new Vue({
-    el: "#panel",
-    delimiters: ["<%", "%>"],
-    data() {
-        return {
-            data: {
-                show: false,
-                panel: '',
-                panelData: {},
-            },
-        };
-    },
-});
