@@ -1,0 +1,62 @@
+// #hina-footer{display:flex;flex-direction: column;}
+
+// #hina-footer .footer-block{display:flex;flex-direction: row;}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    .footer-section {
+        flex: 1;
+        min-width: 200px; // Minimum width for each section
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; // Align items to the start (left) for the logo-section
+
+        &:not(:last-child) {
+            border-right: 1px solid #444;
+        }
+
+        .footer-logo {
+            max-width: 100px;
+            margin-bottom: 10px; // Ensure space between logo and version text
+        }
+
+        .logo-text {
+            text-align: left;
+        }
+
+        .social-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .foot-link {
+            margin: 5px 0;
+            color: #ddd;
+            &:hover {
+                color: #fff;
+            }
+            i {
+                margin-right: 5px;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .footer {
+        flex-direction: column;
+        .footer-section {
+            border-right: none;
+            align-items: center; // Center-align items on smaller screens
+            &:not(:last-child) {
+                margin-bottom: 20px;
+            }
+        }
+    }
+}

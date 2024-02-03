@@ -1,5 +1,7 @@
 #Hina
 hina_import.css.map
+static/css/scss/*.css
+static/css/scss/*.css.map
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

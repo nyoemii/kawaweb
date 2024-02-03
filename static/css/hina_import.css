@@ -2,4 +2,54 @@
   border: 2px; /* Defines the border around the entire element */
   border-radius: 0 0 4px 4px; /* Applies rounded corners to the bottom-right and bottom-left */
   overflow: hidden; /* Ensures the inner elements do not overflow the rounded corners */
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+}
+.footer .footer-section {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.footer .footer-section:not(:last-child) {
+  border-right: 1px solid #444;
+}
+.footer .footer-section .footer-logo {
+  max-width: 100px;
+  margin-bottom: 10px;
+}
+.footer .footer-section .social-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.footer .footer-section .foot-link {
+  margin: 5px 0;
+  color: #ddd;
+}
+.footer .footer-section .foot-link:hover {
+  color: #fff;
+}
+.footer .footer-section .foot-link i {
+  margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+  }
+  .footer .footer-section {
+    border-right: none;
+  }
+  .footer .footer-section:not(:last-child) {
+    margin-bottom: 20px;
+  }
 }/*# sourceMappingURL=hina_import.css.map */
