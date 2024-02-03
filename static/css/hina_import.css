@@ -1,9 +1,11 @@
+/*Profile design*/
 #hina-stats-block {
   border: 2px; /* Defines the border around the entire element */
   border-radius: 0 0 4px 4px; /* Applies rounded corners to the bottom-right and bottom-left */
   overflow: hidden; /* Ensures the inner elements do not overflow the rounded corners */
 }
 
+/*Footer design*/
 .footer {
   display: flex;
   justify-content: space-between;
@@ -17,7 +19,7 @@
   min-width: 200px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 .footer .footer-section:not(:last-child) {
   border-right: 1px solid #444;
@@ -26,10 +28,13 @@
   max-width: 100px;
   margin-bottom: 10px;
 }
+.footer .footer-section .logo-text {
+  text-align: left;
+}
 .footer .footer-section .social-links {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: baseline;
 }
 .footer .footer-section .foot-link {
   margin: 5px 0;
@@ -48,6 +53,7 @@
   }
   .footer .footer-section {
     border-right: none;
+    align-items: center;
   }
   .footer .footer-section:not(:last-child) {
     margin-bottom: 20px;
