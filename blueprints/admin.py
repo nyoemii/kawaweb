@@ -804,7 +804,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     "message": str(e)
                 }
             ), 400
-
+    # TODO: Add Set Ranking Support, Endpoint should be able to handle it already haven't tested it yet.
     if a == "rank":
         form = await request.form
         if not form:
