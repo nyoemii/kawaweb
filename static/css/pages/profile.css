@@ -103,49 +103,25 @@
 
 .badge-selects {
   background: hsl(var(--main), 16%, 20%);
-  overflow: hidden;
+  position: relative;
+  overflow-x: hidden;
 }
 .badge-selects:hover {
   overflow-x: auto;
 }
-  .badge-block {
-
+  .badge:hover .badge-selects:hover {
+    overflow-x: visible;
   }
-    .badge {
-      display: inline-block;
-      border-radius: 6px;
-      padding: 4.5px 7px;
-      font-size: 12px;
-      margin-left: 10px;
-      background-color: hsl(var(--main), 30%, 30%);
-      transition: 0.2s color;
-      transition: 0.2s scale;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: row;
-    }
-      .badge:hover {
-        scale: 1.10;
-        transition: 0.2s scale;
-      }
-      .badge .icon {
-        padding: 0;
-        margin-left: 0;
-        margin-right: 6px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-        .badge.icon i {
-          width: 16px;
-          height: 16px;
-        }
-      
-
+  .badge-selects::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: hsl(var(--main), 10%, 25%);
+    border-bottom-right-radius: 8px;
+  }
+  .badge-selects::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    background-color: hsl(var(--main), 15%, 40%);
+  }
 .select-left {
   display: flex;
   flex-direction: row;
