@@ -1522,7 +1522,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                     await glob.db.execute(
                         f"""
                         UPDATE users
-                        SET email = {email}
+                        SET 'email' = '{email}'
                         WHERE id = {action.user.id};
                         """
                     )
@@ -2105,7 +2105,7 @@ async def beatmaps(page=None):
     offset = (page - 1) * items_per_page
 
     requests = await glob.db.fetchall(
-        "SELECT * FROM map_requests WHERE active = 1 LIMIT %s OFFSET %s",
+        "SELECT * FROM map_requests WHERE active = 1 ORDER BY datetime DESC LIMIT %s OFFSET %s",
         (items_per_page, offset)
     )
     
