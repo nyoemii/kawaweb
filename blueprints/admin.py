@@ -1822,7 +1822,7 @@ async def log(action: Action):
         webhook.add_embed(embed)
         webhook.execute()
     
-    elif action.type == 1:
+    elif action.type == 1: # TODO: Add support for Set Ranking
         await glob.db.execute(
             f"""
             INSERT INTO logs (id, action, reason, `mod`, target, time, type)
@@ -1840,13 +1840,18 @@ async def log(action: Action):
             )
         
         embed.set_author(
-            name=f"New Action By {action.mod.name} ({action.mod.id})",
+            name=f"Diff {action.text} By {action.mod.name} ({action.mod.id})",
             icon_url=f"https://a.kawata.pw/{action.mod.id}"
             )
 
         embed.add_embed_field(
             name="Information:",
-            value=f"Action ID: {action.id}\nAction Moderator: {action.mod.name} ({action.mod.id})\nAction map: {action.map.title} [{action.map.version}] ({action.map.id})\nAction Type: {action.action}\n Action Reason: {action.reason}",
+            value=f"""
+            Ranked By: {action.mod.name} ({action.mod.id})\n
+            Map: {action.map.title} [{action.map.version}] ({action.map.id})\n
+            Map Stats: CS: {action.map.cs} AR: {action.map.ar} OD: {action.map.od} HP: {action.map.hp} NM*: {action.map.diff}\n
+            Action: {action.action}\n 
+            """,
             inline=False
             )
 
