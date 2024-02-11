@@ -1609,6 +1609,13 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
             ), 400
         
         try:
+            if Privileges.ManageBadges not in GetPriv(action.mod.priv):
+                return jsonify(
+                    {
+                        "status": "error",
+                        "message": "You do not have permission to add badges to users."
+                    }
+                ), 403
             action = await Action.create(a, form.get("reason"), form.get("user"))
             badge = form.get("badge")
 
@@ -1665,6 +1672,13 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
             ), 400
         
         try:
+            if Privileges.ManageBadges not in GetPriv(action.mod.priv):
+                return jsonify(
+                    {
+                        "status": "error",
+                        "message": "You do not have permission to add badges to users."
+                    }
+                ), 403
             action = await Action.create(a, form.get("reason"), form.get("user"))
             badge = form.get("badge")
 
@@ -2086,6 +2100,96 @@ async def badge(badgeid):
     
     # Return JSON response
     return jsonify(badge)
+
+
+@admin.route('/badge/<int:badgeid>/update', methods=['POST'])
+async def update_badge(badgeid):
+    """Update the provided badge."""
+    if not 'authenticated' in session:
+        return await flash('error', 'Please login first.', 'login')
+
+    if not session['user_data']['is_staff']:
+        return await flash('error', f'You have insufficient privileges.', 'home')
+    if Privileges.ManageBadges not in GetPriv(session["user_data"]["priv"]):
+        return jsonify(
+            {
+                "status": "error",
+                "message": "You do not have permission to update badges."
+            }
+        ), 403
+
+    data = await request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+
+    # Update the badge in the database
+    await glob.db.execute(
+        "UPDATE badges SET name = %s, description = %s, priority = %s WHERE id = %s",
+        (data['name'], data['description'], data['priority'], badgeid),
+    )
+
+    # Update the badge styles in the database
+    for style in data['styles']:
+        existing_style = await glob.db.fetch(
+            "SELECT * FROM badge_styles WHERE badge_id = %s AND type = %s",
+            (badgeid, style['type']),
+        )
+
+        if existing_style:
+            # Update the existing style
+            await glob.db.execute(
+                "UPDATE badge_styles SET value = %s WHERE badge_id = %s AND type = %s",
+                (style['value'], badgeid, style['type']),
+            )
+        else:
+            # Insert a new style
+            await glob.db.execute(
+                "INSERT INTO badge_styles (badge_id, type, value) VALUES (%s, %s, %s)",
+                (badgeid, style['type'], style['value']),
+            )
+
+    return jsonify({'success': 'Badge updated successfully'}), 200
+
+@admin.route('/badge/create', methods=['POST'])
+async def create_badge():
+    """Create a new badge."""
+    if not 'authenticated' in session:
+        return await flash('error', 'Please login first.', 'login')
+
+    if not session['user_data']['is_staff']:
+        return await flash('error', f'You have insufficient privileges.', 'home')
+    
+    if Privileges.ManageBadges not in GetPriv(session["user_data"]["priv"]):
+        return jsonify(
+            {
+                "status": "error",
+                "message": "You do not have permission to create badges."
+            }
+        ), 403
+    data = await request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+
+    # Create a new badge in the database
+    await glob.db.execute(
+        "INSERT INTO badges (name, description, priority) VALUES (%s, %s, %s)",
+        (data['name'], data['description'], data['priority']),
+    )
+    # Get the ID of the newly created badge
+    result = await glob.db.fetch(
+        "SELECT LAST_INSERT_ID()",
+    )
+
+    new_badge_id = result['LAST_INSERT_ID()'] if result else None
+
+    # Add the badge styles to the database
+    for style in data['styles']:
+        await glob.db.execute(
+            "INSERT INTO badge_styles (badge_id, type, value) VALUES (%s, %s, %s)",
+            (new_badge_id, style['type'], style['value']),
+        )
+
+    return jsonify({'success': 'Badge created successfully'}), 200
 
 @admin.route('/beatmaps/<int:page>')
 @admin.route('/beatmaps')

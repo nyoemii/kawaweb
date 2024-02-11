@@ -31,6 +31,7 @@ new Vue({
             flags: window.flags,
             show: false,
             badge: {},
+            isNewBadge: false,
         }
     },
     methods: {
@@ -50,24 +51,48 @@ new Vue({
                 });
         },
         saveBadge() {
-            // Code to save the badge's name, description, and priority
-        },
-        saveStyles() {
-            // Code to save the badge styles
+            const url = this.isNewBadge ? '/admin/badge/create' : `/admin/badge/${this.badge.id}/update`;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.badge),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                this.close();
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         },
         addStyle() {
             this.badge.styles.push({ type: '', value: '' });
+        },
+        newBadge() {
+            this.badge = {
+                name: '',
+                description: '',
+                priority: 0,
+                styles: [],
+            };
+            this.isNewBadge = true;
+            this.show = true;
         },
     },
     created: function() {
         editBadgeBus.$on('showEditBadgePanel', (badgeid) => {
             console.log('Edit Badge Window Triggered')
-            this.badgeid = badgeid;
+            this.isNewBadge = false;
             this.fetchSelectedBadge(badgeid);
             this.show = true;
         });
-    },
-    computed: {
+        editBadgeBus.$on('showNewBadgePanel', () => {
+            console.log('New Badge Window Triggered')
+            this.newBadge();
+        });
     },
     template: `
         <div id="editBadgeWindow" class="modal" v-bind:class="{ 'is-active': show }">
@@ -96,10 +121,10 @@ new Vue({
                         </div>
                         <h2>Edit Badge Styles</h2>
                         <p>
-                        Required Styles: color, icon.</br>
+                        Required Styles: color (Hue Angle), icon (eg. fas fa-heart).</br>
                         Supported Styles: 
                         </p>
-                        <div class="columns" v-for="(style, index) in badge.styles" :key="index">
+                        <div class="columns" v-for="(style, index) in badge.styles" :key="index" style="margin-top: 10px; margin-bottom: 10px;">
                             <div class="column">
                                 <div class="field">
                                     <label class="label">Type</label>
