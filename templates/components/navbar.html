@@ -1,4 +1,5 @@
 <nav id="navbar" class="navbar is-primary">
+    <script src="/static/js/components.js" crossorigin="anonymous"></script>
     <div class="navbar-brand">
         <a class="navbar-item navbar-logo" href="/home">
             {{ appName() }}
@@ -108,6 +109,11 @@
                                         {% for badge in session.user_data['badges'][:8] %}
                                             <badge :type="1" :test="0" :badge="{{ badge }}"></badge>
                                         {% endfor %}
+                                        <script>
+                                            new Vue({
+                                                el: '.user-card-badges',
+                                            });
+                                        </script>
                                     </div>
                                     {% endif %}
                                 </div>
