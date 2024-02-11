@@ -29,7 +29,7 @@ class Action:
             actionbcrypt = bcrypt.hashpw(actionmd5, bcrypt.gensalt())
             return actionbcrypt[29:].decode('utf-8')
     
-    def __init__(self, action, reason = None, id = None, duration = None):
+    def __init__(self, action, reason = None, id = None, duration = None, badge = None):
         self.id = Action.genID()
         self.modid = session["user_data"]["id"]
         self.targetid = id
@@ -75,12 +75,14 @@ class Action:
             self.type = 0
 
         elif action == "addbadge":
-            self.text = "Added Badge"
-            self.type = 0
+            self.text = "Given Badge"
+            self.badge = badge
+            self.type = 2
 
         elif action == "removebadge":
-            self.text = "Removed Badge"
-            self.type = 0
+            self.text = "Revoked Badge"
+            self.badge = badge
+            self.type = 2
 
         elif action == "removescore":
             self.text = "Removed Score"
@@ -114,8 +116,8 @@ class Action:
             raise ValueError(f"Invalid action {action}.")
         
     @classmethod
-    async def create(cls, action, reason=None, id=None, duration=None):
-        instance = cls(action, reason, id, duration)
+    async def create(cls, action, reason=None, id=None, duration=None, badge=None):
+        instance = cls(action, reason, id, duration, badge)
 
         await instance.initialize()
 
@@ -1617,8 +1619,9 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
             ), 400
         
         try:
-            action = await Action.create(a, form.get("reason"), form.get("user"))
             badge = form.get("badge")
+            Badge = await glob.db.fetch(f"SELECT * FROM badges WHERE id = {badge}")
+            action = await Action.create(a, reason=form.get("reason"), id=form.get("user"), badge=Badge)
         
         except ValueError as e:
             return jsonify(
@@ -1902,6 +1905,45 @@ async def log(action: Action):
         embed.set_footer(
             text=f"ID: {action.id}",
             icon_url=f"https://a.kawata.pw/{action.mod.id}")
+
+        webhook.add_embed(embed)
+        webhook.execute()
+
+    elif action.type == 2: 
+        await glob.db.execute(
+            f"""
+            INSERT INTO logs (id, action, reason, `mod`, target, time, type)
+            VALUES ('{action.id}', '{action.action}', '{action.reason}', {action.mod.id}, {action.user.id}, '{datetime.datetime.now()}', {action.type});
+            """
+        )
+        webhook = DiscordWebhook(glob.config.ADMIN_WEBHOOK_URL)
+        # don't post password changes to discord, that's just dumb
+        embed = DiscordEmbed(
+            title=f"{action.user.name} was {action.text} {action.badge['name']} by {action.mod.name}",
+            description=f"",
+            color=5126045,
+            timestamp=datetime.datetime.now()
+            )
+        
+        embed.set_author(
+            name=f"New Action By {action.mod.name}",
+            icon_url=f"https://a.kawata.pw/{action.mod.id}"
+            )
+
+        embed.add_embed_field(
+            name="Information:",
+            value=f"""
+            Action Moderator: {action.mod.name} ({action.mod.id})\n
+            Action User: {action.user.name} ({action.user.id})\n
+            Badge: {action.badge['name']} ({action.badge['id']})\n
+            Badge Description: {action.badge['description']}\n
+            """,
+            inline=False
+            )
+
+        embed.set_footer(
+            text=f"ID: {action.id}",
+            icon_url=f"https://a.kawata.pw/{action.user.id}")
 
         webhook.add_embed(embed)
         webhook.execute()
@@ -2205,10 +2247,10 @@ async def create_badge():
     )
     # Get the ID of the newly created badge
     result = await glob.db.fetch(
-        "SELECT LAST_INSERT_ID()",
+        f"SELECT id FROM badges WHERE name = '{data['name']}'",
     )
 
-    new_badge_id = result['LAST_INSERT_ID()'] if result else None
+    new_badge_id = result['id'] if result else None
 
     # Check if the badge ID exists
     if not new_badge_id:
@@ -2222,6 +2264,7 @@ async def create_badge():
                 (new_badge_id, style['type'], style['value']),
             )
     except Exception as e:
+        print('error: ', str(e))
         return jsonify({'error': str(e)}), 500
 
     return jsonify({'success': 'Badge created successfully'}), 200
