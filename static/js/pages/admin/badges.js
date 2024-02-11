@@ -31,7 +31,6 @@ new Vue({
             flags: window.flags,
             show: false,
             badge: {},
-            
         }
     },
     methods: {
@@ -55,7 +54,10 @@ new Vue({
         },
         saveStyles() {
             // Code to save the badge styles
-        }
+        },
+        addStyle() {
+            this.badge.styles.push({ type: '', value: '' });
+        },
     },
     created: function() {
         editBadgeBus.$on('showEditBadgePanel', (badgeid) => {
@@ -93,12 +95,16 @@ new Vue({
                             </div>
                         </div>
                         <h2>Edit Badge Styles</h2>
-                        <div class="columns">
+                        <p>
+                        Required Styles: color, icon.</br>
+                        Supported Styles: 
+                        </p>
+                        <div class="columns" v-for="(style, index) in badge.styles" :key="index">
                             <div class="column">
                                 <div class="field">
                                     <label class="label">Type</label>
                                     <div class="control">
-                                        <input class="input" type="text" v-model="badge.styles[0].type">
+                                        <input class="input" type="text" v-model="style.type">
                                     </div>
                                 </div>
                             </div>
@@ -106,29 +112,12 @@ new Vue({
                                 <div class="field">
                                     <label class="label">Value</label>
                                     <div class="control">
-                                        <input class="input" type="text" v-model="badge.styles[0].value">
+                                        <input class="input" type="text" v-model="style.value">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="columns">
-                            <div class="column">
-                                <div class="field">
-                                    <label class="label">Type</label>
-                                    <div class="control">
-                                        <input class="input" type="text" v-model="badge.styles[1].type">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column">
-                                <div class="field">
-                                    <label class="label">Value</label>
-                                    <div class="control">
-                                        <input class="input" type="text" v-model="badge.styles[1].value">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <button class="button is-primary" type="button" @click="addStyle">Add Style</button>
                         <button class="button is-primary" type="submit">Save</button>
                     </form>
                 </div>
