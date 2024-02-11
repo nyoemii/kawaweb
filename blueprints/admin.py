@@ -1693,8 +1693,9 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
             ), 400
         
         try:
-            action = await Action.create(a, form.get("reason"), form.get("user"))
             badge = form.get("badge")
+            Badge = await glob.db.fetch(f"SELECT * FROM badges WHERE id = {badge}")
+            action = await Action.create(a, reason=form.get("reason"), id=form.get("user"), badge=Badge)
         
         except ValueError as e:
             return jsonify(
