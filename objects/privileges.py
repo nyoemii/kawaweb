@@ -49,7 +49,7 @@ class Privileges(IntFlag):
     Nominator = ManageBeatmaps | AccessPanel
     SUPPORT = RestrictUsers | SilenceUsers | WipeUsers | KickUsers | ChatMod | ViewPanelLog | SendAlerts | ManageClans | AccessPanel
     Mod = SUPPORT | ManageUsers | ManageBadges | ViewSensitiveInfo  # define this as a moderator
-    Admin = Mod | ViewSensitiveInfo # has moderator privileges, can view sensitive info
+    Admin = Mod | ManagePrivs # has moderator privileges, can view sensitive info
     
 
     Donator = Supporter | Premium
