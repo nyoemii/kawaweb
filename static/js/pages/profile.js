@@ -57,6 +57,7 @@ new Vue({
         this.LoadProfileData();
         this.LoadAllofdata();
         this.LoadUserStatus();
+        console.log('Data:', this.data);
     },
     methods: {
         LoadAllofdata() {

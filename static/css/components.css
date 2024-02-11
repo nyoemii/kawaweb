@@ -168,3 +168,93 @@
                 font-weight: 400;
                 text-wrap: wrap !important;
             }
+
+
+
+/* Style for User Panel Vue Component */
+.profile-panel {
+    position: absolute;
+    display: flex !important;
+    width: fit-content;
+    z-index: 610;
+    opacity: 1;
+    flex-direction: row;
+    justify-content: flex-start; /* Updated */
+    align-items: center; /* Added */
+    background-position: center;
+    background-size: cover;
+    border-radius: 20px;
+    margin-top: -84px;
+    color: white;
+    background-color: hsl(var(--main), 10%, 20%);
+    transition: 200ms opacity, 200ms visibility;
+    transition-delay: 0s, 0s;
+    transition-delay: 250ms;
+    line-height: 1.35;
+    visibility: visible;
+    background-image: url(/static/images/default-bg.png);
+}
+    .profile-panel-background {
+        height: 100%;
+        width: 100%;
+        border-radius: 12px;
+        position: absolute !important;
+        z-index: -1;
+        background-position: center;
+        background-size: cover;
+    }
+    .profile-panel > div {
+        position: relative;
+    }
+    .profile-panel-avatar {
+        height: 72px;
+        width: 72px;
+        background-size: cover;
+        background-position: center;
+    }
+    .profile-panel-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* Updated */
+        margin-left: 8px; /* Added */
+    }
+        .profile-panel-info .name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            margin-right: 12px;
+            text-align: left;
+        }
+        .profile-panel-info .badges {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            border-radius: 8px;
+            height: fit-content;
+            padding: 2px;
+            width: fit-content;
+            max-width: 98%;
+        }
+            .badges .badge {
+                margin-right: 2px;
+                text-shadow: 0 2px 2px rgba(0, 0, 0, 0.56);
+            }
+            .badge-popup {
+                position: absolute;
+                width: fit-content;
+                padding: 4px;
+                padding-left: 8px;
+                padding-right: 8px;
+                height: fit-content;
+                border-radius: 20px;
+                background: rgba(0, 0, 0, .5);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-wrap: wrap;
+                opacity: 1;
+                transition: .2s ease;
+                z-index: 99;
+                text-shadow: 0 2px 2px rgba(0, 0, 0, 0.56);
+            }
