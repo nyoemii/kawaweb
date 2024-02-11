@@ -1284,10 +1284,10 @@ body::-webkit-scrollbar-thumb {
   flex-direction: row;
   align-items: center;
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.56);
   height: fit-content;
-  padding: 4px;
+  padding: 2px;
   width: fit-content;
+  max-width: 98%;
 }
   .badges .badge {
     margin-right: 2px;
@@ -1399,7 +1399,6 @@ body::-webkit-scrollbar-thumb {
     margin: 6px 12px;
     color: #222;
     position: relative;
-    overflow: hidden;
   }
     a.user-card
     {
@@ -1408,10 +1407,11 @@ body::-webkit-scrollbar-thumb {
       padding: 10px 10px 10px 16px;
       border-color: hsl(var(--main) 10% 32%) !important;
       background-color: hsl(var(--main) 40% 40%);
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
       background-size: cover;
       background-position: center;
       position: relative;
-      overflow: hidden;
       min-height: 65px;
       display: flex;
     }
@@ -1430,7 +1430,6 @@ body::-webkit-scrollbar-thumb {
         min-width: 0;
         padding-right: 16px;
         text-overflow: ellipsis;
-        overflow: hidden;
         white-space: nowrap;
         -ms-flex-direction: column !important;
         flex-direction: column !important;

@@ -100,28 +100,6 @@
 .mode-selects {
   background: hsl(var(--main), 25%, 22%);
 }
-
-.badge-selects {
-  background: hsl(var(--main), 16%, 20%);
-  position: relative;
-  overflow-x: hidden;
-}
-.badge-selects:hover {
-  overflow-x: auto;
-}
-  .badge:hover .badge-selects:hover {
-    overflow-x: visible;
-  }
-  .badge-selects::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    background-color: hsl(var(--main), 10%, 25%);
-    border-bottom-right-radius: 8px;
-  }
-  .badge-selects::-webkit-scrollbar-thumb {
-    border-radius: 6px;
-    background-color: hsl(var(--main), 15%, 40%);
-  }
 .select-left {
   display: flex;
   flex-direction: row;

@@ -235,15 +235,8 @@ new Vue({
                             </div>
                         </div>
                         <div class="bar-selection badge-selects">
-                            <div v-if="user.badges.length != 0" v-for="badge in user.badges" class="select-left badge-block">
-                                <div class="badge" :style="'background-color: hsl(' + badge.styles.color + ', 20%, 30%); color: hsl(' + badge.styles.color + ', 100%, 80%);'">
-                                    <span v-if="badge.styles.icon">
-                                        <i v-bind:class="'fas fa-' + badge.styles.icon"></i>
-                                    </span>
-                                    <span class="badge-name">
-                                        <% badge.name %>
-                                    </span>
-                                </div>
+                            <div v-if="user.badges.length != 0" class="select-left badge-block">
+                                <badge v-for="badge in user.badges" :badge="badge"></badge>
                             </div>
                             <div v-else class="select-left">
                                 <div class="badge-block">

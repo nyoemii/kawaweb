@@ -1,23 +1,26 @@
-new Vue({
-    el: "#badges",
-    delimiters: ["<%", "%>"],
-    data() {
-        return {
-            flags: window.flags,
-            badges: {},
-        }
-    },
-    created() {
-        console.log('Badges.js Badges Page Created');
-    },
-    methods: {
-        
-        editBadge(badgeid) {
-            editBadgeBus.$emit('showEditBadgePanel', badgeid);
+document.addEventListener('DOMContentLoaded', function () {
+    new Vue({
+        el: "#badges",
+        delimiters: ["<%", "%>"],
+        data() {
+            return {
+                flags: window.flags,
+                badges: badges,
+            }
         },
-    },
-    computed: {
-    }
+        created() {
+            console.log('Badges.js Badges Page Created');
+            console.log('Badges:', this.badges);
+        },
+        methods: {
+
+            editBadge(badgeid) {
+                editBadgeBus.$emit('showEditBadgePanel', badgeid);
+            },
+        },
+        computed: {
+        }
+    });
 });
 var editBadgeBus = new Vue();
 new Vue({

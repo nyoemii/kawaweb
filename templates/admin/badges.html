@@ -29,6 +29,7 @@
                         <th>Description</th>
                         <th>Priority</th>
                         <th>Styles</th>
+                        <th>Preview</th>
                         <th>Edit</th>
                     </tr>
                 </thead>
@@ -40,6 +41,7 @@
                         <td>{{ badge.description }}</td>
                         <td>{{ badge.priority }}</td>
                         <td>{{ badge.styles|length }}</td>
+                        <td><badge :badge="{{ badge }}"></badge></td>
                         <td><button @click="editBadge({{ badge.id }})">Edit</button></td>
                     </tr>
                     {% endfor %}

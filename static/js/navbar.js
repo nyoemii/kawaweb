@@ -1,3 +1,6 @@
+new Vue({
+    el: '.user-card-badges',
+});
 var searchBus = new Vue();
 new Vue({
     el: '#search-icon',

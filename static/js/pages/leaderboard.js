@@ -105,13 +105,7 @@ Vue.component('user-profile', {
                     {{ user.name }}
                 </div>
                 <div class="Badges">
-                    <span v-for="badge in user.badges">
-                        <i :class="'badge ' + badge.styles.icon" :style="'color: hsl(' + badge.styles.color + ', 100%, 60%);'" @mouseover="showBadgePopup($event, badge)" @mouseout="hideBadgePopup"></i>
-                        <div class="badge-popup" v-if="badgePopupVisible == badge.id" :style="{ top: -20, left: 0 }">
-                            <div class="badge-name" :style="'color: hsl('+ badge.styles.color + ', 100%, 60%);'">{{ badge.name }}</div>
-                            <div class="badge-description">{{ badge.description }}</div>
-                        </div>
-                    </span>
+                    <badge v-for="badge in user.badges" :badge="badge" :type="1"></badge>
                 </div>
             </div>
         </div>
@@ -138,7 +132,7 @@ Vue.component('user-profile', {
                 // Calculate the position of the badge popup relative to the badge icon
                 const badgeIcon = event.target;
                 const badgeIconRect = badgeIcon.getBoundingClientRect();
-                this.badgePopupTop = badgeIconRect.top + badgeIconRect.height + 'px';
+                this.badgePopupTop = badgeIconRect.top + badgeIconRect.height + 6 + 'px';
                 this.badgePopupLeft = badgeIconRect.left + 'px';
             }
             },

@@ -104,11 +104,11 @@
                                 <span class="user-card-name">{{ session.user_data['name'] }}</span>
                                 <div class="user-card-badges">
                                     {% if session.user_data.get('badges') %}
+                                    <div data-badge-group="user-card" class="badge-block">
                                         {% for badge in session.user_data['badges'][:8] %}
-                                            <div class="user-card-badge">
-                                                <i class="{{ badge.styles.icon }}" style="color: hsl({{ badge.styles.color }}, 100%, 50%)" id="usercardbadge" data-title="{{ badge.name }}"></i>
-                                            </div>
+                                            <badge :type="1" :test="0" :badge="{{ badge }}"></badge>
                                         {% endfor %}
+                                    </div>
                                     {% endif %}
                                 </div>
                                 <span class="user-card-data_angle">
@@ -121,11 +121,6 @@
                         Settings
                     </a>
                 </div>
-                <!--<div class="navbar-dropdown">
-                    <a class="navbar-item" href="/u/{{ session.user_data['id'] }}">
-                        Profile
-                    </a>
-                </div>-->
             </div>
             <div class="navbar-item">
                 <a class="button is-light" href="/logout">
