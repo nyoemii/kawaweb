@@ -59,7 +59,7 @@ Vue.component('badge', {
     </div>
     <div v-if="type === 1" class="iconBadge"  :style="'background-color: hsl(' + badge.styles.color + ', 20%, 30%); color: hsl(' + badge.styles.color + ', 100%, 80%);  border: 1px solid hsl(' + badge.styles.color + ', 40%, 35%);'" @mouseover="showPanel = true" @mouseleave="showPanel = false">
       <span class="icon" v-if="badge.styles.icon">
-        <i v-bind:class="'fas fa-' + badge.styles.icon"></i>
+        <i v-bind:class="'' + badge.styles.icon"></i>
       </span>
       <div class="badge-panel"  :style="'background-color: hsl(' + badge.styles.color + ', 20%, 20%); color: hsl(' + badge.styles.color + ', 100%, 80%);'">
         <h3>{{ badge.name }}</h3>
