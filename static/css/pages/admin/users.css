@@ -156,23 +156,6 @@
           text-decoration: none;
         }
 
-      .badge-selects {
-        background: hsl(var(--main), 16%, 20%);
-      }
-        .badge {
-            display: inline-block;
-            border-radius: 6px;
-            padding: 4.5px 7px;
-            font-size: 12px;
-            margin-left: 10px;
-            background-color: hsl(var(--main), 30%, 30%);
-            transition: 0.2s color;
-            transition: 0.2s ease;
-          }
-            .badge:hover {
-              scale: 1.10;
-              box-shadow: 0 0px 20px color;
-            }
 
 
     .user-bg {
