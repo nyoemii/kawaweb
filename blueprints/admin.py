@@ -74,6 +74,14 @@ class Action:
             self.text = "Edited Account"
             self.type = 0
 
+        elif action == "addbadge":
+            self.text = "Added Badge"
+            self.type = 0
+
+        elif action == "removebadge":
+            self.text = "Removed Badge"
+            self.type = 0
+
         elif action == "removescore":
             self.text = "Removed Score"
             self.type = 0
@@ -118,7 +126,7 @@ class Action:
         await self.mod.fetchUser()
 
 
-        if self.action in ["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges", "editaccount", "removescore"]:
+        if self.action in ["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges", "editaccount", "addbadge", "removebadge", "removescore"]:
             self.user = User(self.targetid)
             await self.user.fetchUser()
         elif self.action in ["rank", "approve", "qualify", "love", "unrank", "completerequest"]:
@@ -1609,6 +1617,18 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
             ), 400
         
         try:
+            action = await Action.create(a, form.get("reason"), form.get("user"))
+            badge = form.get("badge")
+        
+        except ValueError as e:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": str(e)
+                }
+            ), 400
+        
+        try:
             if Privileges.ManageBadges not in GetPriv(action.mod.priv):
                 return jsonify(
                     {
@@ -1616,8 +1636,6 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                         "message": "You do not have permission to add badges to users."
                     }
                 ), 403
-            action = await Action.create(a, form.get("reason"), form.get("user"))
-            badge = form.get("badge")
 
             if await glob.db.fetch(f"SELECT * FROM user_badges WHERE userid = {action.user.id} AND badge_id = {badge}") is not None:
                 return jsonify(
@@ -1672,6 +1690,18 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
             ), 400
         
         try:
+            action = await Action.create(a, form.get("reason"), form.get("user"))
+            badge = form.get("badge")
+        
+        except ValueError as e:
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": str(e)
+                }
+            ), 400
+        
+        try:
             if Privileges.ManageBadges not in GetPriv(action.mod.priv):
                 return jsonify(
                     {
@@ -1679,8 +1709,6 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                         "message": "You do not have permission to add badges to users."
                     }
                 ), 403
-            action = await Action.create(a, form.get("reason"), form.get("user"))
-            badge = form.get("badge")
 
             if await glob.db.fetch(f"SELECT * FROM user_badges WHERE userid = {action.user.id} AND badge_id = {badge}") is None:
                 return jsonify(
@@ -2044,8 +2072,8 @@ async def badges():
     # Check if JSON query parameter is present
     is_json = request.args.get('json') == 'true'
 
-    # Get all badges
-    badges = await glob.db.fetchall("SELECT * FROM badges")
+    # Get all badges and sort by priority
+    badges = await glob.db.fetchall("SELECT * FROM badges ORDER BY priority DESC")
 
     # Get badge styles for each badge
     for badge in badges:
@@ -2182,12 +2210,19 @@ async def create_badge():
 
     new_badge_id = result['LAST_INSERT_ID()'] if result else None
 
+    # Check if the badge ID exists
+    if not new_badge_id:
+        return jsonify({'error': 'Failed to create badge'}), 500
+
     # Add the badge styles to the database
-    for style in data['styles']:
-        await glob.db.execute(
-            "INSERT INTO badge_styles (badge_id, type, value) VALUES (%s, %s, %s)",
-            (new_badge_id, style['type'], style['value']),
-        )
+    try:
+        for style in data['styles']:
+            await glob.db.execute(
+                "INSERT INTO badge_styles (badge_id, type, value) VALUES (%s, %s, %s)",
+                (new_badge_id, style['type'], style['value']),
+            )
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
     return jsonify({'success': 'Badge created successfully'}), 200
 
