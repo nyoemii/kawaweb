@@ -47,7 +47,8 @@ class Privileges(IntFlag):
     # if user_priv & Privileges.Donator. thats it.
 
     Nominator = ManageBeatmaps | AccessPanel
-    Mod = AccessPanel | RestrictUsers | SilenceUsers | WipeUsers | KickUsers| ManagePrivs | ChatMod | ManageUsers  # define this as a moderator
+    SUPPORT = RestrictUsers | SilenceUsers | WipeUsers | KickUsers | ChatMod | ViewPanelLog | SendAlerts | ManageClans | AccessPanel
+    Mod = SUPPORT | ManageUsers | ManageBadges | ViewSensitiveInfo  # define this as a moderator
     Admin = Mod | ViewSensitiveInfo # has moderator privileges, can view sensitive info
     
 
