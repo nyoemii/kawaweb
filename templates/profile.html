@@ -202,7 +202,7 @@
                 </div>
             </div>
             <div class="bar-selection badge-selects">
-                <div v-if="data.badges.length != 0" class="select-left badge-block">
+                <div v-if="data.badges != undefined" class="select-left badge-block">
                     <badge v-for="badge in data.badges" :badge="badge" :type="0"></badge>
                 </div>
                 <div v-else class="select-left">
@@ -211,6 +211,7 @@
                             This user has no badges.
                         </span>
                     </div>
+                </div>
             </div>
         </div>
     </div>
