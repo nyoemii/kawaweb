@@ -3,7 +3,7 @@ version: "3.8"
 services:
   web:
     image: kawaweb:latest
-    container_name: Kawata-Web
+    container_name: ${CONTAINER_NAME}
     network_mode: bridge
     restart: always
     ports:
@@ -21,6 +21,9 @@ services:
     environment:
       - APP_HOST=${APP_HOST}
       - APP_PORT=${APP_PORT}
+      - GULAG_ADDRESS=${GULAG_ADDRESS}
+      - GULAG_PORT=${GULAG_PORT}
+      - CONTAINER_NAME=${CONTAINER_NAME}
       - APP_NAME=${APP_NAME}
       - SECRET_KEY=${SECRET_KEY}
       - HCAPTCHA_SITEKEY=${HCAPTCHA_SITEKEY}

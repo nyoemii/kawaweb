@@ -14,6 +14,8 @@ done < .env
 echo "Installing nginx configuration"
 sed -e "s|\${APP_PORT}|$APP_PORT|g" \
     -e "s|\${DOMAIN}|$DOMAIN|g" \
+    -e "s|\${GULAG_ADDRESS}|$GULAG_ADDRESS|g" \
+    -e "s|\${GULAG_PORT}|$GULAG_PORT|g" \
     -e "s|\${SSL_CERT_PATH}|$SSL_CERT_PATH|g" \
     -e "s|\${SSL_KEY_PATH}|$SSL_KEY_PATH|g" \
     ext/nginx.conf.example > /etc/nginx/sites-available/web.conf

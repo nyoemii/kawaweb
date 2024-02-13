@@ -3,13 +3,13 @@
 # a.ppy.sh is used for osu! avatars
 
 upstream bancho {
-	server Kawata-Bancho:10000; # set bancho upstream
+	server ${GULAG_ADDRESS}:${GULAG_PORT}; # set bancho upstream
 }
 
 server {
 	listen 80;
 
-	server_name web.${DOMAIN} ${DOMAIN}; # Website!
+	server_name  ${DOMAIN} web.${DOMAIN}; # Website!
 
 	access_log /srv/root/nginx/logs/access/web.${DOMAIN}.log;
 	error_log /srv/root/nginx/logs/error/web.${DOMAIN}.log;
@@ -37,6 +37,6 @@ server {
 		add_header Access-Control-Allow-Origin *; 
 		proxy_redirect off;
 		client_max_body_size 128M; # set max web upload
-		proxy_pass http://127.0.0.1:8000; # pass to kawaweb
+		proxy_pass http://127.0.0.1:${APP_PORT}; # pass to kawaweb
 	}
 }
