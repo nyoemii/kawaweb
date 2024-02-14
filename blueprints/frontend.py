@@ -532,10 +532,16 @@ async def leaderboard(mode='std', sort='pp', mods='vn'):
     except:
         globalNotice = None
         pass
-    if (glob.sys['isDevEnv']):
-        return await render_template('leaderboard.html', mode=mode, sort=sort, mods=mods, globalNotice=globalNotice, flash=f"This Website is the Dev Environment and should not be used for active play, please play on <a href='https://{glob.config.official_domain}'>our Official Server</a>", status="success")
-    if (glob.sys['maintenance']):
-        return await render_template('leaderboard.html', mode=mode, sort=sort, mods=mods, globalNotice=globalNotice, flash="Website is currently under maintenence", status="success")
+    try:
+        if (glob.sys['isDevEnv']):
+            return await render_template('leaderboard.html', mode=mode, sort=sort, mods=mods, globalNotice=globalNotice, flash=f"This Website is the Dev Environment and should not be used for active play, please play on <a href='https://{glob.config.official_domain}'>our Official Server</a>", status="success")
+    except:
+        pass
+    try:
+        if (glob.sys['maintenance']):
+            return await render_template('leaderboard.html', mode=mode, sort=sort, mods=mods, globalNotice=globalNotice, flash="Website is currently under maintenence", status="success")
+    except:
+        pass
     return await render_template('leaderboard.html', mode=mode, sort=sort, mods=mods, globalNotice=globalNotice)
 
 @frontend.route('/clans')
