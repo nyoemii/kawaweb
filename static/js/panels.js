@@ -571,7 +571,12 @@ new Vue({
                         </div>
                         <div class="doc-block" v-if="page === 'Kawata'">
                             <div class="doc-notice">
-                                <a class="button dl" href="" title="Client is currently in Limited Beta Testing" style="color: red;"><i class="fas fa-download"></i>  Download</a>
+                                <div class="notice">
+                                    <h2>Notice:</h2> <p>Due to obfuscation method currently in use you will need to turn off Anti-Virus when downloading and add an exclusion for the install folder, otherwise you will encounter issues. </p>
+                                </div>
+                                <div class="content">
+                                <a class="button dl" href="https://storage.kawata.pw/get/osu!Kawata.zip" title="Client is in Public Beta, You may encounter bugs."><i class="fas fa-download"></i>  Download</a> <a class="button VA" href="http://www.hybrid-analysis.com/sample/3a08fea940bb7028b08b0a6688cae86344af3fc5ea2340ff03a29d95be090614"><i></i> Virus Analysis Report</a>
+                                </div>
                             </div>
                             <div class="doc-section">
                                 <h3><i class="fas fa-exclamation-circle"></i> Kawata/Aeris Client:</h3>
@@ -585,7 +590,7 @@ new Vue({
                                     <div class="doc-content">
                                         <h3><i class="fas fa-exclamation"></i> Features:</h3>
                                         <div class="subsection">
-                                            <h5>Cheats:</h5>
+                                            <h5>Cheats: (Server Enabled)</h5>
                                             <div class="level">
                                                 <p>
                                                     Aim Correction (Improved Skooter AC, Optional Tap on Correct for Non-RX Players, Relative Range Support)</br>
