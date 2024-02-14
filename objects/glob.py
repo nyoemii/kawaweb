@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-__all__ = ('db', 'redis', 'http', 'version', 'cache')
+__all__ = ('db', 'redis', 'http', 'version', 'cache', 'sys')
 
 from typing import TYPE_CHECKING
 import config  # imported for indirect use
@@ -19,3 +19,4 @@ version: 'Version'
 cache = {
     'bcrypt': {}
 }
+sys = {}

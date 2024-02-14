@@ -143,7 +143,6 @@ dmypy.json
 cython_debug/
 
 # Project specific
-config.py
 .vscode/
 .data/*
 !.data/backgrounds/.gitkeep

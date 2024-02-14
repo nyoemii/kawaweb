@@ -4,6 +4,8 @@
 __all__ = ()
 
 import os
+import asyncio
+import threading
 
 import aiohttp
 from redis import asyncio as aioredis
@@ -42,12 +44,34 @@ async def redis_conn() -> None:
     glob.redis = aioredis
     glob.redis = await aioredis.from_url(glob.config.REDIS_DSN)
     log('Connected to Redis!', Ansi.LGREEN)
+    
+@app.before_serving
+async def run_bg_tasks() -> None:
+    # Schedule the execution of the set_sys_data function
+    asyncio.create_task(set_sys_data())
 
-
+async def set_sys_data(silent=False) -> None:
+    i = 0
+    if silent:
+        sys_data = await glob.db.fetchall('SELECT * FROM server_data')
+        sys_data_dict = {item['type']: item['value'] for item in sys_data}
+        glob.sys = sys_data_dict
+    else:
+        while i < 3:
+            i += 1
+            sys_data = await glob.db.fetchall('SELECT * FROM server_data')
+            sys_data_dict = {item['type']: item['value'] for item in sys_data}
+            glob.sys = sys_data_dict
+            if i == 1:
+                log('Set Server Data From DB', Ansi.LGREEN)
+            if i == 2:
+                log('Updated Server Data From DB', Ansi.LGREEN)
+                i = 1
+            await asyncio.sleep(30)
 @app.after_serving
 async def shutdown() -> None:
     await glob.db.close()
-    await glob.http.close()
+    await glob.http.close()    
 
 # globals which can be used in template code
 @app.template_global()
@@ -79,4 +103,4 @@ async def page_not_found(e):
 
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    app.run(port=8000, debug=glob.config.debug) # blocking call
+    app.run(port=glob.config.app_port, debug=glob.config.debug) # blocking call

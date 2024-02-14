@@ -11,8 +11,9 @@ load_dotenv()
 def read_list(value: str) -> list[str]:
     return [v.strip() for v in value.split(",")]
 
-# app name
+# app info
 app_name = os.environ["APP_NAME"]
+app_port = int(os.environ["APP_PORT"])
 
 # secret key
 secret_key = os.environ["SECRET_KEY"]
@@ -23,6 +24,8 @@ hCaptcha_secret = os.environ["HCAPTCHA_SECRET"]
 
 # domain (used for api, avatar, etc)
 domain = os.environ["DOMAIN"]
+# official domain (Used for the official domain of the server when in Dev Mode)
+official_domain = os.environ["OFFICIAL_DOMAIN"]
 
 # max image size for avatars, in megabytes
 max_image_size = int(os.environ["MAX_IMAGE_SIZE"])
