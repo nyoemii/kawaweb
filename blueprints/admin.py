@@ -2329,13 +2329,20 @@ async def beatmaps(page=None):
             """,
             (request['map_id'], request['map_id']),
         )
-
-        request['map_info'] = next(
-            map for map in map_info_and_diffs if map['id'] == request['map_id']
-        )
-        request['map_diffs'] = [
-            map for map in map_info_and_diffs if map['id'] != request['map_id']
-        ]
+        try:
+            request['map_info'] = next(
+                (map for map in map_info_and_diffs if map['id'] == request['map_id'])
+            )
+            request['map_diffs'] = [
+                map for map in map_info_and_diffs if map['id'] != request['map_id']
+            ]
+        except:
+            print("error")
+            print("map_info_and_diffs")
+            print(map_info_and_diffs)
+            print("request")
+            print(request)
+            pass
 
         # Convert datetime objects to strings
         request['datetime'] = request['datetime'].strftime('%Y-%m-%d %H:%M:%S')

@@ -17,6 +17,8 @@ app_port = int(os.environ["APP_PORT"])
 
 # secret key
 secret_key = os.environ["SECRET_KEY"]
+# API Key for Admin Requests
+api_key = os.environ["API_KEY"]
 
 #hCaptcha settings:
 hCaptcha_sitekey = os.environ["HCAPTCHA_SITEKEY"]
