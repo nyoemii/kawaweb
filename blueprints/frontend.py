@@ -105,7 +105,6 @@ async def home(doc=None, sid=None, id=None):
     except:
         pass
     try:
-        print(glob.sys['maintenance'])
         if glob.sys['maintenance'] == "True":
             return await render_template('home.html', unix_timestamp=unix_timestamp, changelogs=changelogs, rankedmaps=newly_ranked, doc=doc, dash_data=dash_data, globalNotice=globalNotice,
                                          flash=f"Website is currently under maintenence", status="success")
@@ -509,12 +508,12 @@ async def profile_select(id):
         globalNotice = None
         pass
     try:
-        if (glob.sys['isDevEnv']):
+        if (glob.sys['isDevEnv']) == "True":
             return await render_template('profile.html', user=user_data, mode=mode, mods=mods, globalNotice=globalNotice, flash=f"This Website is the Dev Environment and should not be used for active play, please play on <a href='https://{glob.config.official_domain}'>our Official Server</a>", status="success")
     except:
         pass
     try:
-        if (glob.sys['maintenance']):
+        if (glob.sys['maintenance']) == "True":
             return await render_template('profile.html', user=user_data, mode=mode, mods=mods, globalNotice=globalNotice, flash="Website is currently under maintenence", status="success")
     except:
         pass
@@ -533,12 +532,12 @@ async def leaderboard(mode='std', sort='pp', mods='vn'):
         globalNotice = None
         pass
     try:
-        if (glob.sys['isDevEnv']):
+        if (glob.sys['isDevEnv']) == "True":
             return await render_template('leaderboard.html', mode=mode, sort=sort, mods=mods, globalNotice=globalNotice, flash=f"This Website is the Dev Environment and should not be used for active play, please play on <a href='https://{glob.config.official_domain}'>our Official Server</a>", status="success")
     except:
         pass
     try:
-        if (glob.sys['maintenance']):
+        if (glob.sys['maintenance']) == "True":
             return await render_template('leaderboard.html', mode=mode, sort=sort, mods=mods, globalNotice=globalNotice, flash="Website is currently under maintenence", status="success")
     except:
         pass
@@ -553,12 +552,12 @@ async def clans():
         globalNotice = None
         pass
     try:
-        if glob.sys['isDevEnv']:
+        if glob.sys['isDevEnv'] == "True":
             return await render_template('clans.html', globalNotice=globalNotice, flash=f"This Website is the Dev Environment and should not be used for active play, please play on <a href='https://{glob.config.official_domain}'>our Official Server</a>", status="success")
     except:
         pass
     try:
-        if glob.sys['maintenance']:
+        if glob.sys['maintenance'] == "True":
             return await render_template('clans.html', globalNotice=globalNotice, flash="Website is currently under maintenence", status="success")
     except:
         pass
@@ -575,12 +574,12 @@ async def login():
         globalNotice = None
         pass
     try:
-        if glob.sys['isDevEnv']:
+        if glob.sys['isDevEnv'] == "True":
             return await render_template('login.html', globalNotice=globalNotice, flash=f"This Website is the Dev Environment and should not be used for active play, please play on <a href='https://{glob.config.official_domain}'>our Official Server</a>", status="success")
     except:
         pass
     try:
-        if glob.sys['maintenance']:
+        if glob.sys['maintenance'] == "True":
             return await render_template('login.html', globalNotice=globalNotice, flash="Website is currently under maintenence", status="success")
     except:
         pass
@@ -715,12 +714,12 @@ async def register():
         globalNotice = None
         pass
     try:
-        if glob.sys['isDevEnv']:
+        if glob.sys['isDevEnv'] == "True":
             return await render_template('register.html', globalNotice=globalNotice, flash=f"This Website is the Dev Environment and should not be used for active play, please play on <a href='https://{glob.config.official_domain}'>our Official Server</a>", status="success")
     except:
         pass
     try:
-        if glob.sys['maintenance']:
+        if glob.sys['maintenance'] == "True":
             return await render_template('register.html', globalNotice=globalNotice, flash="Website is currently under maintenence", status="success")
     except:
         pass
@@ -893,12 +892,12 @@ async def changelog(type='frontend', category='all'):
         globalNotice = None
         pass
     try:
-        if (glob.sys['isDevEnv']):
+        if (glob.sys['isDevEnv']) == "True":
             return await render_template('changelog.html', changelogs=changelogs, type=type, category=category, globalNotice=globalNotice, flash=f"This Website is the Dev Environment and should not be used for active play, please play on <a href='https://{glob.config.official_domain}'>our Official Server</a>", status="success")
     except:
         pass
     try:
-        if (glob.sys['maintenance']):
+        if (glob.sys['maintenance']) == "True":
             return await render_template('changelog.html', changelogs=changelogs, type=type, category=category, globalNotice=globalNotice, flash="Website is currently under maintenence", status="success")
     except:
         pass
