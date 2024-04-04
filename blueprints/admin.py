@@ -2296,29 +2296,38 @@ async def beatmaps(page=None):
     
     # Append map_info to each entry in requests
     for request in requests:
-        player_and_badges = await glob.db.fetchall(
-            """
-            SELECT users.name, users.id, users.country, badges.*, badge_styles.*
-            FROM users
-            LEFT JOIN user_badges ON users.id = user_badges.userid
-            LEFT JOIN badges ON user_badges.badge_id = badges.id
-            LEFT JOIN badge_styles ON badges.id = badge_styles.badge_id
-            WHERE users.id = %s
-            ORDER BY badges.priority DESC
-            """,
+        user = await glob.db.fetch(
+            "SELECT name, id, country FROM users WHERE id = %s",
             (request['player_id'],),
         )
 
-        player = player_and_badges[0]
-        player['badges'] = [
-            {
-                **badge,
-                "styles": {key: badge[key] for key in badge if key.startswith('style')}
-            }
-            for badge in player_and_badges
-        ]
+        user_badges = await glob.db.fetchall(
+            "SELECT badge_id FROM user_badges WHERE userid = %s",
+            (request['player_id'],),
+        )
+        badges = []
+        for user_badge in user_badges:
+            badge_id = user_badge["badge_id"]
 
-        request['player'] = player
+            badge = await glob.db.fetch(
+                "SELECT * FROM badges WHERE id = %s",
+                (badge_id,),
+            )
+
+            badge_styles = await glob.db.fetchall(
+                "SELECT * FROM badge_styles WHERE badge_id = %s",
+                (badge_id,),
+            )
+
+            badge = dict(badge)
+            badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
+
+            badges.append(badge)
+
+            # Sort the badges based on priority
+            badges.sort(key=lambda x: x['priority'], reverse=True)
+        request['player'] = user
+        request['player']['badges'] = badges
         map_info_and_diffs = await glob.db.fetchall(
             """
             SELECT *
@@ -2352,7 +2361,7 @@ async def beatmaps(page=None):
     
     
     if glob.config.debug:
-        print(requests[1])
+        print(requests[2])
     # Return HTML response
     return await render_template(
         'admin/beatmaps.html', requests=requests, 
