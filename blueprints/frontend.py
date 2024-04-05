@@ -610,31 +610,32 @@ async def login_post():
         [utils.get_safe_name(username)]
     )
     badges = []
-    # Select badge_id from user_badges where userid = user_id
-    user_badges = await glob.db.fetchall(
-        "SELECT badge_id FROM user_badges WHERE userid = %s",
-        [user_info['id']]
-    )
-    for user_badge in user_badges:
-        badge_id = user_badge["badge_id"]
-        
-        badge = await glob.db.fetch(
-            "SELECT * FROM badges WHERE id = %s",
-            [badge_id]
+    if user_info is not None and user_info['id'] is not None:
+        # Select badge_id from user_badges where userid = user_id
+        user_badges = await glob.db.fetchall(
+            "SELECT badge_id FROM user_badges WHERE userid = %s",
+            [user_info['id']]
         )
-        
-        badge_styles = await glob.db.fetchall(
-            "SELECT * FROM badge_styles WHERE badge_id = %s",
-            [badge_id]
-        )
-        
-        badge = dict(badge)
-        badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
-        
-        badges.append(badge)
-        
-        # Sort the badges based on priority
-        badges.sort(key=lambda x: x['priority'], reverse=True)
+        for user_badge in user_badges:
+            badge_id = user_badge["badge_id"]
+
+            badge = await glob.db.fetch(
+                "SELECT * FROM badges WHERE id = %s",
+                [badge_id]
+            )
+
+            badge_styles = await glob.db.fetchall(
+                "SELECT * FROM badge_styles WHERE badge_id = %s",
+                [badge_id]
+            )
+
+            badge = dict(badge)
+            badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
+
+            badges.append(badge)
+
+            # Sort the badges based on priority
+            badges.sort(key=lambda x: x['priority'], reverse=True)
     # user doesn't exist; deny post
     # NOTE: Bot isn't a user.
     if not user_info or user_info['id'] == 1:
