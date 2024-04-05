@@ -32,6 +32,17 @@
                         <h3>{{ map['map_info']['artist'] }} - {{ map['map_info']['title'] }}</h3>
                         <h4>{{ map['map_info']['creator'] }} | {{ map['map_info']['version'] }}</h4>
                         <p>Requester: {{ map['player']['name'] }}</p>
+                        <div class="mini-icons">
+                        {% for diff in map['map_diffs'] %}
+                        {% if loop.index < 15 %}
+                            <div data-title="{{diff['version']}}&#10;{{diff['diff']}}⭐">
+                                <img src="/static/images/icons/mode-{{diff['mode']}}.png">
+                            </div>
+                        {% else %}
+                            <div>.</div>
+                        {% endif %}
+                        {% endfor %}
+                        </div>
                     </div>
                 </div>
                 {% endif %}
@@ -42,11 +53,22 @@
                 {% if loop.index is even %}
                 <div id="map" class="card" @click="editMap({{ map }})">
                     <div class="card-background" :style="'background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://assets.ppy.sh/beatmaps/' + {{map['map_info']['set_id']}} + '/covers/card@2x.jpg)'"></div>
-                    <div class="card-avatar" :style="'background-image: url(https://a.' + domain + '/' + {{map['player_id']}} + ')'"></div>
+                    <div class="card-avatar" data-title="{{map['player']['name']}}" :style="'background-image: url(https://a.' + domain + '/' + {{map['player_id']}} + ')'"></div>
                     <div class="card-content">
                         <h3>{{ map['map_info']['artist'] }} - {{ map['map_info']['title'] }}</h3>
                         <h4>{{ map['map_info']['creator'] }} | {{ map['map_info']['version'] }}</h4>
                         <p>Requester: {{ map['player']['name'] }}</p>
+                        <div class="mini-icons">
+                        {% for diff in map['map_diffs'] %}
+                        {% if loop.index < 15 %}
+                            <div data-title="{{diff['version']}}&#10;{{diff['diff']}}⭐">
+                                <img src="/static/images/icons/mode-{{diff['mode']}}.png">
+                            </div>
+                        {% else %}
+                            <div>.</div>
+                        {% endif %}
+                        {% endfor %}
+                        </div>
                     </div>
                 </div>
                 {% endif %}
