@@ -127,10 +127,10 @@
         <div class="mod-info">
           <div>
             Ranked by:</br>
-            <a href="/u/{{ map.mod.id }}">{{ map.mod.name }}</a>
+            <a href="/u/{{ map.get('mod', {}).get('id', '1') }}">{{ map.get('mod', {}).get('name', 'Melodies') }}</a>
           </div>
-          <img src="https://a.{{domain()}}/{{ map.mod.id }}" class="mod-icon">
-        </div>
+          <img src="https://a.{{domain()}}/{{ map.get('mod', {}).get('id', '1') }}" class="mod-icon">
+          </div>
       </div>
       {% endfor %}
   </div>
