@@ -19,6 +19,7 @@ services:
       - .:/srv/root
       - ${GULAG_PATH}:/srv/root/gulag
     environment:
+      - TZ=${TZ}
       - APP_HOST=${APP_HOST}
       - APP_PORT=${APP_PORT}
       - GULAG_ADDRESS=${GULAG_ADDRESS}

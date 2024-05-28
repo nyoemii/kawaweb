@@ -42,7 +42,7 @@ new Vue({
 
             if (this.query !== '') {
                 // Search for players
-                const playersResponse = await fetch("https://api.kawata.pw/v1/search_players?limit=10&q=" + this.query);
+                const playersResponse = await fetch("https://api." + domain + "/v1/search_players?limit=10&q=" + this.query);
                 const playersData = await playersResponse.json();
                 if (playersData["result"]) {
                     this.players = playersData["result"];
@@ -128,7 +128,7 @@ new Vue({
                             <a v-else v-for="player in players" :key="player.info.id" :href="'/u/' +player.info.id" class="player-search-result">
                                 <!-- Display the player search result here -->
                                 <div class="avatar">
-                                    <img :src="'https://a.kawata.pw/' + player.info.id" @error="this.onerror=null; this.src='https://a.kawata.pw/-1'">
+                                    <img :src="'https://a.${domain}/' + player.info.id" @error="this.onerror=null; this.src='https://a.${domain}/-1'">
                                 </div>
                                 <div class="player">
                                     <h3>{{ player.info.name }}</h3>
