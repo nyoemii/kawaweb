@@ -9,5 +9,5 @@ scripts/wait-for-it.sh --timeout=60 $MYSQL_HOST:$MYSQL_PORT
 # Start Server
 # Python for Dev
 # Hypercorn for Prod
-python3.9 main.py
+python3.11 main.py
 #hypercorn main.py
