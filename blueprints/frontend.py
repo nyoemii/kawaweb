@@ -91,16 +91,20 @@ async def home(doc=None, sid=None, id=None):
         try:
             map_info = await glob.db.fetch('SELECT server, id, set_id, artist, title, creator FROM maps WHERE id = %s', [map['map_id']])
         except Exception as e:
-            log(f"Error fetching map info for newly ranked map: {e}", Ansi.LRED)
+            print(f"Error fetching map info for newly ranked map: {e}", Ansi.LRED)
             return await flash('error', 'An error occurred while fetching map info.', 'home')
         if map_info is not None:
             map.update(map_info)
         try:
             map['diffs'] = await glob.db.fetchall('SELECT * FROM maps WHERE set_id = %s', [map['set_id']])
+        except Exception as e:
+            print(f"Error fetching map info for newly ranked map: {e}", Ansi.LRED)
+            return await flash('error', 'An error occurred while fetching map info.', 'home')
+        try:
             map['mod'] = await glob.db.fetch('SELECT name, id, country, priv FROM users WHERE id = %s', [map['mod_id']])
         except Exception as e:
-            print(f"Error fetching map diffs or mod for newly ranked map: {e}", Ansi.LRED)
-            return await flash('error', 'An error occurred while fetching map diffs or mod.', 'home')
+            print(f"Error fetching mod info for newly ranked map: {e}", Ansi.LRED)
+            return await flash('error', 'An error occurred while fetching mod info.', 'home')
     try:
         if glob.sys['globalNotice'] != "" or glob.sys['globalNotice'] != None:
             globalNotice = glob.sys['globalNotice']
