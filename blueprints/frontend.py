@@ -88,8 +88,13 @@ async def home(doc=None, sid=None, id=None):
     
     newly_ranked = await glob.db.fetchall('SELECT * FROM newly_ranked ORDER BY time DESC LIMIT 5')
     for map in newly_ranked:
-        map_info = await glob.db.fetch('SELECT server, id, set_id, artist, title, creator FROM maps WHERE id = %s', [map['map_id']])
-        map.update(map_info)
+        try:
+            map_info = await glob.db.fetch('SELECT server, id, set_id, artist, title, creator FROM maps WHERE id = %s', [map['map_id']])
+        except Exception as e:
+            log(f"Error fetching map info for newly ranked map: {e}", Ansi.LRED)
+            return await flash('error', 'An error occurred while fetching map info.', 'home')
+        if map_info is not None:
+            map.update(map_info)
         map['diffs'] = await glob.db.fetchall('SELECT * FROM maps WHERE set_id = %s', [map['set_id']])
         map['mod'] = await glob.db.fetch('SELECT name, id, country, priv FROM users WHERE id = %s', [map['mod_id']])
     try:
