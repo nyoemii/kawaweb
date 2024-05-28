@@ -1199,7 +1199,7 @@ new Vue({
             fetchScoreInfo: function() {
                 // Use the score ID to fetch score information from the API
                 try {
-                    fetch(`https://api.kawata.pw/v1/get_score_info?id=${this.scoreId}&b=1`)
+                    fetch(`https://api.${domain}/v1/get_score_info?id=${this.scoreId}&b=1`)
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
@@ -1235,7 +1235,7 @@ new Vue({
                 this.replayIsLoading = true;
 
                 // Fetch the rendered replay
-                const response = await fetch(`https://api.kawata.pw/v1/replays/rendered?id=${scoreId}`, {
+                const response = await fetch(`https://api.${domain}/v1/replays/rendered?id=${scoreId}`, {
                     method: 'GET',
                 });
                 console.log(response.status);
