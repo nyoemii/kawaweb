@@ -11,8 +11,8 @@ server {
 
 	server_name  ${DOMAIN} web.${DOMAIN}; # Website!
 
-	access_log /srv/root/nginx/logs/access/web.${DOMAIN}.log;
-	error_log /srv/root/nginx/logs/error/web.${DOMAIN}.log;
+	access_log /srv/root/.data/logs/nginx/access/web.${DOMAIN}.log;
+	error_log /srv/root/.data/logs/nginx/error/web.${DOMAIN}.log;
 	
 
 	# /web, /api, /users, /ss, /d, /p, /beatmaps, /beatmapsets, /community, /difficulty-rating
