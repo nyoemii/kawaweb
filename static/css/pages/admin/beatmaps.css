@@ -227,6 +227,32 @@
         border-bottom-left-radius: 20px;
         margin-bottom: 10px;
     }
+        [data-panel="changeBeatmapStatus"] .alert {
+            --alert-200: green;
+            --alert-400: rgb(193, 193, 0);
+            --alert-500: red;
+            border-radius: 20px;
+            margin-top: 8px;
+            padding: 4px;
+            width: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            position: relative;
+            transition: 0.2s ease;
+        }
+            [data-panel="changeBeatmapStatus"] .alert .alert-content {
+                padding: 10px;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                transition: 0.2s ease;
+            }
         [data-panel="changeBeatmapStatus"] .content {
             background-color: hsl(var(--main), 18%, 18%);
             padding: 4px;

@@ -323,7 +323,7 @@
 
 .alert {
     --alert-200: green;
-    --alert-400: yellow;
+    --alert-400: rgb(193, 193, 0);
     --alert-500: red;
     border-radius: 20px;
     margin-top: 8px;
