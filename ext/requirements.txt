@@ -11,3 +11,11 @@ Pillow
 python-dotenv
 redis==5.0.0; python_version >= '3.7'
 discord-webhook
+PyYAML
+structlog
+python-logstash
+elasticsearch
+jsons
+python-json-logger
+python-rapidjson
+orjson

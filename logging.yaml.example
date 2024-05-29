@@ -1,0 +1,108 @@
+### Python logging configuration
+###
+### This configuration is used to configure the logging module in Python.
+###
+### Levels:
+###
+### Among the standard DEBUG, INFO, WARNING, ERROR and CRITICAL levels, there are three additional levels currently:
+###
+### VERBOSE: This is a level that is equivalent to the highest level of DEBUG while still only showing logs pertaining to the application.
+### DBGLV2: This is a level just under VERBOSE for showing slightly less DEBUG information like SQL queries.
+### DBGLV1: This is the lowest level of DEBUG and is used for showing the least amount of DEBUG information.
+###
+### IMPORTANT:
+###
+### The root logger is set to INFO by default and should not be changed unless you know what you are doing.
+### This application is setup to use some custom loggers, Those being 'console', 'console.info', 'console.debug', 'console.warn' and 'console.error' please configure these loggers as needed. All must be present in this config.
+### The 'console' logger is the main logger and should be used for all logging. It is also level controlled by the DEBUG_LEVEL environment variable and will only show INFO and above level logs by default.
+### It is recommended to setup 'console' with logstash 
+###
+### Examples:
+### 
+###  Handlers:
+###  
+###  console:  Example handler for logging to the console.
+###    class: logging.StreamHandler
+###    level: VERBOSE
+###    formatter: plaintext
+###    stream: ext://sys.stdout
+###  
+###  logstash:  Example handler for logging to Logstash. Only 1 handler needed as levels can be parsed in Logstash. Set level to VERBOSE to log everything to Logstash.
+###    class: logstash.TCPLogstashHandler
+###    level: VERBOSE
+###    host: '<IP or Docker Container Name>'
+###    port: 5040
+###    version: 1
+###    message_type: logstash
+###    tags: ['python']
+###    formatter: json.bytes
+###  
+###  Not Recommended (has many issues):
+###  elasticsearch.INFO: Example handler for logging to Elasticsearch with INFO level. The .INFO is appended to the handler name to differentiate between the different levels.
+###    class: objects.utils.ElasticsearchHandler
+###    level: INFO
+###    hosts: [{'host': '<IP or Docker Container Name>', 'port': 9200, 'scheme': 'http'}]
+###    index: 'logs-kawatadev-web'
+###    formatter: json
+###  
+version: 1
+disable_existing_loggers: true
+loggers:
+  console:
+    level: VERBOSE
+    handlers: [console, logstash]
+    propagate: no
+  console.info:
+    level: INFO
+    handlers: []
+    propagate: yes
+  console.debug:
+    level: DEBUG
+    handlers: []
+    propagate: yes
+  console.warning:
+    level: WARNING
+    handlers: []
+    propagate: yes
+  console.error:
+    level: ERROR
+    handlers: []
+    propagate: yes
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: VERBOSE
+    formatter: plaintext
+    stream: ext://sys.stdout
+  console.json:
+    class: logging.StreamHandler
+    level: VERBOSE
+    formatter: json
+    stream: ext://sys.stdout
+  console.detailed:
+    class: logging.StreamHandler
+    level: VERBOSE
+    formatter: detailed
+    stream: ext://sys.stdout
+formatters:
+  plaintext:
+    format: '[%(asctime)s] %(levelname)s %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+  json:
+    class: pythonjsonlogger.jsonlogger.JsonFormatter
+    format: '%(asctime)s %(name)s %(levelname)s %(message)s %(pathname)s %(lineno)d %(module)s %(funcName)s %(exc_info)s'
+    json_fields:
+      asctime: '@timestamp'
+    datefmt: '%Y-%m-%dT%H:%M:%S.%fZ'
+  json.bytes:
+    class: objects.utils.BytesJsonFormatter
+    format: '%(asctime)s %(name)s [%(levelname)s] %(message)s %(pathname)s %(lineno)d %(module)s %(funcName)s %(exc_info)s'
+    json_fields:
+      asctime: '@timestamp'
+    datefmt: '%Y-%m-%dT%H:%M:%S.%fZ'
+  detailed:
+    format: '[%(asctime)s] %(levelname)s %(name)s %(message)s %(pathname)s:%(lineno)d'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+root:
+  level: INFO
+  handlers: [console]

@@ -13,7 +13,7 @@ from functools import wraps
 from PIL import Image
 from pathlib import Path
 from quart import Blueprint, redirect, render_template, request, session, send_file
-from quart import Quart, request, redirect, Response
+from quart import Quart, request, redirect, Response, g
 
 from constants import regexes
 from objects import glob
@@ -21,6 +21,7 @@ from objects import utils
 from objects.privileges import Privileges
 from objects.utils import flash
 from objects.utils import flash_with_customizations
+from objects.utils import klogging
 
 VALID_MODES = frozenset({'std', 'taiko', 'catch', 'mania'})
 VALID_MODS = frozenset({'vn', 'rx', 'ap'})
@@ -62,49 +63,73 @@ async def home(doc=None, sid=None, id=None):
     )
     changelogs = await glob.db.fetchall('SELECT * FROM changelog ORDER BY time DESC LIMIT 5')
     for log in changelogs:
-        poster = await glob.db.fetch("SELECT name, id, country, priv FROM users WHERE id = %s", [log['poster']])
-        poster_badges = await glob.db.fetchall(
-            "SELECT badge_id FROM user_badges WHERE userid = %s",
-            (log['poster'],),
-        )
-        badges = []
-        for user_badge in poster_badges:
-            badge_id = user_badge["badge_id"]
-            badge = await glob.db.fetch(
-                "SELECT * FROM badges WHERE id = %s",
-                (badge_id,),
+        try:
+            poster = await glob.db.fetch("SELECT name, id, country, priv FROM users WHERE id = %s", [log['poster']])
+            poster_badges = await glob.db.fetchall(
+                "SELECT badge_id FROM user_badges WHERE userid = %s",
+                (log['poster'],),
             )
-            badge_styles = await glob.db.fetchall(
-                "SELECT * FROM badge_styles WHERE badge_id = %s",
-                (badge_id,),
-            )
-            badge = dict(badge)
-            badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
-            badges.append(badge)
-            # Sort the badges based on priority
-            badges.sort(key=lambda x: x['priority'], reverse=True)
-        poster['badges'] = badges
-        log['poster'] = poster
+            badges = []
+            for user_badge in poster_badges:
+                badge_id = user_badge["badge_id"]
+                badge = await glob.db.fetch(
+                    "SELECT * FROM badges WHERE id = %s",
+                    (badge_id,),
+                )
+                badge_styles = await glob.db.fetchall(
+                    "SELECT * FROM badge_styles WHERE badge_id = %s",
+                    (badge_id,),
+                )
+                badge = dict(badge)
+                badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
+                badges.append(badge)
+                # Sort the badges based on priority
+                badges.sort(key=lambda x: x['priority'], reverse=True)
+            poster['badges'] = badges
+            log['poster'] = poster
+        except:
+            klogging.log(f"Error fetching a changelog author", klogging.Ansi.LRED, extra={
+                "Changelog": log,
+            })
+            return await flash('error', 'Error fetching a changelog author, Please notify a Developer.', 'home')
     
     newly_ranked = await glob.db.fetchall('SELECT * FROM newly_ranked ORDER BY time DESC LIMIT 5')
     for map in newly_ranked:
         try:
-            map_info = await glob.db.fetch('SELECT server, id, set_id, artist, title, creator FROM maps WHERE id = %s', [map['map_id']])
-        except Exception as e:
-            print(f"Error fetching map info for newly ranked map: {e}", Ansi.LRED)
-            return await flash('error', 'An error occurred while fetching map info.', 'home')
-        if map_info is not None:
-            map.update(map_info)
-        try:
-            map['diffs'] = await glob.db.fetchall('SELECT * FROM maps WHERE set_id = %s', [map['set_id']])
-        except Exception as e:
-            print(f"Error fetching map info for newly ranked map: {e}", Ansi.LRED)
-            return await flash('error', 'An error occurred while fetching map info.', 'home')
-        try:
-            map['mod'] = await glob.db.fetch('SELECT name, id, country, priv FROM users WHERE id = %s', [map['mod_id']])
-        except Exception as e:
-            print(f"Error fetching mod info for newly ranked map: {e}", Ansi.LRED)
-            return await flash('error', 'An error occurred while fetching mod info.', 'home')
+            try:
+                map_info = await glob.db.fetch('SELECT server, id, set_id, artist, title, creator FROM maps WHERE id = %s', [map['map_id']])
+            except Exception as e:
+                klogging.log(f"Error fetching map info for newly ranked map: {e}", klogging.Ansi.LRED, extra={
+                        "Newly Ranked Map": map,
+                    })
+            
+            if map_info is not None:
+                map.update(map_info)
+            
+            try:
+                map['diffs'] = await glob.db.fetchall('SELECT * FROM maps WHERE set_id = %s', [map['set_id']])
+            except KeyError as e:
+                if str(e) == "'set_id'":
+                    klogging.log(f"no set_id found when fetching newly ranked map <{[map['map_id']]}>, deleting entry", klogging.Ansi.LRED)
+                    await glob.db.execute('DELETE FROM newly_ranked WHERE map_id = %s', [map['map_id']])
+                else:
+                    klogging.log(f"Error fetching diffs for newly ranked map: {e}", klogging.Ansi.LRED, extra={
+                        "Newly Ranked Map": map,
+                    })
+                raise
+            
+            try:
+                map['mod'] = await glob.db.fetch('SELECT name, id, country, priv FROM users WHERE id = %s', [map['mod_id']])
+            except Exception as e:
+                klogging.log(f"Error fetching mod info for newly ranked map: {e}", klogging.Ansi.LRED, extra={
+                        "Newly Ranked Map": map,
+                    })
+        except:
+            if e.type == KeyError:
+                if str(e) == "'set_id'":
+                    return await flash('error', 'Error fetching map information for a Newly Ranked Map, this has been automatically corrected. Please reload.', 'home')
+            return await flash('error', 'Error fetching map information for a Newly Ranked Map', 'home')
+    
     try:
         if glob.sys['globalNotice'] != "" or glob.sys['globalNotice'] != None:
             globalNotice = glob.sys['globalNotice']
@@ -514,6 +539,12 @@ async def profile_select(id):
         return (await render_template('404.html'), 404)
 
     user_data['customisation'] = utils.has_profile_customizations(user_data['id'])
+    
+    g.Player = {
+        "id": user_data['id'],
+        "name": user_data['name'],
+        "country": user_data['country'],
+    }
     try:
         if glob.sys['globalNotice'] != "" or glob.sys['globalNotice'] != None:
             globalNotice = glob.sys['globalNotice']
@@ -710,7 +741,14 @@ async def login_post():
     if glob.config.debug:
         login_time = (time.time_ns() - login_time) / 1e6
         log(f'Login took {login_time:.2f}ms!', Ansi.LYELLOW)
-
+    g.Player = {
+        "id": user_info['id'],
+        "name": user_info['name'],
+        "is_staff": user_info['priv'] & Privileges.Staff != 0,
+        "is_dev": user_info['priv'] & Privileges.Dangerous != 0,
+        "is_donator": user_info['priv'] & Privileges.Donator != 0,
+        "priv": user_info['priv'],
+    }
     return await flash('success', f'Hey, welcome back {username}!', 'home')
 
 @frontend.route('/register')

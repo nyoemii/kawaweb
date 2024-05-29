@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1
 
@@ -13,8 +13,8 @@ RUN apt update && apt install --no-install-recommends -y \
 
 COPY ext/requirements.txt ./
 #RUN python3.9 -m pip install python-dotenv
-RUN python3.9 -m pip install -U pip setuptools
-RUN python3.9 -m pip install -r requirements.txt
+RUN python3.11 -m pip install -U pip setuptools
+RUN python3.11 -m pip install -r requirements.txt
 
 # Copy your service files to the appropriate location
 COPY . .

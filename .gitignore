@@ -149,3 +149,4 @@ cython_debug/
 !.data/banners/.gitkeep
 nginx/
 .fuse*
+logging.yaml

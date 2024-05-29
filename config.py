@@ -56,6 +56,11 @@ path_to_gulag = os.environ["PATH_TO_GULAG"]
 # enable debug (disable when in production to improve performance)
 debug = os.environ["DEBUG"]
 
+# Logging settings
+LOG_WITH_COLORS = os.environ["LOG_WITH_COLORS"]
+SERVICE_NAME = os.getenv("SERVICE_NAME", "kawata") # Brand Name of the Service, eg. "Kawata, Akatsuki, etc."
+CONTAINER_NAME = os.getenv("CONTAINER_NAME", "web") # Name of Container, eg. "kawaweb, web, etc."
+
 # disallowed names (hardcoded banned usernames)
 disallowed_names = read_list(os.environ["DISALLOWED_NAMES"])
 
