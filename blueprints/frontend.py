@@ -116,7 +116,8 @@ async def home(doc=None, sid=None, id=None):
                     klogging.log(f"Error fetching diffs for newly ranked map: {e}", klogging.Ansi.LRED, extra={
                         "Newly Ranked Map": map,
                     })
-                raise
+                g.type = KeyError
+                raise 
             
             try:
                 map['mod'] = await glob.db.fetch('SELECT name, id, country, priv FROM users WHERE id = %s', [map['mod_id']])
@@ -125,7 +126,7 @@ async def home(doc=None, sid=None, id=None):
                         "Newly Ranked Map": map,
                     })
         except:
-            if e.type == KeyError:
+            if g.type == KeyError:
                 if str(e) == "'set_id'":
                     return await flash('error', 'Error fetching map information for a Newly Ranked Map, this has been automatically corrected. Please reload.', 'home')
             return await flash('error', 'Error fetching map information for a Newly Ranked Map', 'home')
