@@ -28,6 +28,10 @@
   animation: appear 0.4s ease;
 }
 
+.is-centered {
+  text-align: center;
+}
+
 @-webkit-keyframes appear {
   0% {
     -webkit-transform: translateY(-50px);
@@ -61,8 +65,37 @@
   }
 }
 
+.home-stats {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: fit-content;
+  margin: 20px auto 20px auto;
+}
+  .home-stats .stat {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+    background: hsl(var(--main), 40%, 30%);
+    border-radius: 16px;
+    color: white;
+    font-size: 1.5em;
+    font-weight: 500;
+    text-align: center;
+    margin: 0 10px 0 10px;
+    padding: 4px 5px 4px 5px;
+  }
+    .home-stats .stat span {
+      font-size: 0.25em;
+      font-weight: 400;
+    }
+
 .splash {
   background: hsl(var(--main), 40%, 40%);
+  background: radial-gradient(ellipse at bottom, hsl(var(--main), 50%, 40%) 0%, hsl(var(--main), 40%, 30%) 100%);
 }
 
 .footer {
