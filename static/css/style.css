@@ -715,7 +715,7 @@ a.foot-link {
 }
 
 .modal.is-active .modal-background {
-  opacity: 1;
+  opacity: .65;
 }
 
 .modal .modal-content {

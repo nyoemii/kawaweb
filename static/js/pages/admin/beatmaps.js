@@ -106,10 +106,17 @@ new Vue({
                     <div :class="'status ' + statusInfo.class">
                         <h3><% statusInfo.text %></h3>
                     </div>
-                    <div class="download">
-                        <a :href="'/d/' + beatmap['map_info']['set_id']">
-                            <button class="button"><i class="fas fa-download"></i>Download</button>
-                        </a>
+                    <div class="download-links">
+                        <div class="download">
+                            <a :href="'https://osu.ppy.sh/b/' + beatmap['map_info']['id']">
+                                <button class="button"><i class="fas fa-external-link-alt"></i>View on osu! Website</button>
+                            </a>
+                        </div>
+                        <div class="download">
+                            <a :href="'/d/' + beatmap['map_info']['set_id']">
+                                <button class="button"><i class="fas fa-download"></i>Download</button>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="second-block">

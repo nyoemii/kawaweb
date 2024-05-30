@@ -16,7 +16,7 @@ from discord_webhook import DiscordWebhook, DiscordEmbed
 
 from constants import regexes
 from objects import glob
-from objects.utils import flash, get_safe_name
+from objects.utils import flash, get_safe_name, klogging
 from objects.privileges import Privileges, ComparePrivs, GetPriv
 
 admin = Blueprint('admin', __name__)
@@ -2328,40 +2328,54 @@ async def beatmaps(page=None):
             badges.sort(key=lambda x: x['priority'], reverse=True)
         request['player'] = user
         request['player']['badges'] = badges
-        map_info_and_diffs = await glob.db.fetchall(
-            """
-            SELECT *
-            FROM maps
-            WHERE id = %s OR set_id = (
-                SELECT set_id FROM maps WHERE id = %s
+        try:
+            map_info_and_diffs = await glob.db.fetchall(
+                """
+                SELECT *
+                FROM maps
+                WHERE id = %s OR set_id = (
+                    SELECT set_id FROM maps WHERE id = %s
+                )
+                """,
+                (request['map_id'], request['map_id']),
             )
-            """,
-            (request['map_id'], request['map_id']),
-        )
+        except:
+            klogging.log(f"Error fetching map info for request {request['id']}", klogging.Ansi.LRED, extra={
+                "request": request,
+            })
         try:
             request['map_info'] = next(
                 (map for map in map_info_and_diffs if map['id'] == request['map_id'])
             )
+        except Exception as e:
+            klogging.log(f"Error fetching map info for request {request['id']}, Deleting Request", klogging.Ansi.LRED, extra={
+                "request": request,
+            })
+            await glob.db.execute(
+                "DELETE FROM map_requests WHERE id = %s",
+                (request['id'],),
+            )
+        try:
             request['map_diffs'] = [
                 map for map in map_info_and_diffs if map['id'] != request['map_id']
             ]
         except:
-            print("error")
-            print("map_info_and_diffs")
-            print(map_info_and_diffs)
-            print("request")
-            print(request)
-            pass
+            klogging.log(f"Error fetching map diffs for request {request['id']}", klogging.Ansi.LRED, extra={
+                "request": request,
+            })
+            
 
         # Convert datetime objects to strings
         request['datetime'] = request['datetime'].strftime('%Y-%m-%d %H:%M:%S')
         request['map_info']['last_update'] = request['map_info']['last_update'].strftime('%Y-%m-%d %H:%M:%S')
         for diff in request['map_diffs']:
-            diff['last_update'] = diff['last_update'].strftime('%Y-%m-%d %H:%M:%S')
+            try:
+                diff['last_update'] = diff['last_update'].strftime('%Y-%m-%d %H:%M:%S')
+            except Exception as e:
+                klogging.log(f"Error converting datetime to string for diff {diff['id']}", klogging.Ansi.LRED, extra={
+                    "diff": diff,
+                })
     
-    
-    if glob.config.debug:
-        print(requests[2])
     # Return HTML response
     return await render_template(
         'admin/beatmaps.html', requests=requests, 
