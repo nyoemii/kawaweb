@@ -298,13 +298,20 @@ async def settings_avatar_post():
         # avatar cropping to 1:1 for non-animated images
         pilavatar = Image.open(avatar.stream)
         pilavatar = utils.crop_image(pilavatar)
-        pilavatar.save(os.path.join(AVATARS_PATH, f'{session["user_data"]["id"]}{file_extension.lower()}'))
+        try:
+            pilavatar.save(os.path.join(AVATARS_PATH, f'{session["user_data"]["id"]}{file_extension.lower()}'))
+        except Exception as e:
+            klogging.log(f"Error saving avatar: {e}", klogging.Ansi.LRED)
+            return await flash('error', f'Error saving avatar', 'settings/avatar')
     else:
         # Handle GIF images (no processing)
         save_path = os.path.join(AVATARS_PATH, f'{session["user_data"]["id"]}.gif')
-        with open(save_path, "wb") as output_file:
-            output_file.write(avatar.read())
-    
+        try:
+            with open(save_path, "wb") as output_file:
+                output_file.write(avatar.read())
+        except Exception as e:
+            klogging.log(f"Error saving avatar: {e}", klogging.Ansi.LRED)
+            return await flash('error', f'Error saving avatar', 'settings/avatar')
 
     return await flash('success', 'Your avatar has been successfully changed!', 'settings/avatar')
 
