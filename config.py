@@ -52,6 +52,7 @@ REDIS_DSN = f"redis://{REDIS_AUTH_STRING}{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
 
 # path to gulag root (must have leading and following slash)
 path_to_gulag = os.environ["PATH_TO_GULAG"]
+seperate_data_path = os.environ["SEPERATE_DATA_PATH"]
 
 # enable debug (disable when in production to improve performance)
 debug = os.environ["DEBUG"]
