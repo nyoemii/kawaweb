@@ -6,7 +6,6 @@
 <script src="/static/js/asserts/vue-axios.js"></script>
 <link rel="stylesheet" href="/static/css/pages/home.css">
 <link rel="stylesheet" href="/static/css/pages/changelog.css">
-<link rel="stylesheet" type="text/css" href="/static/css/stars.css">
 
 {% endblock %}
 
@@ -31,7 +30,7 @@
           <div class="stat">
             <span>
               <i class="fas fa-user-friends"></i> 
-              {{ dash_data['count'] }} Users
+              {{ dash_data['count']|default('?') }} Users
             </span>
           </div>
         </div>

@@ -48,13 +48,13 @@ def login_required(func):
 @frontend.route('/docs')
 @frontend.route('/home')
 @frontend.route('/')
-async def home(doc=None, sid=None, id=None):
+async def home(doc=None, sid=None, id=None, flash=None, status=None):
     doc=doc
     sid=sid
     id=id
+    status=status
     unix_timestamp = await glob.db.fetch('SELECT * FROM server_data WHERE type = "breakevent"')
     unix_timestamp = unix_timestamp['value']
-    
     dash_data = await glob.db.fetch(
         'SELECT COUNT(id) count, '
         '(SELECT name FROM users ORDER BY id DESC LIMIT 1) lastest_user, '
@@ -137,19 +137,20 @@ async def home(doc=None, sid=None, id=None):
     except:
         globalNotice = None
         pass
-    try:
-        if glob.sys['isDevEnv'] == "True":
-            return await render_template('home.html', unix_timestamp=unix_timestamp, changelogs=changelogs, rankedmaps=newly_ranked, doc=doc, dash_data=dash_data, globalNotice=globalNotice,
-                                         flash=f"This Website is the Dev Environment and should not be used for active play, please play on <a href='https://{glob.config.official_domain}'>our Official Server</a>", status="success")
-    except:
-        pass
-    try:
-        if glob.sys['maintenance'] == "True":
-            return await render_template('home.html', unix_timestamp=unix_timestamp, changelogs=changelogs, rankedmaps=newly_ranked, doc=doc, dash_data=dash_data, globalNotice=globalNotice,
-                                         flash=f"Website is currently under maintenence", status="success")
-    except:
-        pass
-    return await render_template('home.html', unix_timestamp=unix_timestamp, changelogs=changelogs, rankedmaps=newly_ranked, doc=doc, dash_data=dash_data, globalNotice=globalNotice, )
+    if flash is None:
+        try:
+            if glob.sys['isDevEnv'] == "True":
+                flash=f"This Website is the Dev Environment and should not be used for active play, please play on <a href='https://{glob.config.official_domain}'>our Official Server</a>" 
+                status="success"
+        except:
+            pass
+        try:
+            if glob.sys['maintenance'] == "True":
+                flash=f"Website is currently under maintenence"
+                status="success"
+        except:
+            pass
+    return await render_template('home.html', unix_timestamp=unix_timestamp, changelogs=changelogs, rankedmaps=newly_ranked, doc=doc, dash_data=dash_data, globalNotice=globalNotice, flash=flash, status=status)
 
 @frontend.route('/home/account/edit')
 async def home_account_edit():
@@ -750,7 +751,7 @@ async def login_post():
         "is_donator": user_info['priv'] & Privileges.Donator != 0,
         "priv": user_info['priv'],
     }
-    return await flash('success', f'Hey, welcome back {username}!', 'home')
+    return await home(status='success', flash=f'Hey, welcome back {username}!')
 
 @frontend.route('/register')
 async def register():

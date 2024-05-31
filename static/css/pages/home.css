@@ -79,7 +79,7 @@
     align-items: center;
     width: fit-content;
     height: fit-content;
-    background: hsl(var(--main), 40%, 30%);
+    background: hsla(var(--main), 40%, 30%, 0.6);
     border-radius: 16px;
     color: white;
     font-size: 1.5em;
@@ -94,7 +94,6 @@
     }
 
 .splash {
-  background: hsl(var(--main), 40%, 40%);
   background: radial-gradient(ellipse at bottom, hsl(var(--main), 50%, 40%) 0%, hsl(var(--main), 40%, 30%) 100%);
 }
 
