@@ -21,7 +21,6 @@
         background: hsl(var(--main), 10%, 15%);
         position: relative;
     }
-        
         .main-block .selector {
             position: absolute;
             bottom: 0;

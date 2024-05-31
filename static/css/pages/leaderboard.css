@@ -24,6 +24,7 @@
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
   padding: 24px 24px;
+  overflow: visible;
 }
 
 .leaderboard-table {
@@ -36,6 +37,8 @@
   transition: 0.2s ease;
   position: relative;
   z-index: 1;
+  overflow: visible;
+  opacity: 0.9;
 }
 
 tr td {
