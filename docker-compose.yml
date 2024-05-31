@@ -17,7 +17,8 @@ services:
     init: true
     volumes:
       - .:/srv/root
-      - ${GULAG_PATH}:/srv/root/gulag
+      - ${GULAG_PATH}/kawata.py:/srv/root/gulag
+      - ${GULAG_PATH}/.data/b.py:/srv/root/.data/b.py
     environment:
       - TZ=${TZ}
       - APP_HOST=${APP_HOST}
@@ -38,6 +39,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - PATH_TO_GULAG=${PATH_TO_GULAG}
+      - SEPERATE_DATA_PATH=${SEPERATE_DATA_PATH}
       - DEBUG_LEVEL=${DEBUG_LEVEL}
       - DISALLOWED_NAMES=${DISALLOWED_NAMES}
       - DISALLOWED_PASSWORDS=${DISALLOWED_PASSWORDS}

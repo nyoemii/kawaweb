@@ -261,7 +261,7 @@ async def settings_avatar_post():
     # constants
     MAX_IMAGE_SIZE = glob.config.max_image_size * 1024 * 1024
     if glob.config.seperate_data_path:
-        AVATARS_PATH = f'{glob.config.path_to_gulag}/data/b.py/avatars'
+        AVATARS_PATH = f'./.data/b.py/avatars'
     else:
         AVATARS_PATH = f'{glob.config.path_to_gulag}.data/avatars'
     ALLOWED_EXTENSIONS = ['.jpeg', '.jpg', '.png']
