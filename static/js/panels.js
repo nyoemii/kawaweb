@@ -285,7 +285,7 @@ new Vue({
                                     </br>
                                     If you want to participate in Score Hunts, <a href="https://discord.gg/4CzsqkK">Join our Discord</a> In there you can find the #score-hunting channel, which shows you the current active and previous Score Hunts.</br>
                                     </br>
-                                    *Make sure to read the requirements of __each__ scorehunt. They can change depending on any of them.*</br>
+                                    *Make sure to read the requirements of <b>each</b> scorehunt. They can change depending on any of them.*</br>
                                     </br>
                                     The following notes will <b>ALWAYS</b> be true for scorehunts.
                                     <div class="subsection">

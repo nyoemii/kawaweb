@@ -97,6 +97,23 @@
   background: radial-gradient(ellipse at bottom, hsl(var(--main), 50%, 40%) 0%, hsl(var(--main), 40%, 30%) 100%);
 }
 
+.scroll-down {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  width: fit-content;
+  transform: translateX(-50%);
+  color: white;
+  cursor: pointer;
+  font-size: 0.5em;
+  align-content: center;
+  white-space: nowrap;
+}
+  .scroll-down > span {
+    width: inherit;
+    text-align: center;
+  }
+
 .footer {
   margin: 0;
 }

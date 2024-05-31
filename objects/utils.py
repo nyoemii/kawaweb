@@ -7,7 +7,7 @@ from cmyui.logging import Ansi
 from cmyui.logging import log
 from pathlib import Path
 from quart import render_template
-from quart import session, g
+from quart import session, g, jsonify
 
 from objects import glob
 from objects import utils
@@ -25,6 +25,8 @@ from collections.abc import Mapping
 from pythonjsonlogger import jsonlogger
 from elasticsearch import Elasticsearch
 from structlog.stdlib import NAME_TO_LEVEL
+
+import functools, asyncio
 
 # Dreaded Serialization Imports
 import decimal
@@ -731,3 +733,26 @@ class ElasticsearchHandler(Handler):
                 "record": str(record_dict),
                 }
         self.es.index(index=self.index, body=serializable_record)
+
+def error_catcher(func):
+    if asyncio.iscoroutinefunction(func):
+        @functools.wraps(func)
+        async def wrapper(*args, **kwargs):
+            try:
+                return await func(*args, **kwargs)
+            except Exception as e:
+                klogging.log(f"Error in {func.__name__}: {e}", start_color=klogging.Ansi.LRED, level=logging.ERROR, extra={
+                    "error": f"{e}",
+                    })
+                return await flash('error', 'An error occurred, please report this to the developer', 'error')
+    else:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                klogging.log(f"Error in {func.__name__}: {e}", start_color=klogging.Ansi.LRED, level=logging.ERROR, extra={
+                    "error": f"{e}",
+                    })
+                return jsonify({'error': 'An error occurred, please report this to the developer', 'timestamp': datetime.now()}), 500
+    return wrapper

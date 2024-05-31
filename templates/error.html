@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %} 500 {% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="/static/css/pages/404.css">
+<style>html {--main: 355;}</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-block">
+	<div class="title-block">
+		<span>500</span>
+		<h2 class="error-title">
+			An error has occured :(
+		</h2>
+	</div>
+	<div class="error-block">
+		<h3 class="error-subtitle">Please report this to a Developer.</h3>
+		<ol>
+			<li>- Please try to provide the time this occured and your timezone so we can find the log.</li>
+			<li>- Also provide information on what you were doing when this occured so we can reproduce.</li>
+			<li></li>
+		</ol>
+	</div>
+</div>
+{% endblock %}

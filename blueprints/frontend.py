@@ -19,7 +19,7 @@ from objects import utils
 from objects.privileges import Privileges
 from objects.utils import flash
 from objects.utils import flash_with_customizations
-from objects.utils import klogging
+from objects.utils import klogging, error_catcher
 
 VALID_MODES = frozenset({'std', 'taiko', 'catch', 'mania'})
 VALID_MODS = frozenset({'vn', 'rx', 'ap'})
@@ -46,6 +46,7 @@ def login_required(func):
 @frontend.route('/docs')
 @frontend.route('/home')
 @frontend.route('/')
+@error_catcher
 async def home(doc=None, sid=None, id=None, flash=None, status=None):
     doc=doc
     sid=sid
@@ -151,16 +152,19 @@ async def home(doc=None, sid=None, id=None, flash=None, status=None):
     return await render_template('home.html', unix_timestamp=unix_timestamp, changelogs=changelogs, rankedmaps=newly_ranked, doc=doc, dash_data=dash_data, globalNotice=globalNotice, flash=flash, status=status)
 
 @frontend.route('/home/account/edit')
+@error_catcher
 async def home_account_edit():
     return redirect('/settings/profile', )
 
 @frontend.route('/settings')
 @frontend.route('/settings/profile')
+@error_catcher
 @login_required
 async def settings_profile():
     return await render_template('settings/profile.html')
 
 @frontend.route('/settings/profile', methods=['POST'])
+@error_catcher
 @login_required
 async def settings_profile_post():
     form = await request.form
@@ -251,11 +255,13 @@ async def settings_profile_post():
     return await flash('success', 'Your username/email have been changed! Please login again.', 'login')
 
 @frontend.route('/settings/avatar')
+@error_catcher
 @login_required
 async def settings_avatar():
     return await render_template('settings/avatar.html')
 
 @frontend.route('/settings/avatar', methods=['POST'])
+@error_catcher
 @login_required
 async def settings_avatar_post():
     # constants
@@ -319,12 +325,14 @@ async def settings_avatar_post():
     return await flash('success', 'Your avatar has been successfully changed!', 'settings/avatar')
 
 @frontend.route('/settings/custom')
+@error_catcher
 @login_required
 async def settings_custom():
     profile_customizations = utils.has_profile_customizations(session['user_data']['id'])
     return await render_template('settings/custom.html', customizations=profile_customizations)
 
 @frontend.route('/settings/custom', methods=['POST'])
+@error_catcher
 @login_required
 async def settings_custom_post():
     files = await request.files
@@ -420,11 +428,13 @@ async def settings_custom_post():
 
 
 @frontend.route('/settings/password')
+@error_catcher
 @login_required
 async def settings_password():
     return await render_template('settings/password.html')
 
 @frontend.route('/settings/password', methods=["POST"])
+@error_catcher
 @login_required
 async def settings_password_post():
     form = await request.form
@@ -500,11 +510,13 @@ async def settings_password_post():
     return await flash('success', 'Your password has been changed! Please log in again.', 'login')
 
 @frontend.route('/settings/ordr')
+@error_catcher
 @login_required
 async def settings_ordr():
     return await render_template('settings/ordr.html')
 
 @frontend.route('/settings/ordr', methods=["POST"])
+@error_catcher
 @login_required
 async def settings_ordr_post():
     form = await request.form
@@ -522,6 +534,7 @@ async def settings_ordr_post():
 
 
 @frontend.route('/u/<id>')
+@error_catcher
 async def profile_select(id):
     mode = request.args.get('mode', 'std', type=str) # 1. key 2. default value
     mods = request.args.get('mods', 'vn', type=str)
@@ -578,6 +591,7 @@ async def profile_select(id):
 @frontend.route('/lb')
 @frontend.route('/leaderboard/<mode>/<sort>/<mods>')
 @frontend.route('/lb/<mode>/<sort>/<mods>')
+@error_catcher
 async def leaderboard(mode='std', sort='pp', mods='vn'):
     try:
         if glob.sys['globalNotice'] != "" or glob.sys['globalNotice'] != None:
@@ -598,6 +612,7 @@ async def leaderboard(mode='std', sort='pp', mods='vn'):
     return await render_template('leaderboard.html', mode=mode, sort=sort, mods=mods, globalNotice=globalNotice)
 
 @frontend.route('/clans')
+@error_catcher
 async def clans():
     try:
         if glob.sys['globalNotice'] != "" or glob.sys['globalNotice'] != None:
@@ -618,6 +633,7 @@ async def clans():
     return await render_template('clans.html', globalNotice=globalNotice)
 
 @frontend.route('/login')
+@error_catcher
 async def login():
     if 'authenticated' in session:
         return await flash('error', "You're already logged in!", 'home')
@@ -640,6 +656,7 @@ async def login():
     return await render_template('login.html', globalNotice=globalNotice)
 
 @frontend.route('/login', methods=['POST'])
+@error_catcher
 async def login_post():
     if 'authenticated' in session:
         return await flash('error', "You're already logged in!", 'home')
@@ -762,6 +779,7 @@ async def login_post():
     return await home(status='success', flash=f'Hey, welcome back {username}!')
 
 @frontend.route('/register')
+@error_catcher
 async def register():
     if 'authenticated' in session:
         return await flash('error', "You're already logged in.", 'home')
@@ -788,6 +806,7 @@ async def register():
     return await render_template('register.html', globalNotice=globalNotice)
 
 @frontend.route('/register', methods=['POST'])
+@error_catcher
 async def register_post():
     if 'authenticated' in session:
         return await flash('error', "You're already logged in.", 'home')
@@ -904,6 +923,7 @@ async def register_post():
     return await render_template('verify.html')
 
 @frontend.route('/logout')
+@error_catcher
 async def logout():
     if 'authenticated' not in session:
         return await flash('error', "You can't logout if you aren't logged in!", 'login')
@@ -920,6 +940,7 @@ async def logout():
 
 @frontend.route('/changelog')
 @frontend.route('/changelog/<type>/<category>')
+@error_catcher
 async def changelog(type='frontend', category='all'):
     changelogs = await glob.db.fetchall("SELECT * FROM changelog ORDER BY 'time' DESC")
     for log in changelogs:
@@ -994,6 +1015,7 @@ async def instagram_redirect():
 BANNERS_PATH = Path.cwd() / '.data/banners'
 BACKGROUND_PATH = Path.cwd() / '.data/backgrounds'
 @frontend.route('/banners/<user_id>')
+@error_catcher
 async def get_profile_banner(user_id: int):
     # Check if avatar exists
     for ext in ('jpg', 'jpeg', 'png', 'gif'):
@@ -1005,6 +1027,7 @@ async def get_profile_banner(user_id: int):
 
 
 @frontend.route('/backgrounds/<user_id>')
+@error_catcher
 async def get_profile_background(user_id: int):
     # Check if avatar exists
     for ext in ('jpg', 'jpeg', 'png', 'gif'):

@@ -16,8 +16,10 @@ from discord_webhook import DiscordWebhook, DiscordEmbed
 
 from constants import regexes
 from objects import glob
-from objects.utils import flash, get_safe_name, klogging
+from objects.utils import flash, get_safe_name, klogging, error_catcher
 from objects.privileges import Privileges, ComparePrivs, GetPriv
+
+from blueprints import frontend
 
 admin = Blueprint('admin', __name__)
 
@@ -116,6 +118,7 @@ class Action:
             raise ValueError(f"Invalid action {action}.")
         
     @classmethod
+    @error_catcher
     async def create(cls, action, reason=None, id=None, duration=None, badge=None):
         instance = cls(action, reason, id, duration, badge)
 
@@ -123,6 +126,7 @@ class Action:
 
         return instance
         
+    @error_catcher
     async def initialize(self):
         self.mod = User(self.modid)
         await self.mod.fetchUser()
@@ -140,6 +144,7 @@ class Map:
         self.id = id
         
     
+    @error_catcher
     async def fetchMap(self):
         data = await glob.db.fetch(f"SELECT * FROM maps WHERE id = {self.id}")
 
@@ -172,6 +177,7 @@ class User:
         self.id = id
         
 
+    @error_catcher
     async def fetchUser(self):
         data = await glob.db.fetch(f"SELECT * FROM users WHERE id = {self.id}")
         if data is None:
@@ -196,6 +202,7 @@ class User:
     
 
 @admin.route("/action/<a>", methods=["POST"])
+@error_catcher
 async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsilence", "changepassword", "changeprivileges", "rank", "unrank", "love", "unlove", "addbadge", "removebadge", "removescore"]):
     """
     The action endpoint is used to perform actions on users and maps.
@@ -1814,6 +1821,7 @@ async def action(a: Literal["wipe", "restrict", "unrestrict", "silence", "unsile
                 }
             ), 400
 
+@error_catcher
 async def log(action: Action):
     """
     structure of the log table:
@@ -1954,6 +1962,7 @@ async def log(action: Action):
 @admin.route('/')
 @admin.route('/home')
 @admin.route('/dashboard')
+@error_catcher
 async def home():
     """Render the homepage of guweb's admin panel."""
     if not 'authenticated' in session:
@@ -1987,6 +1996,7 @@ async def home():
 @admin.route('/users')
 @admin.route('/users/')
 @admin.route('/users/<int:page>')
+@error_catcher
 async def users(page=None):
     """Render the homepage of guweb's admin panel."""
     if not 'authenticated' in session:
@@ -2036,6 +2046,7 @@ async def users(page=None):
         datetime=datetime, timeago=timeago
     )
 
+@error_catcher
 @admin.route('/user/<int:userid>')
 async def user(userid):
     """Render the homepage of guweb's admin panel."""
@@ -2104,6 +2115,7 @@ async def user(userid):
     return jsonify(user)
 
 @admin.route('/badges')
+@error_catcher
 async def badges():
     """Render the homepage of guweb's admin panel."""
     if not 'authenticated' in session:
@@ -2137,6 +2149,7 @@ async def badges():
     )
 
 @admin.route('/badge/<int:badgeid>')
+@error_catcher
 async def badge(badgeid):
     """Return information about the provided badge."""
     if not 'authenticated' in session:
@@ -2174,6 +2187,7 @@ async def badge(badgeid):
 
 
 @admin.route('/badge/<int:badgeid>/update', methods=['POST'])
+@error_catcher
 async def update_badge(badgeid):
     """Update the provided badge."""
     if not 'authenticated' in session:
@@ -2222,6 +2236,7 @@ async def update_badge(badgeid):
     return jsonify({'success': 'Badge updated successfully'}), 200
 
 @admin.route('/badge/create', methods=['POST'])
+@error_catcher
 async def create_badge():
     """Create a new badge."""
     if not 'authenticated' in session:
@@ -2272,6 +2287,7 @@ async def create_badge():
 
 @admin.route('/beatmaps/<int:page>')
 @admin.route('/beatmaps')
+@error_catcher
 async def beatmaps(page=None):
     """Render the beatmaps page of guweb's admin panel."""
     if not 'authenticated' in session:
@@ -2383,6 +2399,7 @@ async def beatmaps(page=None):
     )
 
 @admin.route('/stuffbroke')
+@error_catcher
 async def stuffbroke():
     if not 'authenticated' in session:
         return await flash('error', 'Please login first.', 'login')
@@ -2397,9 +2414,10 @@ async def stuffbroke():
     ON DUPLICATE KEY UPDATE value = '{int(datetime.datetime.now().timestamp())}';
     """
     )
-    return await flash('success', 'Successfully broke stuff.', 'home')
+    return await frontend.home(flash='Successfully broke stuff.', status='success')
 
 @admin.route('/test')
+@error_catcher
 async def test():
     if not 'authenticated' in session:
         return await flash('error', 'Please login first.', 'login')
