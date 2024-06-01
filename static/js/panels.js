@@ -636,7 +636,6 @@ new Vue({
                         <div class="doc-block" v-if="page === 'Abypass'">
                             <div class="doc-notice">
                                 <a class="button dl" href="https://abypass.fumo.lol/updater"><i class="fas fa-download"></i>  Download</a>
-                                <a class="button dl" href="https://cute.cat-girls.club/u/logytbz.zip"><i class="fas fa-download"></i>  Download Mirror</a>
                             </div>
                             <div class="doc-section">
                                 <h3><i class="fas fa-exclamation-circle"></i> Abypass Client:</h3>
