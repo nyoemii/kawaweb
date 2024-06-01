@@ -60,38 +60,6 @@ async def home(doc=None, sid=None, id=None, flash=None, status=None):
         '(SELECT COUNT(id) FROM users WHERE NOT priv & 1) banned '
         'FROM users'
     )
-    changelogs = await glob.db.fetchall('SELECT * FROM changelog ORDER BY time DESC LIMIT 5')
-    for log in changelogs:
-        try:
-            poster = await glob.db.fetch("SELECT name, id, country, priv FROM users WHERE id = %s", [log['poster']])
-            poster_badges = await glob.db.fetchall(
-                "SELECT badge_id FROM user_badges WHERE userid = %s",
-                (log['poster'],),
-            )
-            badges = []
-            for user_badge in poster_badges:
-                badge_id = user_badge["badge_id"]
-                badge = await glob.db.fetch(
-                    "SELECT * FROM badges WHERE id = %s",
-                    (badge_id,),
-                )
-                badge_styles = await glob.db.fetchall(
-                    "SELECT * FROM badge_styles WHERE badge_id = %s",
-                    (badge_id,),
-                )
-                badge = dict(badge)
-                badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
-                badges.append(badge)
-                # Sort the badges based on priority
-                badges.sort(key=lambda x: x['priority'], reverse=True)
-            poster['badges'] = badges
-            log['poster'] = poster
-        except:
-            klogging.log(f"Error fetching a changelog author", klogging.Ansi.LRED, extra={
-                "Changelog": log,
-            })
-            return await flash('error', 'Error fetching a changelog author, Please notify a Developer.', 'home')
-    
     newly_ranked = await glob.db.fetchall('SELECT * FROM newly_ranked ORDER BY time DESC LIMIT 5')
     for map in newly_ranked:
         try:
@@ -129,6 +97,38 @@ async def home(doc=None, sid=None, id=None, flash=None, status=None):
                 if str(e) == "'set_id'":
                     return await flash('error', 'Error fetching map information for a Newly Ranked Map, this has been automatically corrected. Please reload.', 'home')
             return await flash('error', 'Error fetching map information for a Newly Ranked Map', 'home')
+    
+    changelogs = await glob.db.fetchall('SELECT * FROM changelog ORDER BY time DESC LIMIT 5')
+    for log in changelogs:
+        try:
+            poster = await glob.db.fetch("SELECT name, id, country, priv FROM users WHERE id = %s", [log['poster']])
+            poster_badges = await glob.db.fetchall(
+                "SELECT badge_id FROM user_badges WHERE userid = %s",
+                (log['poster'],),
+            )
+            badges = []
+            for user_badge in poster_badges:
+                badge_id = user_badge["badge_id"]
+                badge = await glob.db.fetch(
+                    "SELECT * FROM badges WHERE id = %s",
+                    (badge_id,),
+                )
+                badge_styles = await glob.db.fetchall(
+                    "SELECT * FROM badge_styles WHERE badge_id = %s",
+                    (badge_id,),
+                )
+                badge = dict(badge)
+                badge["styles"] = {style["type"]: style["value"] for style in badge_styles}
+                badges.append(badge)
+                # Sort the badges based on priority
+                badges.sort(key=lambda x: x['priority'], reverse=True)
+            poster['badges'] = badges
+            log['poster'] = poster
+        except:
+            klogging.log(f"Error fetching a changelog author", klogging.Ansi.LRED, extra={
+                "Changelog": log,
+            })
+            return await flash('error', 'Error fetching a changelog author, Please notify a Developer.', 'home')
     
     try:
         if glob.sys['globalNotice'] != "" or glob.sys['globalNotice'] != None:

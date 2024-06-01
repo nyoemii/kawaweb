@@ -8,6 +8,8 @@ new Vue({
             mode: 'std',
             mods: 'vn',
             sort: 'pp',
+            page: 1,
+            pageSize: 50,
             load: false,
             no_player: false, // soon
         };
@@ -25,16 +27,19 @@ new Vue({
         LoadLeaderboard(sort, mode, mods) {
             if (window.event)
                 window.event.preventDefault();
-
+        
             window.history.replaceState('', document.title, `/leaderboard/${this.mode}/${this.sort}/${this.mods}`);
             this.$set(this, 'mode', mode);
             this.$set(this, 'mods', mods);
             this.$set(this, 'sort', sort);
             this.$set(this, 'load', true);
+            const offset = (this.page - 1) * this.pageSize; // Calculate the offset
             this.$axios.get(`${window.location.protocol}//api.${domain}/v1/get_leaderboard`, {
                 params: {
                     mode: this.StrtoGulagInt(),
-                    sort: this.sort
+                    sort: this.sort,
+                    offset: offset, // Use the offset here
+                    limit: this.pageSize // Use 'limit' instead of 'pageSize'
                 }
             }).then(res => {
                 this.boards = res.data.leaderboard;
@@ -82,6 +87,13 @@ new Vue({
                 default:
                     return -1;
             }
+        },
+        changePage(page) {
+            this.page = page;
+            this.LoadLeaderboard(this.sort, this.mode, this.mods);
+        },
+        getRank(index) {
+            return (this.page - 1) * this.pageSize + index + 1;
         },
     },
 });
