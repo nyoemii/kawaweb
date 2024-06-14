@@ -72,11 +72,11 @@ disallowed_passwords = read_list(os.environ["DISALLOWED_PASSWORDS"])
 registration = os.environ["ENABLE_REGISTRATION"]
 
 # social links (used throughout guweb)
-github = 'https://github.com/kawatapw/kawaweb'
-discord_server = 'https://discord.com/invite/kawata-451130713627164683'
-youtube = 'https://youtube.com/'
-twitter = 'https://twitter.com/'
-instagram = 'https://instagram.com/'
+github = os.getenv("GITHUB", "https://github.com/kawatapw/kawaweb")
+discord_server = os.getenv("DISCORD_SERVER", "https://discord.com/invite/")
+youtube = os.getenv("YOUTUBE", "https://youtube.com/")
+twitter = os.getenv("TWITTER", "https://twitter.com/")
+instagram = os.getenv("INSTAGRAM", "https://instagram.com/")
 
 RANKED_WEBHOOK_URL = os.environ["RANKED_WEBHOOK_URL"]
 ADMIN_WEBHOOK_URL  = os.environ["ADMIN_WEBHOOK_URL"]
