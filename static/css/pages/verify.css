@@ -54,6 +54,7 @@
     color: #e6a5b5;
     font-weight: 400;
     line-height: 1.25;
+    margin-top: 0 !important;
 }
 
 .column {
