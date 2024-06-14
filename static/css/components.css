@@ -52,7 +52,7 @@
             .badge .icon {
                 padding: 0;
                 margin-left: 0;
-                margin-right: 6px;
+                /* margin-right: 6px; */
                 width: 24px;
                 height: 24px;
                 border-radius: 50%;
