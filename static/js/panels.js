@@ -215,40 +215,41 @@ new Vue({
                                     <div class="doc-content">
                                         <p><b>Maple AA</b> is allowed but MUST be equal to or below the following settings.</br>
                                         <div class="subsection">
-                                            <div><p>Aim Assist <b>RULES FOR VANILLA<b>:<p>
-                                            <div>AA <b>V1</b></br>
-                                            Strength: 0.7 | Base FOV: 70 | Max FOV (Scaling): 3 | Minimum FOV (total): 25 Maximum FOV (Total): 200 | Assist on Sliders: Allowed | Acceleration Factor: Doesn't matter. |
-
-                                        <div>
-                                        <div class="subsection">
-                                            AA <b>V2</b></br>
-                                            AA Power: 0,6 or below. Assist on sliders: Allowed
+                                            <p>Aim Assist <b>RULES FOR VANILLA</b>:<p>
+                                            <div class="subsection">
+                                                AA <b>V1</b></br>
+                                                Strength: 0.7 | Base FOV: 70 | Max FOV (Scaling): 3 | Minimum FOV (total): 25 Maximum FOV (Total): 200 | Assist on Sliders: Allowed | Acceleration Factor: Doesn't matter. |
+                                            </div>
+                                            <div class="subsection">
+                                                AA <b>V2</b></br>
+                                                AA Power: 0,6 or below. Assist on sliders: Allowed
+                                            </div>
+                                            <div class="subsection">
+                                                AA <b>V3</b></br>
+                                                AA Power: 1.2 or below. Slider AA: 0,6 or below.
+                                            </div>
                                         </div>
                                         <div class="subsection">
-                                            AA <b>V3</b></br>
-                                            AA Power: 1.2 or below. Slider AA: 0,6 or below.
+                                            <p>Aim Assist <b>RULES FOR RELAX</b>:</p>
+                                            <div class="subsection">
+                                                AA <b>V1</b></br>
+                                                Strength: 0.7 | Base FOV: 70 | Max FOV (Scaling): 3 | Minimum FOV (total): 30 Maximum FOV (Total): 250 | Assist on Sliders: Allowed | Acceleration Factor: Does not matter |
+                                            </div>    
+                                            <div class="subsection">
+                                                AA <b>V2</b></br>
+                                                AA Power: 0.8 Assist on sliders: Allowed
+                                            </div>
+                                            <div class="subsection">
+                                                AA <b>V3</b></br>
+                                                AA Power: 1.5 Slider AA: 0.6
+                                            </div>
                                         </div>
-                                        
-                                         <div class="subsection">
-                                        <div><p>Aim Assist RULES FOR RELAX:
-                                        <div>AA <b>V1<b></br>
-                                            <div>Strength: 0.7 | Base FOV: 70 | Max FOV (Scaling): 3 | Minimum FOV (total): 30 Maximum FOV (Total): 250 | Assist on Sliders: Allowed | Acceleration Factor: Does not matter |
-                                        </div>    
-                                        <div class="subsection">    
-                                        <div>AA <b>V2</br>
-                                        <div>AA Power: 0.8 Assist on sliders: Allowed
-                                        
-                                         <div class="subsection">
-                                        <div>AA <b>V3</br>
-                                        <div>AA Power: 1.5 Slider AA: 0.6
-                                        
-                                        </div>
+                                    </div>
                                 </div>
                                 <div class="subsection">
                                     <h5><b>CS modifiers:</b></h5>
-                                   From now on (July 1st 2024), CS changers are NOT allowed anymore on Kawata.
-                                   The use of it will be punished with a wipe and counted as an act of overcheating.
-                                    </div>
+                                    From now on (July 1st 2024), CS changers are NOT allowed anymore on Kawata.</br>
+                                    The use of it will be punished with a wipe and counted as an act of overcheating.
                                 </div>
                                 <div class="subsection">
                                     <h5><b>Flashlight:</b></h5>
@@ -262,15 +263,20 @@ new Vue({
                                 <div class="subsection">
                                     <h5><b>Multiple Cheats:</b></h5>
                                     <div class="doc-content">
-                                        <p>You now <b>can't<b> have more than <b>ONE<b> cheat instance/client open at the same time,this <b>ALSO<b> apply's for combining cheats together, if you get caught doing so you will end up getting banned.
-                                       
+                                        <p>You now <b>can't</b> have more than <b>ONE</b> cheat instance/client open at the same time. </br>
+                                        This <b>ALSO</b> apply's for combining cheats together, if you get caught doing so you will end up getting banned.</br>
+                                        </br>
                                         <p>* The only exception for this rule is combining osu!rx (V1 or V2) with Kat's AA/any kind of Aim assist that doesn't have timewarp & relax.</p>
                                     </div>
                                 </div>
                                 <div class="subsection">
                                     <h5><b>Unfair hacks:</b></h5>
                                     <div class="doc-content">
-                                        Unfair hacks such as replaybots (and replay editing, by extension), score modifiers, OD changers, spinbots, autobots (includes all forms of auto,cursordance bots too), cheats that modify the score's replay data (e.g. tap data or aim data, or playing with the in-game Relax mod, then removing it on submission) and score editors are NOT allowed, this rule may be enforced outside of the examples given. It is discretionary.
+                                        Unfair hacks such as replay bots (and replay editing, by extension), </br>
+                                        score modifiers, OD changers, spinbots, </br>
+                                        autobots (includes all forms of auto,cursordance bots too), </br>
+                                        cheats that modify the score's replay data (e.g. tap data or aim data, or playing with the in-game Relax mod, then removing it on submission) </br>
+                                        and score editors are <b>NOT</b> allowed, this rule may be enforced outside of the examples given. It is discretionary.
                                     </div>
                                 </div>
                                 <div class="subsection">
