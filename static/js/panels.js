@@ -585,7 +585,7 @@ new Vue({
                         <div class="doc-block" v-if="page === 'Kawata'">
                             <div class="doc-notice">
                                 <div class="notice">
-                                    <h2>Notice:</h2> <p>Due to obfuscation method currently in use you will need to turn off Anti-Virus when downloading and add an exclusion for the install folder, otherwise you will encounter issues. The Files also need to be extracted to %localappdata%/osu!Kawata folder which you will need to make otherwise the updater will throw an error.</p>
+                                    <h2>Notice:</h2> <p>Due to obfuscation method currently in use you will need to turn off Anti-Virus when downloading and add an exclusion for the install folder, otherwise you will encounter issues. The Files also need to be extracted to %localappdata%/osu!Aeris folder which you will need to make otherwise the updater will throw an error.</p>
                                 </div>
                                 <div class="content">
                                 <a class="button dl" href="https://storage.kawata.pw/get/osu!Kawata.zip" title="Client is in Public Beta, You may encounter bugs."><i class="fas fa-download"></i>  Download</a> <a class="button VA" href="http://www.hybrid-analysis.com/sample/3a08fea940bb7028b08b0a6688cae86344af3fc5ea2340ff03a29d95be090614"><i></i> Virus Analysis Report</a>
