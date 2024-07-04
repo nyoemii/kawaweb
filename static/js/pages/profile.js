@@ -244,7 +244,7 @@ new Vue({
         DisplayCheats(obj) {
             let htmlString = '';
             if (obj.RelaxHack === true) htmlString += `<div>Relax</div>`;
-            if (obj.ARChanger === true & obj.ARChangerAR) htmlString += `<div>AR: ${obj.ARChangerAR}</div>`;
+            if (obj.ARChanger === true & obj.ARChangerAR) htmlString += `<div>AR: ${obj.ARChangerAR.toFixed(2)}</div>`;
             if (obj.Timewarp === true) {
                 if (obj.TimewarpRate || obj.TimewarpType == 'Rate') htmlString += `<div>TW: ${obj.TimewarpRate}%</div>`
                 else if (obj.TimewarpMultiplier || obj.TimewarpType == 'Multiplier') htmlString += `<div>TW: ${obj.TimewarpMultiplier}x</div>`

@@ -1581,7 +1581,7 @@ new Vue({
                                     <div id="cheats" class="row">
                                         <div class="info-value" v-if="score.cheat_values.ARChanger">
                                             <h3 class="title">AR Changer:</h3>
-                                            <h1 class="value" v-if="score.cheat_values.ARChangerAR">{{ score.cheat_values.ARChangerAR }} AR</h1>
+                                            <h1 class="value" v-if="score.cheat_values.ARChangerAR">{{ score.cheat_values.ARChangerAR.toFixed(2) }} AR</h1>
                                         </div>
                                         <div class="info-value" v-if="score.cheat_values.CSChanger">
                                             <h3 class="title" v-if="score.cheat_values.CSChanger">CS Changer</h3>
