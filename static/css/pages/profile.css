@@ -1,3 +1,7 @@
+.subtitle {
+  margin-top: 0 !important;
+}
+
 .main-block {
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
