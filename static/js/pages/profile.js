@@ -241,6 +241,28 @@ new Vue({
                     return 3;
             }
         },
+        DisplayCheats(obj) {
+            let htmlString = '';
+            if (obj.RelaxHack === true) htmlString += `<div>Relax</div>`;
+            if (obj.ARChanger === true & obj.ARChangerAR) htmlString += `<div>AR: ${obj.ARChangerAR}</div>`;
+            if (obj.Timewarp === true) {
+                if (obj.TimewarpRate || obj.TimewarpType == 'Rate') htmlString += `<div>TW: ${obj.TimewarpRate}%</div>`
+                else if (obj.TimewarpMultiplier || obj.TimewarpType == 'Multiplier') htmlString += `<div>TW: ${obj.TimewarpMultiplier}x</div>`
+            }
+            if (obj.AimType) {
+                if (obj.AimType == 'Correction' || obj.AimCorrectionValue)
+                    if (obj.AimCorrectionRelative === true) htmlString += `<div>AC: CS + ${obj.AimCorrectionValue}</div>`
+                    else htmlString += `<div>AC: ${obj.AimCorrectionValue}</div>`
+                    if (obj.TapOnCorrect === true) htmlString += `<div>AC: TOC</div>`
+                if (obj.AimType == 'OBAA') {
+                    htmlString += `<div>AA: OsuBuddy</div>`
+                }
+            }
+            if (obj.HiddenRemover === true) htmlString += `<div>No HD</div>`;
+            if (obj.FlashlightRemover === true) htmlString += `<div>No FL</div>`;
+
+            return htmlString;
+        },
     },
     computed: {},
 });
