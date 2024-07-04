@@ -91,6 +91,9 @@ new Vue({
     created: function() {
         searchBus.$on('show-search-window', () => {
             this.show = true;
+            this.$nextTick(() => {
+                this.$refs.searchInput.focus();
+            });
         });
     },
     mounted: function() {
