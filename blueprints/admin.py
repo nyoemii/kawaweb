@@ -1888,7 +1888,7 @@ async def log(action: Action):
 
         embed = DiscordEmbed(
             title=f"{action.map.title} [{action.map.version}] was {action.text} by {action.mod.name} ({action.mod.id})",
-            description=f"{action.map.version} was {action.text}",
+            description=f"[{action.map.title} [{action.map.version}]](https://osu.ppy.sh/b/{action.map.id}) was {action.text}",
             color=5126045,
             timestamp=datetime.datetime.now()
             )
