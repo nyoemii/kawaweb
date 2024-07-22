@@ -31,7 +31,7 @@
     margin-bottom: 4px;
     padding: 1px 4px;
     border-radius: 12px !important;
-    background-color: hsl(var(--change-category), 15%, 25%);
+    background-color: hsla(var(--change-category), 15%, 25%, 0.7);
     color: hsl(var(--change-category), 15%, 80%);
     border-width: 2px;
     border-style: solid;
@@ -56,7 +56,7 @@
         font-size: 0.8em;
         font-weight: 400;
         height: 66px;
-        width: fit-content;
+        width: 225px;
         margin: 0;
         padding-right: 8px;
         display: flex;

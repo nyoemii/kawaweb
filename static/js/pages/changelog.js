@@ -15,8 +15,15 @@ new Vue({
         console.log("Loading Changelog Page");
         this.changelogs = window.changelogs;
         console.log(this.changelogs);
-        this.LoadData(this.changelogs, this.type, this.category); // Access as properties of `this`
-        this.LoadChangelogs(this.changelogs, this.type, this.category); // Access as properties of `this`
+
+        // Parse the current URL to set the initial type and category
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        if (pathSegments.length >= 2) {
+            this.type = pathSegments[1]; // Assuming the URL structure is /changelog/{type}/{category}
+            this.category = pathSegments.length > 2 ? pathSegments[2] : 'all';
+        }
+
+        this.LoadChangelogs(this.changelogs, this.type, this.category);
     },
     methods: {
         LoadData(changelogs, type, category) {
@@ -28,7 +35,7 @@ new Vue({
             if (window.event)
                 window.event.preventDefault();
 
-            window.history.replaceState('', document.title, `/changelog/${this.type}/${this.category}`);
+            window.history.replaceState('', document.title, `/changelog/${type}/${category}`);
 
             // Map type from string to integer
             const typeMap = {

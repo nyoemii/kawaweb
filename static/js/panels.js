@@ -954,6 +954,20 @@ new Vue({
                 console.error(error);
             }
         },
+        downloadMapReplays: async function() {
+            this.leaderboards.forEach(async (score) => {
+                try {
+                    // Construct the URL for the replay
+                    const url = `https://api.${domain}/v1/get_replay?id=${score.id}`;
+                    // Direct the browser to the URL, which should trigger the download
+                    window.open(url, '_blank');
+                }
+                catch (error) {
+                    // Handle any errors
+                    console.error(error);
+                }
+            }, this);
+        },
         selectMap: function(id) {
             if (id) {
                 console.log("Selected map: " + id + "");
@@ -1043,6 +1057,7 @@ new Vue({
                                 <button class="button is-primary" @click="window.location.href = 'https://api.osu.direct/d/' + set_id">Download</button>
                                 <button class="button is-primary" @click="window.location.href = 'osu://dl/' + set_id">osu!Direct</button>
                                 <button class="button is-primary" @click="window.location.href = 'https://osu.ppy.sh/b/' + selected.id">View on ppy.sh</button>
+                                <!--<button class="button is-primary" @click="downloadMapReplays">Download Replays</button>-->
                             </div>
                         </div>
                         <div class="info-block">
@@ -1243,56 +1258,16 @@ new Vue({
                 }
                 return x1 + x2;
             },
-            async renderReplay(scoreId) {
+            async DownloadReplay(scoreId) {
                 this.replayIsLoading = true;
 
-                // Fetch the rendered replay
-                const response = await fetch(`https://api.${domain}/v1/replays/rendered?id=${scoreId}`, {
-                    method: 'GET',
-                });
-                console.log(response.status);
-                if (response.status === 200) {
-                    // Fetch the score info
-                    //await this.fetchScoreInfo(scoreId);
-                    const renderResponse = await response.json();
-                    const renderId = renderResponse.render_id;
-                    // Create a new Socket.IO connection
-                    const socket = io.connect('https://ordr-ws.issou.best');
+                // Construct the URL for the replay
+                const url = `https://api.${domain}/v1/get_replay?id=${scoreId}`;
 
-                    // Listen for 'render_done_json' event
-                    socket.on('render_done_json', (message) => {
-                        // Parse the received message
-                        console.log('Received message:', message);
+                // Direct the browser to the URL, which should trigger the download
+                window.location = url;
 
-                        // Check if the renderID matches
-                        if (message.renderID === renderId) {
-                            // Handle the message
-                            console.log('Render done:', message.data);
-
-                            // Disconnect from the Socket.IO server
-                            socket.disconnect();
-
-                            // Update the loading state
-                            this.replayIsLoading = false;
-                            this.fetchScoreInfo(scoreId);
-                        }
-                    });
-
-                    // Connection closed
-                    socket.on('disconnect', () => {
-                        console.log('Socket.IO connection closed');
-                    });
-
-                    // Connection error
-                    socket.on('error', (error) => {
-                        console.error('Socket.IO error:', error);
-                        this.fetchScoreInfo(scoreId);
-                    });
-                } else {
-                    // Handle non-201 response status
-                    console.error('Unexpected response status:', response.status);
-                    this.replayIsLoading = false;
-                }
+                this.replayIsLoading = false;
             },
             play() {
                 if (this.video.paused) {
@@ -1468,14 +1443,14 @@ new Vue({
                             <div id="score-banner-map" class="artist-creator">{{ score.beatmap.artist }} || <a :href="'https://osu.ppy.sh/u/' + score.beatmap.creator + '/'">{{ score.beatmap.creator }}</a></div>
                             </div>
                         </div>
-                        <div id="render-replay" @click="renderReplay(score.id)" :disabled="replayIsLoading" v-if="!score.r_replay_id" class="level-left" :style="{
+                        <div id="render-replay" @click="DownloadReplay(score.id)" :disabled="replayIsLoading" v-if="!score.r_replay_id" class="level-left" :style="{
                             'position': 'absolute',
                             'left': '1',
                             'bottom': '19%',
                         }">
                             <div class="map-difficulty">
                                 <span class="kawata-icon"></span>
-                                <span id="" class="difficulty-title">{{ replayIsLoading ? 'Replay Rendering...' : 'Render Replay?' }}</span>
+                                <span id="" class="difficulty-title">{{ replayIsLoading ? 'Downloading Replay...' : 'Download Replay?' }}</span>
                             </div>
                         </div>
                         <div id="bm-info" class="selector">
