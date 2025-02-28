@@ -276,7 +276,7 @@ html {
   padding-right: 0;
   margin: 8px 0;
   justify-content: space-between;
-  overflow: hidden;
+  /*overflow: hidden;*/
   background: hsl(var(--main), 25%, 25%);
   transition: 0.2s ease;
   cursor: pointer;
@@ -292,7 +292,7 @@ html {
   margin: 8px 0;
   justify-content: space-between;
   border-radius: 10px;
-  overflow: hidden;
+  /*overflow: hidden;*/
   transition: 0.2s ease;
   cursor: pointer;
 }
@@ -311,11 +311,12 @@ html {
 
 .map-content1 {
   display: flex;
+  position: relative;
   flex-direction: row;
   align-items: center;
   height: 100%;
   min-width: 0;
-  overflow: hidden;
+  /*overflow: hidden;*/
   flex: 1;
 }
 
@@ -360,6 +361,100 @@ html {
         font-size: 10px;
         text-shadow: 0px 2px 3px black;
       }
+      .play-stats span > div.maple-settings {
+        position: relative;
+        cursor: pointer;
+        z-index: 1;
+      }
+
+      .play-stats span > div.maple-settings > .maple-popup {
+        position: absolute;
+        background: hsl(var(--main), 35%, 45%);
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 4px 4px 4px 4px;
+        z-index: 1000;
+        min-width: 150px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        left: 50%;
+        width: max-content;
+        max-width: 690px;
+        min-width: 80px;
+        transform: translateX(-50%) translateY(10px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+      }
+
+      .play-stats span > div.maple-settings > .maple-popup::after {
+          content: '';
+          position: absolute;
+          bottom: -5px;
+          left: 50%;
+          transform: translateX(-50%) rotate(45deg);
+          width: 10px;
+          height: 10px;
+          background: hsl(var(--main), 35%, 45%);
+          border-right: 1px solid #444;
+          border-bottom: 1px solid #444;
+      }
+
+      .play-stats span > div.maple-settings > .maple-popup > .settings-grid {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 2px;
+        max-width: none;
+      }
+      @media screen and (min-width: 8ch) {
+        .play-stats span > div.maple-settings > .maple-popup > .settings-grid:has(> .setting-item:nth-child(n+9)) {
+          flex-wrap: wrap;
+          max-width: calc(8 * (fit-content + 2px));
+        }
+      }
+
+      .play-stats span > div.maple-settings > .maple-popup > .settings-grid > .setting-item {
+        display: flex;
+        position: relative;
+        align-items: center;
+        gap: 4px;
+        padding: 2px;
+        font-size: 0.9em;
+        min-width: fit-content;
+      }
+      .play-stats span > div.maple-settings > .maple-popup > .settings-grid > .setting-item .setting-name {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        background: hsl(var(--main), 40%, 55%);
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 1.2em;
+        white-space: nowrap;
+        z-index: 1001;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+      }
+
+      .play-stats span > div.maple-settings > .maple-popup > .settings-grid > .setting-item:hover .setting-name {
+          opacity: 1;
+          visibility: visible;
+          transform: translateX(-50%) translateY(0);
+      }
+
+      .play-stats span > div.maple-settings > .maple-popup > .settings-grid > .setting-item > .setting-icon {
+          font-size: 1.28em;
+          width: 8px;
+          text-align: center;
+      }
+
+      .play-stats span > div.maple-settings > .maple-popup > .settings-grid > .setting-item > .setting-value {
+          font-family: monospace;
+          font-size: 1.25em;
+      }
+    
 
 .map-date {
   font-size: 10px;
@@ -751,4 +846,5 @@ span.beatmap-mapper {
 .log-block {
   transition: 0.2s ease;
   margin-bottom: 12px;
+  overflow: unset !important;
 }

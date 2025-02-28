@@ -1212,121 +1212,129 @@ new Vue({
         }
     },
     methods: {
-            initScorePanel: async function() {
-                console.log("Showing Score Window | ID: " + this.scoreId + "");
-                // Reset Score Window Data
-                this.score = null;
-                this.video = null;
-                this.renderedreplayurl = '';
-                this.progress = 0;
-                await this.fetchScoreInfo();
-                console.log("");
-                this.show = true;
-            },
-            fetchScoreInfo: function() {
-                // Use the score ID to fetch score information from the API
-                try {
-                    fetch(`https://api.${domain}/v1/get_score_info?id=${this.scoreId}&b=1`)
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log(data);
-                            this.score = data['score'];
-                            console.warn("Retrieved Score:")
-                            console.log(this.score);
-                            this.score.beatmap = data['beatmap_info'];
-                            this.renderedreplayurl = 'https://dl2.issou.best/ordr/videos/render' + this.score.r_replay_id + '.mp4';
-                        })
-
-                        .catch(error => {
-                            console.error('Error fetching score information:');
-                            console.error(error);
-                        });
-                } catch (error) {
-                    // Handle any errors
-                    console.error('Error fetching score information:');
-                    console.error(error);
-                }
-            },
-            addCommas(nStr) {
-                nStr += '';
-                var x = nStr.split('.');
-                var x1 = x[0];
-                var x2 = x.length > 1 ? '.' + x[1] : '';
-                var rgx = /(\d+)(\d{3})/;
-                while (rgx.test(x1)) {
-                    x1 = x1.replace(rgx, '$1' + ',' + '$2');
-                }
-                return x1 + x2;
-            },
-            async DownloadReplay(scoreId) {
-                this.replayIsLoading = true;
-
-                // Construct the URL for the replay
-                const url = `https://api.${domain}/v1/get_replay?id=${scoreId}`;
-
-                // Direct the browser to the URL, which should trigger the download
-                window.location = url;
-
-                this.replayIsLoading = false;
-            },
-            play() {
-                if (this.video.paused) {
-                    this.video.play();
-                } else {
-                    this.video.pause();
-                }
-            },
-            fullScreen() {
-                //this.video.requestFullscreen(); // Disabled For new Container Fullscreen
-                const videoContainer = this.$refs.videoContainer;
-                if (videoContainer.requestFullscreen) {
-                    videoContainer.requestFullscreen();
-                } else if (videoContainer.mozRequestFullScreen) { // Firefox
-                    videoContainer.mozRequestFullScreen();
-                } else if (videoContainer.webkitRequestFullscreen) { // Chrome, Safari and Opera
-                    videoContainer.webkitRequestFullscreen();
-                } else if (videoContainer.msRequestFullscreen) { // IE/Edge
-                    videoContainer.msRequestFullscreen();
-                }
-            },
-            download() {
-                let a = document.createElement('a');
-                a.href = this.video.src;
-                a.target = "_blank";
-                a.download = "";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            },
-            shareScore() {
-                // Get the current URL without any query parameters
-                const baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
-        
-                // Get the scoreId
-                const scoreId = this.scoreId; // Replace this with how you get the scoreId
-        
-                // Create the share URL
-                const shareUrl = `${baseUrl}?score=${scoreId}`;
-        
-                // Copy the share URL to the clipboard
-                navigator.clipboard.writeText(shareUrl).then(() => {
-                    console.log('Share URL copied to clipboard');
-                }).catch(err => {
-                    console.error('Could not copy text: ', err);
-                });
-            },
-            rewind() {
-                this.video.currentTime = this.video.currentTime - ((this.video.duration / 100) * 5);
-            },
-            forward() {
-                this.video.currentTime = this.video.currentTime + ((this.video.duration / 100) * 5);
-            },
-            close: function() {
-                this.show = false;
-                const url = new URL(window.location.href);
-                url.searchParams.delete('score');
-                window.history.replaceState({}, '', url);
-            },
+        initScorePanel: async function() {
+            console.log("Showing Score Window | ID: " + this.scoreId + "");
+            // Reset Score Window Data
+            this.score = null;
+            this.video = null;
+            this.renderedreplayurl = '';
+            this.progress = 0;
+            await this.fetchScoreInfo();
+            console.log("");
+            this.show = true;
+        },
+        fetchScoreInfo: function() {
+            // Use the score ID to fetch score information from the API
+            try {
+                fetch(`https://api.${domain}/v1/get_score_info?id=${this.scoreId}&b=1`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        this.score = data['score'];
+                        console.warn("Retrieved Score:")
+                        console.log(this.score);
+                        this.score.beatmap = data['beatmap_info'];
+                        this.renderedreplayurl = 'https://dl2.issou.best/ordr/videos/render' + this.score.r_replay_id + '.mp4';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching score information:');
+                        console.error(error);
+                    });
+            } catch (error) {
+                // Handle any errors
+                console.error('Error fetching score information:');
+                console.error(error);
+            }
+        },
+        addCommas(nStr) {
+            nStr += '';
+            var x = nStr.split('.');
+            var x1 = x[0];
+            var x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            return x1 + x2;
+        },
+        async DownloadReplay(scoreId) {
+            this.replayIsLoading = true;
+            // Construct the URL for the replay
+            const url = `https://api.${domain}/v1/get_replay?id=${scoreId}`;
+            // Direct the browser to the URL, which should trigger the download
+            window.location = url;
+            this.replayIsLoading = false;
+        },
+        play() {
+            if (this.video.paused) {
+                this.video.play();
+            } else {
+                this.video.pause();
+            }
+        },
+        fullScreen() {
+            //this.video.requestFullscreen(); // Disabled For new Container Fullscreen
+            const videoContainer = this.$refs.videoContainer;
+            if (videoContainer.requestFullscreen) {
+                videoContainer.requestFullscreen();
+            } else if (videoContainer.mozRequestFullScreen) { // Firefox
+                videoContainer.mozRequestFullScreen();
+            } else if (videoContainer.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                videoContainer.webkitRequestFullscreen();
+            } else if (videoContainer.msRequestFullscreen) { // IE/Edge
+                videoContainer.msRequestFullscreen();
+            }
+        },
+        download() {
+            let a = document.createElement('a');
+            a.href = this.video.src;
+            a.target = "_blank";
+            a.download = "";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        },
+        shareScore() {
+            // Get the current URL without any query parameters
+            const baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+    
+            // Get the scoreId
+            const scoreId = this.scoreId; // Replace this with how you get the scoreId
+    
+            // Create the share URL
+            const shareUrl = `${baseUrl}?score=${scoreId}`;
+    
+            // Copy the share URL to the clipboard
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                console.log('Share URL copied to clipboard');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        },
+        rewind() {
+            this.video.currentTime = this.video.currentTime - ((this.video.duration / 100) * 5);
+        },
+        forward() {
+            this.video.currentTime = this.video.currentTime + ((this.video.duration / 100) * 5);
+        },
+        close: function() {
+            this.show = false;
+            const url = new URL(window.location.href);
+            url.searchParams.delete('score');
+            window.history.replaceState({}, '', url);
+        },
+        MAAIntToStr(int) {
+            switch (int) {
+                case 0:
+                    return 'V1';
+                case 1:
+                    return 'V2';
+                case 2:
+                    return 'V3';
+                case 3:
+                    return 'V-L1';
+            }
+        },
     },
     watch: {
             score: function(newScore) {
@@ -1545,6 +1553,9 @@ new Vue({
                                             <h1 class="value" v-if="score.cheat_values.AimStartingDistance">Starting Distance: {{ score.cheat_values.AimStartingDistance }}</h1>
                                             <h1 class="value" v-if="score.cheat_values.AimStoppingDistance">Stopping Distance: {{ score.cheat_values.AimStoppingDistance }}</h1>
                                             <h1 class="value" v-if="score.cheat_values.AimAssistOnSliders">Assist on Sliders</h1>
+                                        </div>
+                                        <div class="info-value" v-if="score.cheat_values.AimType == 'MapleAA'>
+                                            <h3 class="title">Aim Assist: (MapleAA: {{ this.MAAIntToStr(score.cheat_values.Algorithm) }} ) </h3>
                                         </div>
                                         <div class="info-value" v-if="score.cheat_values.RelaxHack">
                                             <h3 class="title">Relax Hack</h3>
