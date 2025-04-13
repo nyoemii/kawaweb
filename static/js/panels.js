@@ -887,7 +887,7 @@ new Vue({
                 return data.data.set_id;
             } catch (error) {
                 // Handle any errors
-                console.error(error);
+                this.$log.error(error);
             }
         },
     }
@@ -934,7 +934,7 @@ new Vue({
                 await this.selectMap();
             } catch (error) {
                 // Handle any errors
-                console.error(error);
+                this.$log.error(error);
             }
         },
         fetchMapLb: async function() {
@@ -951,7 +951,7 @@ new Vue({
                 console.log(data);
             } catch (error) {
                 // Handle any errors
-                console.error(error);
+                this.$log.error(error);
             }
         },
         downloadMapReplays: async function() {
@@ -964,7 +964,7 @@ new Vue({
                 }
                 catch (error) {
                     // Handle any errors
-                    console.error(error);
+                    this.$log.error(error);
                 }
             }, this);
         },
@@ -1207,8 +1207,8 @@ new Vue({
                 }, 10);
             }
         } catch (error) {
-            console.error("Error showing score from url.");
-            console.error(error);
+            this.$log.error("Error showing score from url.");
+            this.$log.error(error);
         }
     },
     methods: {
@@ -1237,13 +1237,13 @@ new Vue({
                         this.renderedreplayurl = 'https://dl2.issou.best/ordr/videos/render' + this.score.r_replay_id + '.mp4';
                     })
                     .catch(error => {
-                        console.error('Error fetching score information:');
-                        console.error(error);
+                        this.$log.error('Error fetching score information:');
+                        this.$log.error(error);
                     });
             } catch (error) {
                 // Handle any errors
-                console.error('Error fetching score information:');
-                console.error(error);
+                this.$log.error('Error fetching score information:');
+                this.$log.error(error);
             }
         },
         addCommas(nStr) {
@@ -1308,7 +1308,7 @@ new Vue({
             navigator.clipboard.writeText(shareUrl).then(() => {
                 console.log('Share URL copied to clipboard');
             }).catch(err => {
-                console.error('Could not copy text: ', err);
+                this.$log.error('Could not copy text: ', err);
             });
         },
         rewind() {

@@ -5,6 +5,13 @@
   overflow: hidden;
 }
 
+#stars.lb-stars,
+#stars2.lb-stars,
+#stars3.lb-stars {
+  position: absolute;
+  left: -35%;
+}
+
 #stars {
   width: 1px;
   height: 1px;

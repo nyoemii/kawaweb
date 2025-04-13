@@ -57,7 +57,7 @@ new Vue({
         this.LoadProfileData();
         this.LoadAllofdata();
         this.LoadUserStatus();
-        console.log('Data:', this.data);
+        this.$log.debug('Data:', this.data);
     },
     methods: {
         LoadAllofdata() {
@@ -125,7 +125,7 @@ new Vue({
                 })
                 .catch(function (error) {
                     clearTimeout(loop);
-                    console.log(error);
+                    this.$log.error(error);
                 });
             loop = setTimeout(this.LoadUserStatus, 5000);
         },

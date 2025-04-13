@@ -13,7 +13,7 @@ new Vue({
         }
     },
     created() {
-        console.log('Users.js User Page Created');
+        this.$log.debug('Users.js User Page Created');
         this.handleUserInput(userquery);
     },
     methods: {
@@ -27,10 +27,10 @@ new Vue({
                         .then(response => response.json())
                         .then(data => {
                             this.users = data;
-                            console.log('users:', this.users);
+                            this.$log.debug('users:', this.users);
                         })
                         .catch(error => {
-                            console.error('Error:', error);
+                            this.$log.error('Error:', error);
                         });
                 }, 500);
             else {
@@ -40,17 +40,17 @@ new Vue({
                     .then(response => response.json())
                     .then(data => {
                         this.users = data;
-                        console.log('users:', this.users);
+                        this.$log.debug('users:', this.users);
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        this.$log.error('Error:', error);
                     });
                 
             }
         },
         editUser(userid) {
             editUserBus.$emit('showEditUserPanel', userid);
-            console.log('Edit User Window Trigger Emitted');
+            this.$log.debug('Edit User Window Trigger Emitted');
         },
     },
     computed: {
@@ -80,11 +80,11 @@ new Vue({
             this.show = false;
         },
         LoadUserEditor(module) {
-            console.log(`Loading ${module} editor...`); // placeholder print statement
+            this.$log.debug(`Loading ${module} editor...`); // placeholder print statement
             this.module = module;
         },
         showdropdown(subdropdown) {
-            console.log(`Showing ${subdropdown} dropdown...`); // placeholder print statement
+            this.$log.debug(`Showing ${subdropdown} dropdown...`); // placeholder print statement
             this.subdropdown = subdropdown;
         },
         fetchSelectedUser(userid) {
@@ -95,10 +95,10 @@ new Vue({
                 .then(data => {
                     this.user = null;
                     this.user = data;
-                    console.log('User:', this.user);
+                    this.$log.debug('User:', this.user);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    this.$log.error('Error:', error);
                 });
         },
         async postAction(url, formData) {
@@ -136,54 +136,54 @@ new Vue({
                 .then(response => response.json())
                 .then(data => {
                     this.badges = data;
-                    console.log('Badges:', this.badges);
+                    this.$log.debug('Badges:', this.badges);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    this.$log.error('Error:', error);
                 });
             return this.badges;
         },
         toggleBadgeSelection(badgeid) {
-            console.log(`Toggling badge ${badgeid}...`);
-            console.log('User badges before toggling:', this.user.badges);
+            this.$log.debug(`Toggling badge ${badgeid}...`);
+            this.$log.debug('User badges before toggling:', this.user.badges);
             if (this.user.badges.find(b => b.id === badgeid)) {
                 this.user.badges.splice(this.user.badges.indexOf(badgeid), 1);
                 this.postAction('/admin/action/removebadge', { user: this.user.id, badge: badgeid })
                     .then(status => {
                         if (status === 200) {
-                            console.log('Badge removed:', badgeid);
+                            this.$log.debug('Badge removed:', badgeid);
                             this.$refs[badgeid][0].classList.toggle('selected');
                             this.fetchSelectedUser(this.user.id);
                         } else {
-                            console.error('Failed to remove badge:', badgeid);
+                            this.$log.error('Failed to remove badge:', badgeid);
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        this.$log.error('Error:', error);
                     });
             } else {
                 this.user.badges.push(badgeid);
                 this.postAction('/admin/action/addbadge', { user: this.user.id, badge: badgeid })
                     .then(status => {
                         if (status === 200) {
-                            console.log('Badge added:', badgeid);
+                            this.$log.debug('Badge added:', badgeid);
                             this.$refs[badgeid][0].classList.toggle('selected');
                             this.fetchSelectedUser(this.user.id);
                         } else {
-                            console.error('Failed to add badge:', badgeid);
+                            this.$log.error('Failed to add badge:', badgeid);
                         }
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        this.$log.error('Error:', error);
                     });
             }
             
-            console.log('User badges after toggling:', this.user.badges);
+            this.$log.debug('User badges after toggling:', this.user.badges);
         }
     },
     created: function() {
         editUserBus.$on('showEditUserPanel', (userid) => {
-            console.log('Edit User Window Triggered')
+            this.$log.debug('Edit User Window Triggered')
             this.userid = userid;
             this.subdropdown = null;
             this.fetchSelectedUser(userid);

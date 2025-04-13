@@ -17,10 +17,10 @@
 {% endblock %}
 
 {% block content %}
-<div id="stars"></div>
-<div id="stars1"></div>
-<div id="stars2"></div>
-<div id="stars3"></div>
+<div class="lb-stars" id="stars"></div>
+<div class="lb-stars" id="stars1"></div>
+<div class="lb-stars" id="stars2"></div>
+<div class="lb-stars" id="stars3"></div>
 <div id="app" :class="(load ? 'load' : '')">
     <div class="leaderboard-banner main-banner">
         <div class="main-selector">
@@ -90,7 +90,7 @@
                                         <% flags[user.country.toUpperCase()] %>
                                     </div>
                                 </a>
-                                <user-profile :user="user" :domain="domain"></user-profile>
+                                <user-profile :user="user" :key="user.player_id" :domain="domain"></user-profile>
                             </td>
                             <td id="clan-tag" >
                                 <span v-if="user.clan_tag">

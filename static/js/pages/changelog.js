@@ -12,9 +12,9 @@ new Vue({
         };
     },
     created() {
-        console.log("Loading Changelog Page");
+        this.$log.info("Loading Changelog Page");
         this.changelogs = window.changelogs;
-        console.log(this.changelogs);
+        this.$log.debug(this.changelogs);
 
         // Parse the current URL to set the initial type and category
         const pathSegments = window.location.pathname.split('/').filter(Boolean);

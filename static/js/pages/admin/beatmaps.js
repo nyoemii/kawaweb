@@ -11,7 +11,7 @@ new Vue({
     async beforeCreate() {
     },
     created() {
-        console.log('Beatmaps.js Beatmaps Page Created');
+        this.$log.info('Beatmaps.js Beatmaps Page Created');
     },
     methods: {
         
@@ -72,10 +72,10 @@ new Vue({
     },
     created: function() {
         editMapBus.$on('showEditBeatmapPanel', (map) => {
-            console.log('Edit Beatmap Window Triggered')
-            console.log(map);
+            this.$log.debug('Edit Beatmap Window Triggered')
+            this.$log.debug(map);
             this.beatmap = map;
-            console.log(this.beatmap);
+            this.$log.debug(this.beatmap);
             this.show = true;
         });
     },

@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
         created() {
-            console.log('Badges.js Badges Page Created');
-            console.log('Badges:', this.badges);
+            this.$log.info('Badges.js Badges Page Created');
+            this.$log.debug('Badges:', this.badges);
         },
         methods: {
 
@@ -44,10 +44,10 @@ new Vue({
                 .then(response => response.json())
                 .then(data => {
                     this.badge = data;
-                    console.log('Badge:', this.badge);
+                    this.$log.debug('Badge:', this.badge);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    this.$log.error('Error:', error);
                 });
         },
         saveBadge() {
@@ -61,11 +61,11 @@ new Vue({
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
+                this.$log.info('Success:', data);
                 this.close();
             })
             .catch((error) => {
-                console.error('Error:', error);
+                this.$log.error('Error:', error);
             });
         },
         addStyle() {
@@ -84,13 +84,13 @@ new Vue({
     },
     created: function() {
         editBadgeBus.$on('showEditBadgePanel', (badgeid) => {
-            console.log('Edit Badge Window Triggered')
+            this.$log.debug('Edit Badge Window Triggered')
             this.isNewBadge = false;
             this.fetchSelectedBadge(badgeid);
             this.show = true;
         });
         editBadgeBus.$on('showNewBadgePanel', () => {
-            console.log('New Badge Window Triggered')
+            this.$log.debug('New Badge Window Triggered')
             this.newBadge();
         });
     },

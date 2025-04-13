@@ -1,3 +1,20 @@
+#popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+#popup-container > * {
+    pointer-events: auto;
+}
+/* Active state for triggers */
+.popup-active {
+    z-index: 5;
+    position: relative;
+}
 
 .badge-selects {
     background: hsl(var(--main), 16%, 20%);
@@ -171,29 +188,44 @@
 
 
 
+
 /* Style for User Panel Vue Component */
-.profile-panel {
+:root {
+    --user: var(--main);  /* Default fallback to main */
+}
+.profile-panel { /* BUG: When hovering in panel, if you hover over a parent div in the dom it will close the panel as it is technically behind the parent div even tho it is being shown on top. */
     position: absolute;
     display: flex !important;
     width: fit-content;
+    min-width: 275px;
+    max-width: 640px;
     z-index: 610;
-    opacity: 1;
-    flex-direction: row;
-    justify-content: flex-start; /* Updated */
-    align-items: center; /* Added */
+    opacity: 0;
+    flex-direction: column;
     background-position: center;
     background-size: cover;
-    border-radius: 20px;
-    margin-top: -84px;
+    border-radius: 16px;
+    margin-top: -240px; /* Adjusted to position above username */
+    margin-left: -20px; /* Offset to center better */
     color: white;
     background-color: hsl(var(--main), 10%, 20%);
-    transition: 200ms opacity, 200ms visibility;
-    transition-delay: 0s, 0s;
-    transition-delay: 250ms;
-    line-height: 1.35;
-    visibility: visible;
-    background-image: url(/static/images/default-bg.png);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    transition: 
+        opacity 300ms ease-in-out,
+        visibility 300ms ease-in-out,
+        transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    visibility: hidden;
+    transform: translateY(10px) scale(0.98);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+    .profile-panel.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+
     .profile-panel-background {
         height: 100%;
         width: 100%;
@@ -202,59 +234,1708 @@
         z-index: -1;
         background-position: center;
         background-size: cover;
+        opacity: 0.7;
     }
-    .profile-panel > div {
+        
+        .profile-panel-background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.4) 0%,
+                rgba(0, 0, 0, 0.7) 100%
+            );
+            border-radius: 12px;
+        }
+
+    .profile-panel-header {
+        display: flex;
+        padding: 12px;
         position: relative;
+        align-items: center;
     }
-    .profile-panel-avatar {
-        height: 72px;
-        width: 72px;
-        background-size: cover;
-        background-position: center;
+
+        .profile-panel-avatar {
+            height: 72px;
+            width: 72px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            flex-shrink: 0;
+        }
+            
+            .profile-panel-avatar:hover {
+                transform: scale(1.05);
+                border-color: rgba(255, 255, 255, 0.5);
+            }
+
+        .profile-panel-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            margin-left: 12px;
+            flex-grow: 1;
+        }
+
+            .profile-panel-info .name {
+                font-size: 22px;
+                font-weight: 700;
+                margin-bottom: 4px;
+                text-align: left;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            .profile-panel-info .rank {
+                font-size: 14px;
+                opacity: 0.9;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+            }
+                
+                .profile-panel-info .rank .global::before {
+                    content: '#';
+                }
+                
+                .profile-panel-info .rank .country {
+                    margin-left: 4px;
+                    display: flex;
+                    align-items: center;
+                }
+                    .profile-panel-info .rank .country .flag {
+                        width: 24px;
+                        height: 16px;
+                        margin-right: 4px;
+                        border-radius: 15%;
+                    }
+                
+                .profile-panel-info .rank .country::before {
+                    content: '';
+                    display: inline-block;
+                    width: 16px;
+                    height: 12px;
+                    margin-right: 4px;
+                    background-size: cover;
+                    background-position: center;
+                }
+
+            .profile-panel-info .badges {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                flex-wrap: wrap;
+                border-radius: 8px;
+                height: fit-content;
+                width: fit-content;
+                max-width: 100%;
+            }
+
+                .badges .badge {
+                    margin-right: 4px;
+                    margin-bottom: 4px;
+                    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.56);
+                    transition: transform 0.2s ease;
+                }
+                
+                .badges .badge:hover {
+                    transform: scale(1.15);
+                    z-index: 2;
+                }
+
+    .profile-panel-stats {
+        display: flex;
+        padding: 0 16px 16px;
+        justify-content: space-between;
     }
-    .profile-panel-info {
+        /* Loading indicator */
+        .loading-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Mode selector */
+        .mode-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+            padding: 0 4px;
+        }
+
+        .mode-option {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background-color: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .mode-option:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .mode-option.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        /* Adjust performance stats for more items */
+        .performance-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+            
+            .stat-value {
+                font-size: 18px;
+                font-weight: 700;
+                margin-bottom: 2px;
+            }
+            
+            .stat-label {
+                font-size: 12px;
+                opacity: 0.7;
+                text-transform: uppercase;
+            }
+
+    .profile-panel-expand {
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+        
+        .profile-panel-expand:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .profile-panel-expand .expand-icon {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7.41,8.59L12,13.17l4.59-4.58L18,10l-6,6l-6-6L7.41,8.59z'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .profile-panel.expanded .profile-panel-expand .expand-icon {
+            transform: rotate(180deg);
+        }
+
+    .profile-panel-details {
+        max-height: 0;
+        transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+    }
+        
+        .profile-panel.expanded .profile-panel-details {
+            max-height: 500px;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .profile-panel-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+            
+            .profile-tab {
+                padding: 12px 16px;
+                cursor: pointer;
+                opacity: 0.7;
+                transition: opacity 0.2s ease, border-bottom 0.2s ease;
+                position: relative;
+                font-size: 14px;
+            }
+            
+            .profile-tab:hover {
+                opacity: 1;
+            }
+            
+            .profile-tab.active {
+                opacity: 1;
+            }
+            
+            .profile-tab.active::after {
+                content: '';
+                position: absolute;
+                bottom: -1px;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background-color: white;
+                animation: tabActivate 0.3s ease;
+            }
+            
+            @keyframes tabActivate {
+                from { transform: scaleX(0); }
+                to { transform: scaleX(1); }
+            }
+
+        .profile-panel-content {
+            padding: 16px;
+        }
+            
+            .tab-content {
+                display: none;
+                animation: fadeIn 0.3s ease;
+            }
+            
+            .tab-content.active {
+                display: block;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            /* Performance tab */
+            .performance-stats {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+                
+                .performance-item {
+                    background-color: rgba(0, 0, 0, 0.2);
+                    border-radius: 8px;
+                    padding: 10px;
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                .performance-label {
+                    font-size: 12px;
+                    opacity: 0.7;
+                    margin-bottom: 4px;
+                }
+                
+                .performance-value {
+                    font-size: 16px;
+                    font-weight: 600;
+                }
+
+            /* Recent scores tab */
+            .most-played,
+            .best-scores,
+            .recent-scores {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+    .badge-popup {
+        position: absolute;
+        width: fit-content;
+        max-width: 200px;
+        padding: 8px 12px;
+        height: fit-content;
+        border-radius: 12px;
+        background: rgba(0, 0, 0, .7);
         display: flex;
         flex-direction: column;
-        justify-content: flex-start; /* Updated */
-        margin-left: 8px; /* Added */
+        justify-content: center;
+        align-items: center;
+        text-wrap: wrap;
+        opacity: 0;
+        transform: translateY(5px);
+        transition: .2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 99;
+        text-shadow: 0 2px 2px rgba(0, 0, 0, 0.56);
+        pointer-events: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(4px);
     }
-        .profile-panel-info .name {
-            font-size: 24px;
+        
+        .badge-popup.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .badge-popup-title {
             font-weight: 600;
             margin-bottom: 4px;
-            margin-right: 12px;
-            text-align: left;
+            text-align: center;
         }
-        .profile-panel-info .badges {
+        
+        .badge-popup-description {
+            font-size: 12px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+
+
+/* Vue Score Card Component Styles */
+    .scores {
+        background: content-box;
+        transition: 0.2s transform ease;
+        background: hsl(var(--main), 20%, 20%);
+        padding: 6px;
+    }
+        .map-single {
+            height: 72px;
+            min-width: 0;
             display: flex;
             flex-direction: row;
             align-items: center;
-            border-radius: 8px;
-            height: fit-content;
-            padding: 2px;
-            width: fit-content;
-            max-width: 98%;
+            padding-right: 0;
+            margin: 8px 0;
+            justify-content: space-between;
+            background: hsl(var(--main), 25%, 25%);
+            transition: 0.2s ease;
+            cursor: pointer;
         }
-            .badges .badge {
-                margin-right: 2px;
-                text-shadow: 0 2px 2px rgba(0, 0, 0, 0.56);
+        .map-single:hover {
+            border-radius: 8px;
+            transform: translateY(-1px);
+            box-shadow: 0 0 1px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.04),
+                0 16px 24px rgba(0, 0, 0, 0.04), 0 24px 32px rgba(0, 0, 0, 0.04);
+            background: hsl(var(--main), 30%, 30%);
+        }
+        .map-single:first-child {
+            margin-top: 0;
+        }
+            .map-data {
+                height: 72px;
+                min-width: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                padding-right: 0;
+                margin: 8px 0;
+                justify-content: space-between;
+                border-radius: 10px;
+                transition: 0.2s ease;
+                cursor: pointer;
             }
-            .badge-popup {
+                .map-image {
+                    display: flex;
+                    position: relative;
+                    flex-direction: row;
+                    align-items: center;
+                    height: 100%;
+                    min-width: 10%;
+                    max-width: 120px;
+                    flex: 1;
+                }
+                    .map-image-picture {
+                        width: 80%;
+                        height: 80%;
+                        margin: 0 auto;
+                        border-radius: 6px;
+                        object-fit: cover;
+                    }
+                .map-content1 {
+                    display: flex;
+                    position: relative;
+                    flex-direction: column;
+                    height: 100%;
+                    min-width: 0;
+                    flex: 1;
+                }
+                    .map-title-block {
+                        display: flex;
+                        flex-direction: column;
+                        line-height: 1;
+                        margin-top: 5px;
+                        margin-left: 6px;
+                        min-width: 0;
+                        padding-right: 12px;
+                        flex: 2;
+                    }
+                        .map-title {
+                            font-size: 14px;
+                            display: flow-root;
+                            font-weight: 500;
+                            width: 75px;
+                            align-items: center;
+                            white-space: nowrap;
+                        }
+                        .map-title > a {
+                            color: hsl(var(--user), 65%, 75%);
+                            text-decoration: none;
+                            font-weight: 500;
+                        }
+                        .map-creators {
+
+                        }
+                    .play-stats-block {
+                        display: flex;
+                        flex-direction: column;
+                        line-height: 1;
+                        margin-left: 6px;
+                        min-width: 0;
+                        padding-right: 12px;
+                        flex: 2;
+                    }
+                        .play-stats-block .play-stats {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                        }
+                          .play-stats span {
+                            display: flex;
+                            align-items: center;
+                            flex-direction: row;
+                            margin-left: 6px;
+                          }
+                            .play-stats span > div {
+                              margin-right: 4px;
+                              background: hsl(var(--main), 45%, 45%);
+                              padding: 3px 5px;
+                              border-radius: 8px;
+                              line-height: 0.8;
+                              font-size: 10px;
+                              text-shadow: 0px 2px 3px black;
+                            }
+                            .play-stats span > div.maple-settings {
+                              position: relative;
+                              cursor: pointer;
+                              z-index: 1;
+                            }
+                        
+                            .play-stats span > div.maple-settings > .maple-popup {
+                              position: absolute;
+                              background: hsl(var(--main), 35%, 45%);
+                              border: 1px solid #444;
+                              border-radius: 8px;
+                              padding: 4px 4px 4px 4px;
+                              z-index: 1000;
+                              min-width: 150px;
+                              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+                              left: 50%;
+                              width: max-content;
+                              max-width: 690px;
+                              min-width: 80px;
+                              transform: translateX(-50%) translateY(10px);
+                              opacity: 0;
+                              visibility: hidden;
+                              transition: all 0.2s ease;
+                            }
+                        
+                            .play-stats span > div.maple-settings > .maple-popup::after {
+                                content: '';
+                                position: absolute;
+                                bottom: -5px;
+                                left: 50%;
+                                transform: translateX(-50%) rotate(45deg);
+                                width: 10px;
+                                height: 10px;
+                                background: hsl(var(--main), 35%, 45%);
+                                border-right: 1px solid #444;
+                                border-bottom: 1px solid #444;
+                            }
+                        
+                            .play-stats span > div.maple-settings > .maple-popup > .settings-grid {
+                              display: flex;
+                              flex-direction: row;
+                              flex-wrap: nowrap;
+                              gap: 2px;
+                              max-width: none;
+                            }
+                            @media screen and (min-width: 8ch) {
+                              .play-stats span > div.maple-settings > .maple-popup > .settings-grid:has(> .setting-item:nth-child(n+9)) {
+                                flex-wrap: wrap;
+                                max-width: calc(8 * (fit-content + 2px));
+                              }
+                            }
+                        
+                            .play-stats span > div.maple-settings > .maple-popup > .settings-grid > .setting-item {
+                              display: flex;
+                              position: relative;
+                              align-items: center;
+                              gap: 4px;
+                              padding: 2px;
+                              font-size: 0.9em;
+                              min-width: fit-content;
+                            }
+                            .play-stats span > div.maple-settings > .maple-popup > .settings-grid > .setting-item .setting-name {
+                              position: absolute;
+                              bottom: 100%;
+                              left: 50%;
+                              transform: translateX(-50%) translateY(10px);
+                              background: hsl(var(--main), 40%, 55%);
+                              padding: 4px 8px;
+                              border-radius: 4px;
+                              font-size: 1.2em;
+                              white-space: nowrap;
+                              z-index: 1001;
+                              opacity: 0;
+                              visibility: hidden;
+                              transition: all 0.2s ease;
+                            }
+                        
+                            .play-stats span > div.maple-settings > .maple-popup > .settings-grid > .setting-item:hover .setting-name {
+                                opacity: 1;
+                                visibility: visible;
+                                transform: translateX(-50%) translateY(0);
+                            }
+                        
+                            .play-stats span > div.maple-settings > .maple-popup > .settings-grid > .setting-item > .setting-icon {
+                                font-size: 1.28em;
+                                width: 8px;
+                                text-align: center;
+                            }
+                        
+                            .play-stats span > div.maple-settings > .maple-popup > .settings-grid > .setting-item > .setting-value {
+                                font-family: monospace;
+                                font-size: 1.25em;
+                            }
+                        .map-date {
+                            font-size: 10px;
+                            font-weight: 500;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-start;
+                        }
+                            .map-date > time {
+                                margin-top: 2px;
+                            }
+                .map-content2 {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    line-height: 1.2;
+                    align-items: flex-end;
+                    justify-content: center;
+                }
+                    .score-details {
+                        height: 100%;
+                        align-items: flex-end;
+                    }
+                        .score-details_right-block {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: flex-end;
+                            height: 100%;
+                            min-width: 140px;
+                            justify-content: center;
+                            padding-right: 14px;
+                            padding-left: 20px;
+                            position: relative;
+                            border-radius: 0 10px 10px 0;
+                            z-index: 0;
+                            margin-left: 6px;
+                            align-items: center;
+                        }
+                            .score-details_pp-block {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: flex-end;
+                                height: 100%;
+                                justify-content: center;
+                                position: relative;
+                                border-radius: 0 10px 10px 0;
+                                z-index: 0;
+                                margin-left: 6px;
+                            }
+                                .map-pp {
+                                    font-weight: 700;
+                                    color: hsl(var(--main), 30%, 55%);
+                                    font-size: 20px;
+                                }
+                                .map-acc {
+                                    font-size: 12px;
+                                    display: flex;
+                                    justify-content: flex-end;
+                                }
+                            .score-details_grade-block .rank-single {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                line-height: 1;
+                                margin: 0;
+                            }
+                            .score-details_grade-block .map-rank {
+                                font-size: 32px;
+                            }
+
+/* Vue Beatmap Display Component */
+/* Beatmap Card Component Styles */
+    /* Base */
+        .beatmap-card {
+            position: relative;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            margin-bottom: 15px;
+            z-index: 1;
+        }
+        .beatmap-card:hover {
+            position: relative;
+            z-index: 10;
+        }
+
+        .beatmap-card.interactive {
+            cursor: pointer;
+        }
+
+        .beatmap-card.interactive:hover {
+            transform: translateY(-2px);
+        }
+    /* Mini Mode Styles */
+        .beatmap-card.mode-mini {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 96%;
+            min-width: 275px;
+            max-width: 96%;
+            height: fit-content;
+            margin: 0 auto 4px auto;
+            transition: all 0.3s ease;
+        }
+        .beatmap-card.mode-mini .beatmap-mini-difficulties,
+        .beatmap-card.mode-mini .beatmap-mini {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .beatmap-card.mode-mini.expanded {
+            height: auto;
+        }
+
+        .beatmap-card.mode-mini.interactive:hover .beatmap-mini-difficulties,
+        .beatmap-card.mode-mini.interactive:hover .beatmap-mini {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 
+                        0 0 0 2px hsla(var(--main, 255), 25%, 35%, 0.75);
+        }
+
+        
+        .beatmap-mini {
+            position: relative;
+            border-radius: inherit;
+            background-color: var(--panel-bg, #1a1a1a);
+            border: 1px solid hsl(var(--main), 10%, 20%);
+            z-index: 2;
+        }
+        /*.beatmap-card.interactive:hover .beatmap-mini {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }*/
+        /* Background with map image */
+            .beatmap-mini-background {
                 position: absolute;
-                width: fit-content;
-                padding: 4px;
-                padding-left: 8px;
-                padding-right: 8px;
-                height: fit-content;
-                border-radius: 20px;
-                background: rgba(0, 0, 0, .5);
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: inherit;
+                z-index: 0;
+                overflow: hidden; /* Add this */
+            }
+
+            .beatmap-mini-background img {
+                width: 100%;
+                height: 100%;
+                border-radius: inherit;
+                object-fit: cover;
+            }
+        
+            .beatmap-mini-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(to right, 
+                            rgba(20, 20, 30, 0.85), 
+                            rgba(20, 20, 30, 0.7));
+                backdrop-filter: blur(4px);
+                z-index: 1;
+                transition: all 0.3s ease;
+            }
+            .beatmap-card.interactive:hover .beatmap-mini-overlay {
+                background: linear-gradient(to right, 
+                            rgba(20, 20, 30, 0.65), 
+                            rgba(20, 20, 30, 0.5));
+                backdrop-filter: blur(2px);
+            }
+
+        /* Content container */
+            .beatmap-mini-content {
+                position: relative;
+                display: flex;
+                align-items: center;
+                height: 60px;
+                width: 100%;
+                padding: 0 15px;
+                z-index: 2;
+            }
+                .beatmap-mini-content .content-right {
+                    display: flex;
+                    align-items: flex-end;
+                    flex-direction: column;
+                    justify-content: flex-end;
+                    flex: 1;
+                }
+
+        /* Single difficulty mode styles */
+            .beatmap-mini-single-diff {
+                display: flex;
+                align-items: center;
+                margin-right: 12px;
+            }
+
+            .beatmap-mini-diff-icon-container {
+                position: relative;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(4px);
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            .beatmap-mini-diff-icon-container:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            }
+
+            .beatmap-mini-diff-icon {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+            }
+
+            .beatmap-mini-mode-icon {
+                font-size: 16px;
+                color: white;
+            }
+
+            .beatmap-mini-rank-change {
+                position: absolute;
+                bottom: -2px;
+                right: -2px;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 8px;
+                color: white;
+                border: 2px solid rgba(20, 20, 30, 0.8);
+            }
+
+        /* Text information */
+            .beatmap-mini-info {
+                overflow: hidden;
+                padding-right: 15px;
+            }
+
+            .beatmap-mini-info.with-single-diff {
+                padding-left: 0;
+            }
+
+            .beatmap-mini-title {
+                font-weight: 600;
+                font-size: 14px;
+                color: white;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-bottom: 2px;
+            }
+
+            .beatmap-mini-artist {
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.8);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-bottom: 2px;
+            }
+
+            .beatmap-mini-creator {
+                font-size: 11px;
+                color: rgba(255, 255, 255, 0.6);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .beatmap-mini-plays {
+                font-size: 11px;
+                color: rgba(255, 255, 255, 0.7);
+                margin-top: 2px;
+            }
+
+        /* Status indicator */
+            .beatmap-mini-status-indicator {
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 600;
+                color: white;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+        /* Difficulty background colors */
+            .beatmap-mini-diff-icon-container.difficulty-1,
+            .beatmap-mini-difficulty-icon-container.difficulty-1 {
+                background-color: rgba(79, 192, 255, 0.3);
+                box-shadow: 0 0 10px rgba(79, 192, 255, 0.4);
+            }
+
+            .beatmap-mini-diff-icon-container.difficulty-2,
+            .beatmap-mini-difficulty-icon-container.difficulty-2 {
+                background-color: rgba(79, 192, 255, 0.3);
+                box-shadow: 0 0 10px rgba(79, 192, 255, 0.4);
+            }
+
+            .beatmap-mini-diff-icon-container.difficulty-3,
+            .beatmap-mini-difficulty-icon-container.difficulty-3 {
+                background-color: rgba(102, 255, 51, 0.3);
+                box-shadow: 0 0 10px rgba(102, 255, 51, 0.4);
+            }
+
+            .beatmap-mini-diff-icon-container.difficulty-4,
+            .beatmap-mini-difficulty-icon-container.difficulty-4 {
+                background-color: rgba(255, 204, 34, 0.3);
+                box-shadow: 0 0 10px rgba(255, 204, 34, 0.4);
+            }
+
+            .beatmap-mini-diff-icon-container.difficulty-5,
+            .beatmap-mini-difficulty-icon-container.difficulty-5 {
+                background-color: rgba(255, 102, 170, 0.3);
+                box-shadow: 0 0 10px rgba(255, 102, 170, 0.4);
+            }
+
+            .beatmap-mini-diff-icon-container.difficulty-6,
+            .beatmap-mini-diff-icon-container.difficulty-7,
+            .beatmap-mini-diff-icon-container.difficulty-8,
+            .beatmap-mini-diff-icon-container.difficulty-9,
+            .beatmap-mini-diff-icon-container.difficulty-10,
+            .beatmap-mini-difficulty-icon-container.difficulty-6,
+            .beatmap-mini-difficulty-icon-container.difficulty-7,
+            .beatmap-mini-difficulty-icon-container.difficulty-8,
+            .beatmap-mini-difficulty-icon-container.difficulty-9,
+            .beatmap-mini-difficulty-icon-container.difficulty-10 {
+                background-color: rgba(170, 136, 255, 0.3);
+                box-shadow: 0 0 10px rgba(170, 136, 255, 0.4);
+            }
+
+        /* Popup panel styles */
+            .beatmap-mini-popup {
+                position: absolute;
+                width: 300px;
+                background: rgba(30, 30, 40, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                padding: 15px;
+                opacity: 0;
+                visibility: hidden;
+                z-index: 1000;
+                transition: all 0.3s ease;
+                pointer-events: none;
+            }
+            #popup-container .beatmap-mini-popup {
+                /* Reset any problematic styles */
+                position: fixed;
+                /* Keep other styles from the original */
+            }
+            .beatmap-mini-popup.visible {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+
+            /* Popup positions */
+                .beatmap-mini-popup.position-top {
+                    bottom: 45px;
+                    left: 50%;
+                    transform: translateX(-50%) translateY(10px);
+                }
+
+                .beatmap-mini-popup.position-left {
+                    top: 0;
+                    right: 45px;
+                    transform: translateY(0) translateX(10px);
+                }
+
+                .beatmap-mini-popup.position-right {
+                    top: 0;
+                    left: 45px;
+                    transform: translateY(0) translateX(-10px);
+                }
+
+                .beatmap-mini-diff-icon-container:hover .beatmap-mini-popup,
+                .beatmap-mini-difficulty-icon-container:hover .beatmap-mini-popup {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateX(-50%) translateY(0);
+                    pointer-events: auto;
+                }
+
+                .beatmap-mini-popup.position-left:hover,
+                .beatmap-mini-diff-icon-container:hover .beatmap-mini-popup.position-left {
+                    transform: translateY(0) translateX(0);
+                }
+
+                .beatmap-mini-popup.position-right:hover,
+                .beatmap-mini-diff-icon-container:hover .beatmap-mini-popup.position-right {
+                    transform: translateY(0) translateX(0);
+                }
+
+            /* Popup content styles */
+                .beatmap-mini-popup-header {
+                    margin-bottom: 12px;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                    padding-bottom: 10px;
+                }
+
+                .beatmap-mini-popup-title {
+                    font-weight: 600;
+                    font-size: 16px;
+                    color: white;
+                    margin-bottom: 4px;
+                    word-break: break-word;
+                }
+
+                .beatmap-mini-popup-artist {
+                    font-size: 14px;
+                    color: rgba(255, 255, 255, 0.8);
+                    margin-bottom: 4px;
+                    word-break: break-word;
+                }
+
+                .beatmap-mini-popup-version {
+                    font-size: 14px;
+                    color: rgba(255, 255, 255, 0.7);
+                    font-style: italic;
+                    word-break: break-word;
+                }
+
+                .beatmap-mini-popup-details {
+                    font-size: 13px;
+                }
+
+                .beatmap-mini-popup-creator {
+                    color: rgba(255, 255, 255, 0.7);
+                    margin-bottom: 10px;
+                }
+
+                .beatmap-mini-popup-stats {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    margin-bottom: 15px;
+                }
+
+                .beatmap-mini-popup-stat {
+                    background-color: rgba(255, 255, 255, 0.1);
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                }
+
+                .beatmap-mini-status {
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    color: white;
+                    text-transform: uppercase;
+                }
+
+            /* Rank change styles in popup */
+                .beatmap-mini-popup-rank-change {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 15px;
+                    padding: 8px 12px;
+                    background-color: rgba(255, 255, 255, 0.05);
+                    border-radius: 6px;
+                }
+
+                .beatmap-mini-popup-rank-label {
+                    font-weight: 600;
+                    margin-right: 8px;
+                }
+
+                .beatmap-mini-popup-rank-value {
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                }
+
+            /* Other difficulties section in popup */
+                .beatmap-mini-popup-other-diffs {
+                    margin-bottom: 15px;
+                }
+
+                .beatmap-mini-popup-diffs-header {
+                    font-weight: 600;
+                    margin-bottom: 8px;
+                    color: rgba(255, 255, 255, 0.8);
+                }
+
+                .beatmap-mini-popup-diffs-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 5px;
+                    max-height: 120px;
+                    overflow-y: auto;
+                }
+
+                .beatmap-mini-popup-diff {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 5px 8px;
+                    background-color: rgba(255, 255, 255, 0.05);
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
+                }
+
+                .beatmap-mini-popup-diff:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+
+                .beatmap-mini-popup-diff-name {
+                    flex: 1;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .beatmap-mini-popup-diff-stars {
+                    margin: 0 8px;
+                    font-size: 12px;
+                    color: #FFCC22;
+                }
+
+                .beatmap-mini-popup-diff-rank {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 16px;
+                    height: 16px;
+                    font-size: 10px;
+                }
+
+            /* Action buttons */
+                .beatmap-mini-popup-actions {
+                    display: flex;
+                    gap: 8px;
+                }
+
+                .beatmap-mini-popup-action {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 5px;
+                    padding: 6px 10px;
+                    background-color: rgba(255, 255, 255, 0.1);
+                    border-radius: 4px;
+                    color: white;
+                    text-decoration: none;
+                    transition: all 0.2s ease;
+                }
+
+                .beatmap-mini-popup-action:hover {
+                    background-color: rgba(255, 255, 255, 0.2);
+                    transform: translateY(-2px);
+                }
+
+        /* All difficulties section (for showAllDifficulties mode) */
+            .beatmap-mini-difficulties {
+                position: relative;
+                width: 95%;
+                margin: 0 auto;
+                padding: 10px 0;
+                background-color: rgba(20, 20, 30, 0.9);
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                z-index: 1;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .beatmap-mini-difficulties-container {
+              padding: 2px 6px;
+            }
+
+            .beatmap-mini-difficulties-loading {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+              padding: 10px;
+              color: rgba(255, 255, 255, 0.7);
+            }
+
+            .beatmap-mini-loading-spinner {
+              width: 16px;
+              height: 16px;
+              border: 2px solid rgba(255, 255, 255, 0.3);
+              border-top-color: white;
+              border-radius: 50%;
+              animation: mini-spinner 0.8s linear infinite;
+            }
+
+            @keyframes mini-spinner {
+              to { transform: rotate(360deg); }
+            }
+
+            .beatmap-mini-no-difficulties {
+              text-align: center;
+              padding: 10px;
+              color: rgba(255, 255, 255, 0.5);
+              font-style: italic;
+            }
+
+            .beatmap-mini-difficulties-scroll-container {
+              position: relative;
+              display: flex;
+              align-items: center;
+              width: 100%;
+            }
+
+            .beatmap-mini-difficulties-scroll-btn {
+              position: absolute;
+              width: 24px;
+              height: 24px;
+              background-color: rgba(0, 0, 0, 0.5);
+              border: none;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: white;
+              cursor: pointer;
+              z-index: 5;
+              transition: all 0.2s ease;
+            }
+
+            .beatmap-mini-difficulties-scroll-btn:hover {
+              background-color: rgba(0, 0, 0, 0.7);
+              transform: scale(1.1);
+            }
+
+            .beatmap-mini-difficulties-scroll-btn.left {
+              left: -5px;
+            }
+
+            .beatmap-mini-difficulties-scroll-btn.right {
+              right: -5px;
+            }
+
+            .beatmap-mini-difficulties-list {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                width: 80%;
+                margin: 0 auto;
+            }
+
+            .beatmap-mini-difficulty-icon-container {
+              position: relative;
+              width: fit-content;
+              height: fit-content;
+              border-radius: 50%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              background-color: rgba(255, 255, 255, 0.1);
+              backdrop-filter: blur(4px);
+              transition: all 0.3s ease;
+              cursor: pointer;
+              z-index: 5;
+              isolation: isolate;
+            }
+
+            .beatmap-mini-difficulty-icon-container:hover {
+              transform: scale(1.05);
+              box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            }
+
+            .beatmap-mini-difficulty-icon-container.selected {
+              box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+
+            .beatmap-mini-difficulty-icon {
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 75%;
+              height: 75%;
+            }
+
+            .beatmap-mini-difficulty-name {
+              position: absolute;
+              bottom: -20px;
+              left: 50%;
+              transform: translateX(-50%);
+              white-space: nowrap;
+              font-size: 10px;
+              color: rgba(255, 255, 255, 0.8);
+              background-color: rgba(0, 0, 0, 0.7);
+              padding: 2px 6px;
+              border-radius: 10px;
+              max-width: 80px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+        /* Loading overlay for the entire card */
+            .beatmap-loading-overlay {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(20, 20, 30, 0.8);
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              z-index: 10;
+              border-radius: 30px;
+            }
+
+            .beatmap-loading-spinner {
+              width: 30px;
+              height: 30px;
+              border: 3px solid rgba(255, 255, 255, 0.3);
+              border-top-color: white;
+              border-radius: 50%;
+              animation: spinner 1s linear infinite;
+              margin-bottom: 10px;
+            }
+
+            @keyframes spinner {
+              to { transform: rotate(360deg); }
+            }
+
+            .beatmap-loading-text {
+              color: white;
+              font-size: 14px;
+            }
+
+        /* Error state */
+            .beatmap-error {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(20, 20, 30, 0.8);
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              justify-content: center;
+              z-index: 10;
+              border-radius: inherit;
+              padding: 15px;
+              text-align: center;
+            }
+
+            .beatmap-error i {
+              color: #FF6666;
+              font-size: 24px;
+              margin-right: 10px;
+            }
+
+            .beatmap-error span {
+              color: white;
+              font-size: 14px;
+              margin-right: 10px;
+            }
+
+            .beatmap-retry-btn {
+              background-color: rgba(255, 255, 255, 0.2);
+              border: none;
+              color: white;
+              padding: 5px 15px;
+              border-radius: 15px;
+              cursor: pointer;
+              transition: all 0.2s ease;
+            }
+
+            .beatmap-retry-btn:hover {
+              background-color: rgba(255, 255, 255, 0.3);
+            }
+
+        /* Responsive adjustments */
+            @media (max-width: 480px) {
+              .beatmap-card.mode-mini {
+                width: 100%;
+              }
+
+              .beatmap-mini-popup {
+                width: 250px;
+              }
+
+              .beatmap-mini-difficulties-list {
+                width: 90%;
+                padding: 10px 20px;
+              }
+            }
+
+    /* Compact Mode */
+        .beatmap-compact {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            height: 60px;
+        }
+
+        .beatmap-compact .beatmap-thumbnail {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+            margin-right: 10px;
+        }
+
+        .beatmap-compact .beatmap-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .beatmap-compact .beatmap-title {
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .beatmap-compact .beatmap-artist {
+            font-size: 12px;
+            color: var(--text-muted, #aaa);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .beatmap-compact .beatmap-version {
+            font-size: 12px;
+            color: var(--text-secondary, #888);
+            font-style: italic;
+        }
+
+        .beatmap-compact .beatmap-plays {
+            font-size: 11px;
+            color: var(--text-muted, #aaa);
+            margin-top: 2px;
+        }
+
+    /* Standard Mode */
+        .beatmap-standard {
+            display: flex;
+            flex-direction: column;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .beatmap-standard .beatmap-image {
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .beatmap-standard .beatmap-content {
+            padding: 12px;
+        }
+
+        .beatmap-standard .beatmap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .beatmap-standard .beatmap-title-container {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .beatmap-standard .beatmap-title {
+            font-weight: 700;
+            font-size: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .beatmap-standard .beatmap-artist {
+            font-size: 14px;
+            color: var(--text-muted, #aaa);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .beatmap-standard .beatmap-status {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: white;
+            font-weight: 600;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+
+        .beatmap-standard .beatmap-details {
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: var(--text-secondary, #888);
+        }
+
+        .beatmap-standard .beatmap-version {
+            font-style: italic;
+            margin-bottom: 2px;
+        }
+
+        .beatmap-standard .beatmap-creator {
+            margin-bottom: 2px;
+        }
+
+        .beatmap-standard .beatmap-plays {
+            font-size: 12px;
+        }
+
+    /* Detailed Mode */
+        /* Base */
+            .beatmap-detailed {
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                text-wrap: wrap;
-                opacity: 1;
-                transition: .2s ease;
-                z-index: 99;
-                text-shadow: 0 2px 2px rgba(0, 0, 0, 0.56);
+                border-radius: 6px;
+                overflow: hidden;
             }
+
+            .beatmap-detailed .beatmap-cover {
+                height: 150px;
+                background-size: cover;
+                background-position: center;
+                position: relative;
+            }
+
+            .beatmap-detailed .beatmap-content {
+                padding: 15px;
+            }
+
+            .beatmap-detailed .beatmap-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 10px;
+            }
+
+            .beatmap-detailed .beatmap-title-container {
+                flex: 1;
+                overflow: hidden;
+            }
+
+            .beatmap-detailed .beatmap-title {
+                font-weight: 700;
+                font-size: 18px;
+                margin-bottom: 2px;
+                line-height: 1.2;
+            }
+
+            .beatmap-detailed .beatmap-artist {
+                font-size: 15px;
+                color: var(--text-muted, #aaa);
+            }
+
+            .beatmap-detailed .beatmap-status {
+                font-size: 12px;
+                padding: 3px 8px;
+                border-radius: 4px;
+                color: white;
+                font-weight: 600;
+                margin-left: 10px;
+                flex-shrink: 0;
+            }
+
+            .beatmap-detailed .beatmap-details {
+                margin-bottom: 15px;
+                font-size: 14px;
+                color: var(--text-secondary, #888);
+                line-height: 1.4;
+            }
+
+            .beatmap-detailed .beatmap-version {
+                font-style: italic;
+                margin-bottom: 3px;
+            }
+
+            .beatmap-detailed .beatmap-creator {
+                margin-bottom: 3px;
+            }
+
+            .beatmap-detailed .beatmap-md5 {
+                font-family: monospace;
+                font-size: 12px;
+                color: var(--text-muted, #777);
+                margin-bottom: 3px;
+                word-break: break-all;
+            }
+
+            .beatmap-detailed .beatmap-plays {
+                font-size: 13px;
+            }
+
+        /* Expand/Collapse for Difficulties */
+            .beatmap-expand {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 6px;
+                background-color: var(--panel-secondary, #222);
+                border-radius: 4px;
+                font-size: 13px;
+                cursor: pointer;
+                margin-bottom: 10px;
+                transition: background-color 0.2s;
+            }
+
+            .beatmap-expand:hover {
+                background-color: var(--panel-hover, #333);
+            }
+
+            .beatmap-expand i {
+                margin-right: 5px;
+            }
+
+        /* Difficulties List */
+            .beatmap-difficulties {
+                margin-top: 10px;
+                margin-bottom: 10px;
+                background-color: var(--panel-secondary, #222);
+                border-radius: 4px;
+            }
+
+            .beatmap-loading {
+                padding: 10px;
+                text-align: center;
+                font-size: 13px;
+                color: var(--text-muted, #aaa);
+            }
+
+            .beatmap-difficulty {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 12px;
+                border-bottom: 1px solid var(--border-color, #333);
+                transition: background-color 0.2s;
+            }
+
+            .beatmap-difficulty:last-child {
+                border-bottom: none;
+            }
+
+            .beatmap-difficulty:hover {
+                background-color: var(--panel-hover, #333);
+                cursor: pointer;
+            }
+
+            .difficulty-name {
+                font-size: 13px;
+                font-style: italic;
+            }
+
+            .difficulty-plays {
+                font-size: 12px;
+                color: var(--text-muted, #aaa);
+            }
+
+        /* Action Buttons */
+            .beatmap-actions {
+                display: flex;
+                gap: 8px;
+                margin-top: 10px;
+            }
+
+            .beatmap-action {
+                display: flex;
+                align-items: center;
+                padding: 6px 10px;
+                background-color: var(--button-bg, #333);
+                border-radius: 4px;
+                font-size: 13px;
+                color: var(--text-primary, #fff);
+                text-decoration: none;
+                transition: background-color 0.2s;
+            }
+
+            .beatmap-action:hover {
+                background-color: var(--button-hover, #444);
+                color: var(--text-primary, #fff);
+            }
+
+            .beatmap-action i {
+                margin-right: 5px;
+            }
+
+        /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .beatmap-detailed .beatmap-cover {
+                    height: 120px;
+                }
+
+                .beatmap-detailed .beatmap-title {
+                    font-size: 16px;
+                }
+
+                .beatmap-detailed .beatmap-artist {
+                    font-size: 14px;
+                }
+
+                .beatmap-actions {
+                    flex-wrap: wrap;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .beatmap-standard .beatmap-image {
+                    height: 80px;
+                }
+
+                .beatmap-detailed .beatmap-cover {
+                    height: 100px;
+                }
+            }
+
