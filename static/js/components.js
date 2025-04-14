@@ -222,7 +222,8 @@ Vue.component('badge', {
   },
   data: function () {
     return {
-      showPanel: false
+      showPanel: false,
+      badgeId: 'badge-' + Math.random().toString(36).substr(2, 9)
     }
   },
   watch: {
@@ -230,6 +231,42 @@ Vue.component('badge', {
       if (typeof newVal !== 'number') {
         this.type = Number(newVal);
       }
+    }
+  },
+  computed: {
+    badgeStyle() {
+      return {
+        '--badge-styles-color': this.badge.styles.color,
+        '--badge-hue': this.badge.styles.color,
+        '--badge-bg-color': `hsl(${this.badge.styles.color}, 20%, 30%)`,
+        '--badge-text-color': `hsl(${this.badge.styles.color}, 100%, 80%)`,
+        '--badge-border-color': `hsl(${this.badge.styles.color}, 40%, 35%)`,
+        'background-color': `var(--badge-bg-color)`,
+        'color': `var(--badge-text-color)`,
+        'border': `1px solid var(--badge-border-color)`
+      };
+    },
+    panelStyle() {
+      return {
+        '--panel-bg-color': `hsl(${this.badge.styles.color}, 20%, 20%)`,
+        '--panel-text-color': `hsl(${this.badge.styles.color}, 100%, 80%)`,
+        'background-color': `var(--panel-bg-color)`,
+        'color': `var(--panel-text-color)`
+      };
+    },
+    badgeDescription() {
+      return this.badge.description || `${this.badge.name} badge`;
+    }
+  },
+  methods: {
+    showPanelInfo() {
+      this.showPanel = true;
+    },
+    hidePanelInfo() {
+      this.showPanel = false;
+    },
+    togglePanelInfo() {
+      this.showPanel = !this.showPanel;
     }
   },
   created() {
@@ -242,32 +279,45 @@ Vue.component('badge', {
   },
   template: `
   <span data-popup="badge">
-    <div v-if="type === 0" class="badge"  :style="'background-color: hsl(' + badge.styles.color + ', 20%, 30%); color: hsl(' + badge.styles.color + ', 100%, 80%);  border: 1px solid hsl(' + badge.styles.color + ', 40%, 35%);'" @mouseover="showPanel = true" @mouseleave="showPanel = false">
-      <span class="icon" v-if="badge.styles.icon">
+    <!-- Regular badge -->
+    <div v-if="type === 0"  class="badge"  :class="badge.styles.customClass"  :style="badgeStyle"  @mouseover="showPanelInfo"  @mouseleave="hidePanelInfo" @focus="showPanelInfo" @blur="hidePanelInfo"
+     @keydown.enter="togglePanelInfo" @keydown.space="togglePanelInfo" tabindex="0" role="button" :aria-label="badge.name" :aria-describedby="badgeId + '-desc'" :aria-expanded="showPanel">
+      <span class="icon"  v-if="badge.styles.icon"  :class="badge.styles.iconClass" aria-hidden="true">
         <i v-bind:class="'' + badge.styles.icon"></i>
       </span>
-      <span class="badge-name">
+      
+      <span class="badge-name"  :class="badge.styles.nameClass" :id="badgeId">
         {{ badge.name }}
       </span>
-      <div class="badge-panel"  :style="'background-color: hsl(' + badge.styles.color + ', 20%, 20%); color: hsl(' + badge.styles.color + ', 100%, 80%);'">
+      
+      <div class="badge-panel"  :class="badge.styles.panelClass"  :style="panelStyle" :id="badgeId + '-desc'" role="tooltip" aria-live="polite">
         <h3>{{ badge.name }}</h3>
         <p>{{ badge.description }}</p>
-        <!-- Add more badge details here -->
+        <div v-if="badge.styles.panelFooter" class="badge-panel-footer">
+          {{ badge.styles.panelFooter }}
+        </div>
       </div>
     </div>
-    <div v-if="type === 1" class="iconBadge"  :style="'background-color: hsl(' + badge.styles.color + ', 20%, 30%); color: hsl(' + badge.styles.color + ', 100%, 80%);  border: 1px solid hsl(' + badge.styles.color + ', 40%, 35%);'" @mouseover="showPanel = true" @mouseleave="showPanel = false">
-      <span class="icon" v-if="badge.styles.icon">
+    
+    <!-- Icon badge -->
+    <div v-if="type === 1"  class="iconBadge"  :class="badge.styles.customClass"  :style="badgeStyle"  @mouseover="showPanelInfo"  @mouseleave="hidePanelInfo" @focus="showPanelInfo" @blur="hidePanelInfo" 
+     @keydown.enter="togglePanelInfo" @keydown.space="togglePanelInfo" tabindex="0" role="button" :aria-label="badge.name" :aria-describedby="badgeId + '-desc'" :aria-expanded="showPanel">
+      <span class="icon"  v-if="badge.styles.icon"  :class="badge.styles.iconClass" aria-hidden="true">
         <i v-bind:class="'' + badge.styles.icon"></i>
       </span>
-      <div class="badge-panel"  :style="'background-color: hsl(' + badge.styles.color + ', 20%, 20%); color: hsl(' + badge.styles.color + ', 100%, 80%);'">
+      
+      <div class="badge-panel"  :class="badge.styles.panelClass"  :style="panelStyle" :id="badgeId + '-desc'" role="tooltip" aria-live="polite">
         <h3>{{ badge.name }}</h3>
         <p>{{ badge.description }}</p>
-        <!-- Add more badge details here -->
+        <div v-if="badge.styles.panelFooter" class="badge-panel-footer">
+          {{ badge.styles.panelFooter }}
+        </div>
       </div>
     </div>
   </span>
   `
 });
+
 
 Vue.component('user-profile', {
   props: ['user'],
@@ -690,7 +740,7 @@ Vue.component('user-profile', {
                 #{{ user.stats.current.country_rank || '?' }}
               </span>
             </div>
-            <div class="badges">
+            <div class="badge-block compact">
               <badge v-for="badge in user.info?.badges" :badge="badge" :type="1" 
                      @mouseover="showBadgePopup($event, badge)" 
                      @mouseout="hideBadgePopup"></badge>

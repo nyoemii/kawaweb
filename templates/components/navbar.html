@@ -105,7 +105,7 @@
                                 <span class="user-card-name">{{ session.user_data['name'] }}</span>
                                 <div class="user-card-badges">
                                     {% if session.user_data.get('badges') %}
-                                    <div data-badge-group="user-card" class="badge-block">
+                                    <div data-badge-group="user-card" class="badge-block compact">
                                         {% for badge in session.user_data['badges'][:8] %}
                                             <badge :type="1" :test="0" :badge="{{ badge }}"></badge>
                                         {% endfor %}
