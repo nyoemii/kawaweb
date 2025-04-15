@@ -1387,7 +1387,7 @@ Vue.component('bmap-card', {
     // Check if we can scroll back
     canScrollBack() {
       return this.visibleDifficultyRange.start > 0;
-    }
+    },
   },
   methods: {
     async loadMapData() {
@@ -1538,6 +1538,32 @@ Vue.component('bmap-card', {
       
       const change = this.rankChanges[diffId];
       return `#${change.newRank} (was #${change.oldRank})`;
+    },
+    
+    difficultyColor(diff) {
+      if (!diff || !diff.diff) {
+        this.$log.debug('using default grey due to lack of diff info:', diff);
+        return '200, 200, 200'; // Default gray RGB values
+      }
+  
+      try {
+        // Create color scale
+        const difficultyColourSpectrum = d3.scaleLinear()
+          .domain([0.1, 1.25, 2, 2.5, 3.3, 4.2, 4.9, 5.8, 6.7, 7.7, 9])
+          .clamp(true)
+          .range(['#4290FB', '#4FC0FF', '#4FFFD5', '#7CFF4F', '#F6F05C', '#FF8068', '#FF4E6F', '#C645B8', '#6563DE', '#18158E', '#000000'])
+          .interpolate(d3.interpolateRgb.gamma(2.2));
+  
+        // Get difficulty rating
+        const stars = parseFloat(diff.diff || 0);
+        
+        // Convert hex to RGB
+        const color = d3.color(difficultyColourSpectrum(stars));
+        return color ? `${color.r}, ${color.g}, ${color.b}` : '200, 200, 200';
+      } catch (error) {
+        this.$log.error('Error calculating difficulty color:', error);
+        return '200, 200, 200'; // Fallback color
+      }
     }
   },
   mounted() {
@@ -1572,7 +1598,7 @@ Vue.component('bmap-card', {
       <div class="beatmap-mini-content">
         <!-- Single difficulty mode - show icon on the left -->
         <div v-if="!showAllDifficulties" class="beatmap-mini-single-diff">
-          <div class="beatmap-mini-diff-icon-container"  v-data-popup
+          <div class="beatmap-mini-diff-icon-container" :style="{ '--diff-color': difficultyColor(selectedDifficulty) }" v-data-popup
               :class="[selectedDifficulty.difficulty_rating ? 'difficulty-' + Math.floor(parseFloat(selectedDifficulty.difficulty_rating)) : '']">
             
             <!-- Difficulty icon with rank change indicator if available -->
@@ -1712,7 +1738,7 @@ Vue.component('bmap-card', {
           <div class="beatmap-mini-difficulties-list">
             <div v-for="diff in visibleDifficulties" v-portal-popup
                  :key="diff.id" 
-                 :class="['beatmap-mini-difficulty-icon-container']">
+                 :class="['beatmap-mini-difficulty-icon-container']" :style="{ '--diff-color': difficultyColor(diff) }">
               
               <!-- Difficulty icon -->
               <div class="beatmap-mini-difficulty-icon" data-popup-trigger>

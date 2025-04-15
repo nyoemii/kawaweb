@@ -20,6 +20,7 @@
 /* Style for User Panel Vue Component */
 :root {
     --user: var(--main);  /* Default fallback to main */
+    --diff-color: 255, 255, 255;
 }
 .profile-panel { /* BUG: When hovering in panel, if you hover over a parent div in the dom it will close the panel as it is technically behind the parent div even tho it is being shown on top. */
     position: absolute;
@@ -835,7 +836,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background-color: rgba(255, 255, 255, 0.1);
+                background-color: rgba(var(--diff-color), 0.5);
                 backdrop-filter: blur(4px);
                 transition: all 0.3s ease;
                 cursor: pointer;
@@ -843,7 +844,7 @@
 
             .beatmap-mini-diff-icon-container:hover {
                 transform: scale(1.05);
-                box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+                box-shadow: 0 0 15px rgba(var(--diff-color), 0.4);
             }
 
             .beatmap-mini-diff-icon {
@@ -863,6 +864,10 @@
                 height: var(--diff-icon-size);*/
                 font-style: normal;
                 color: white;
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                line-height: 1;
             }
 
             .beatmap-mini-rank-change {
@@ -941,43 +946,6 @@
                 box-shadow: 0 0 10px rgba(79, 192, 255, 0.4);
             }
 
-            .beatmap-mini-diff-icon-container.difficulty-2,
-            .beatmap-mini-difficulty-icon-container.difficulty-2 {
-                background-color: rgba(79, 192, 255, 0.3);
-                box-shadow: 0 0 10px rgba(79, 192, 255, 0.4);
-            }
-
-            .beatmap-mini-diff-icon-container.difficulty-3,
-            .beatmap-mini-difficulty-icon-container.difficulty-3 {
-                background-color: rgba(102, 255, 51, 0.3);
-                box-shadow: 0 0 10px rgba(102, 255, 51, 0.4);
-            }
-
-            .beatmap-mini-diff-icon-container.difficulty-4,
-            .beatmap-mini-difficulty-icon-container.difficulty-4 {
-                background-color: rgba(255, 204, 34, 0.3);
-                box-shadow: 0 0 10px rgba(255, 204, 34, 0.4);
-            }
-
-            .beatmap-mini-diff-icon-container.difficulty-5,
-            .beatmap-mini-difficulty-icon-container.difficulty-5 {
-                background-color: rgba(255, 102, 170, 0.3);
-                box-shadow: 0 0 10px rgba(255, 102, 170, 0.4);
-            }
-
-            .beatmap-mini-diff-icon-container.difficulty-6,
-            .beatmap-mini-diff-icon-container.difficulty-7,
-            .beatmap-mini-diff-icon-container.difficulty-8,
-            .beatmap-mini-diff-icon-container.difficulty-9,
-            .beatmap-mini-diff-icon-container.difficulty-10,
-            .beatmap-mini-difficulty-icon-container.difficulty-6,
-            .beatmap-mini-difficulty-icon-container.difficulty-7,
-            .beatmap-mini-difficulty-icon-container.difficulty-8,
-            .beatmap-mini-difficulty-icon-container.difficulty-9,
-            .beatmap-mini-difficulty-icon-container.difficulty-10 {
-                background-color: rgba(170, 136, 255, 0.3);
-                box-shadow: 0 0 10px rgba(170, 136, 255, 0.4);
-            }
 
         /* Popup panel styles */
             .beatmap-mini-popup {
@@ -1297,23 +1265,24 @@
             }
 
             .beatmap-mini-difficulty-icon-container {
-              position: relative;
-              width: fit-content;
-              height: fit-content;
-              border-radius: 50%;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              backdrop-filter: blur(4px);
-              transition: all 0.3s ease;
-              cursor: pointer;
-              z-index: 5;
-              isolation: isolate;
+                position: relative;
+                width: fit-content;
+                height: fit-content;
+                border-radius: 50%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                backdrop-filter: blur(4px);
+                background-color: rgba(var(--diff-color), 0.6);
+                transition: all 0.3s ease;
+                cursor: pointer;
+                z-index: 5;
+                isolation: isolate;
             }
 
             .beatmap-mini-difficulty-icon-container:hover {
               transform: scale(1.05);
-              box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+              box-shadow: 0 0 15px rgba(var(--diff-color), 0.4);
             }
 
             .beatmap-mini-difficulty-icon-container.selected {
