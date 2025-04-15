@@ -1771,3 +1771,10 @@
                 }
             }
 
+/* === Shaders === */
+    /* Psychedelic Shader */
+        .bg-effect-psy {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
