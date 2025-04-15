@@ -23,10 +23,10 @@ const mixin_conversion = {
     // Get mode icon class
     getModeIcon(mode) {
       const modes = {
-        0: 'fas fa-circle', // osu!
-        1: 'fas fa-drum', // taiko
-        2: 'fas fa-apple-alt', // catch
-        3: 'fas fa-stream' // mania
+        0: 'mode-osu', // osu!
+        1: 'mode-taiko', // taiko
+        2: 'mode-catch', // catch
+        3: 'mode-mania' // mania
       };
       return modes[mode] || modes[0];
     },
@@ -282,6 +282,7 @@ Vue.component('badge', {
     <!-- Regular badge -->
     <div v-if="type === 0"  class="badge"  :class="badge.styles.customClass"  :style="badgeStyle"  @mouseover="showPanelInfo"  @mouseleave="hidePanelInfo" @focus="showPanelInfo" @blur="hidePanelInfo"
      @keydown.enter="togglePanelInfo" @keydown.space="togglePanelInfo" tabindex="0" role="button" :aria-label="badge.name" :aria-describedby="badgeId + '-desc'" :aria-expanded="showPanel">
+      <bg-effect-psy :settings="{ hue: badge.styles.color / 360, hueVariation: badge.styles.psyHueVar ? badge.styles.psyHueVar : 0.001, density: badge.styles.psyDensity ? badge.styles.psyDensity : 0, displacement: badge.styles.psyDisp ? badge.styles.psyDisp : 0.1, speed: badge.styles.psySpeed ? badge.styles.psySpeed : 0.2, gradient: badge.styles.psyGradient ? badge.styles.psyGradient : 0.15 }" :show-gui="false" :debug-level="0" v-if="badge.styles.customClass && badge.styles.customClass.includes('psy')"></bg-effect-psy>
       <span class="icon"  v-if="badge.styles.icon"  :class="badge.styles.iconClass" aria-hidden="true">
         <i v-bind:class="'' + badge.styles.icon"></i>
       </span>

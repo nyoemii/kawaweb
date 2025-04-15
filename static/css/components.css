@@ -856,7 +856,12 @@
             }
 
             .beatmap-mini-mode-icon {
-                font-size: 16px;
+                --diff-icon-size: 24px;
+                font-family: osu-mode;
+                font-size: var(--diff-icon-size);
+                /*width: var(--diff-icon-size);
+                height: var(--diff-icon-size);*/
+                font-style: normal;
                 color: white;
             }
 
@@ -1207,7 +1212,7 @@
                 position: relative;
                 width: 95%;
                 margin: 0 auto;
-                padding: 10px 0;
+                padding: 4px 0;
                 background-color: rgba(20, 20, 30, 0.9);
                 border-bottom-left-radius: 12px;
                 border-bottom-right-radius: 12px;
@@ -1299,7 +1304,6 @@
               display: flex;
               flex-direction: column;
               align-items: center;
-              background-color: rgba(255, 255, 255, 0.1);
               backdrop-filter: blur(4px);
               transition: all 0.3s ease;
               cursor: pointer;
@@ -1321,8 +1325,8 @@
               display: flex;
               align-items: center;
               justify-content: center;
-              width: 75%;
-              height: 75%;
+              width: 100%;
+              height: 100%;
             }
 
             .beatmap-mini-difficulty-name {

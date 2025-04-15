@@ -3,6 +3,9 @@
 <head>
   <!-- title -->
   <title>{{ appName() }} - Admin - {% block title %}{% endblock %}</title>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- VueJS -->
   <script src="/static/js/asserts/vue.js"></script>
   <script src="/static/js/asserts/vue-axios.js"></script>
@@ -36,6 +39,7 @@
   <!-- custom style -->
   <link rel="stylesheet" href="/static/css/style.css">
   <link rel="stylesheet" href="/static/css/components.css">
+  <link rel="stylesheet" href="/static/css/components/badges.css">
   <link rel="stylesheet" href="/static/css/pages/generic.css">
   <link rel="stylesheet" href="/static/css/pages/admin/style.css">
   <link rel="stylesheet" href="/static/css/pages/panel.css">
@@ -114,6 +118,7 @@
   <!-- main js script -->
   <script src="/static/js/main.js" crossorigin="anonymous"></script>
   <script src="/static/js/components.js" crossorigin="anonymous"></script>
+  <script src="/static/js/comps/shaders.js" crossorigin="anonymous"></script>
   <script src="/static/js/navbar.js" crossorigin="anonymous"></script>
   <script src="/static/js/panels.js" crossorigin="anonymous"></script>
 </body>

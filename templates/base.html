@@ -4,6 +4,8 @@
   <!-- Title -->
   <title>{{ appName() }} - {% block title %}{% endblock %}</title>
 
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- VueJS -->
   <script src="/static/js/asserts/vue.js"></script>
   <!--<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
@@ -126,6 +128,7 @@
   <script src="/static/js/navbar.js" crossorigin="anonymous"></script>
   <script src="/static/js/panels.js" crossorigin="anonymous"></script>
   <script src="/static/js/components.js" crossorigin="anonymous"></script>
+  <script src="/static/js/comps/shaders.js" crossorigin="anonymous"></script>
 
   <!-- Customisation -->
   {% block bottom %}
