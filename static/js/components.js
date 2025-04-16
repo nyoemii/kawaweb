@@ -1602,7 +1602,7 @@ Vue.component('bmap-card', {
               :class="[selectedDifficulty.difficulty_rating ? 'difficulty-' + Math.floor(parseFloat(selectedDifficulty.difficulty_rating)) : '']">
             
             <!-- Difficulty icon with rank change indicator if available -->
-            <div class="beatmap-mini-diff-icon" data-popup-trigger>
+            <div class="beatmap-mini-diff-icon" @click.stop="beatmapBus.$emit('show-beatmap-panel', selectedDifficulty.id, mapData.set_id)" data-popup-trigger>
               <i :class="getModeIcon(selectedDifficulty.mode)" class="beatmap-mini-mode-icon"></i>
               
               <div v-if="rankChanges && rankChanges[selectedDifficulty.id]" class="beatmap-mini-rank-change"
@@ -1741,7 +1741,7 @@ Vue.component('bmap-card', {
                  :class="['beatmap-mini-difficulty-icon-container']" :style="{ '--diff-color': difficultyColor(diff) }">
               
               <!-- Difficulty icon -->
-              <div class="beatmap-mini-difficulty-icon" data-popup-trigger>
+              <div class="beatmap-mini-difficulty-icon" @click.stop="beatmapBus.$emit('show-beatmap-panel', diff.id, mapData.set_id)" data-popup-trigger>
                 <i :class="getModeIcon(diff.mode)" class="beatmap-mini-mode-icon"></i>
                 
                 <!-- Rank change indicator if available -->

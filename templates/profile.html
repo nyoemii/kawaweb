@@ -36,7 +36,7 @@
         </div>
     </div>
     <div v-if="data.maps.{{ id }}.out.length != 0" class="beatmaps">
-        <bmap-card v-for="(map, index) in data.maps.{{ id }}.out" :beatmap="map" mode="mini" :is-set="false" :show-all-difficulties="true" :selected-difficulty-id="map.id" :show-plays="true"></bmap-card>
+        <bmap-card v-for="(map, index) in data.maps.{{ id }}.out" :key="map.set_id + '-' + map.id" :beatmap="map" mode="mini" :is-set="false" :show-all-difficulties="true" :selected-difficulty-id="map.id" :show-plays="true"></bmap-card>
     </div>
     <div v-else-if="data.maps.{{ id }}.out.length == 0" class="stats-block">
         <div class="columns is-marginless">
