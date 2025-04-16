@@ -1099,9 +1099,9 @@ Vue.component('score-card', {
               </a>
             </div>
             <div class="map-creators">
-              <span>- By <a class=""><% score.beatmap.artist %></a></span>
+              By <a class=""><% score.beatmap.artist %></a>
               |
-              <span>Mapped by <a><% score.beatmap.creator %></a></span>
+              Mapped by <a><% score.beatmap.creator %></a>
             </div>
           </div>
           <div class="play-stats-block">
