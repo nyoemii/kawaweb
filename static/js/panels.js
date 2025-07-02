@@ -294,7 +294,7 @@ new Vue({
                                 <h3><i class="fas fa-exclamation-circle"></i> Score Hunting</h3>
                                 In September 2022, Kawata introduced Score Hunts!
                                 <div class="doc-content">
-                                    This is a way to get rewards from playing difficult, strange or techincal maps. How it works is pretty simple.</br>
+                                    This is a way to get rewards from playing difficult, strange or technical maps. How it works is pretty simple.</br>
                                     </br>
                                     If you want to participate in Score Hunts, <a href="https://discord.gg/4CzsqkK">Join our Discord</a> In there you can find the #score-hunting channel, which shows you the current active and previous Score Hunts.</br>
                                     </br>
